@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
 
-            $table->unique(['teacher_id', 'class_id', 'subject_id', 'academic_year_id'], 'teaching_assignment_unique');
+            $table->unique(['class_id', 'subject_id', 'academic_year_id'], 'teaching_assignment_unique');
         });
     }
 
