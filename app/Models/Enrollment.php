@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Override;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Enrollment extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'student_id',
         'class_id',
@@ -15,7 +17,6 @@ class Enrollment extends Model
         'status',
     ];
 
-    #[Override]
     protected function casts()
     {
         return [
