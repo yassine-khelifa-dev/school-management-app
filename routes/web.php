@@ -8,5 +8,4 @@ Route::get('/', function () {
 });
 
 
-
-Route::resource('enrollments', EnrollmentController::class);
+Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');

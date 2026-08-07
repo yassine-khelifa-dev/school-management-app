@@ -15,12 +15,21 @@
     <div class="container">
 
         <h1 class="text-primary">Enrollments</h1>
+        <div class="border border-danger p-3 my-2">
+            <h2 class="text-danger">Filtre</h2>
 
-
-        <div class="my-2">
-            <h3>Filtre</h3>
-            <x-_filtre_enroll :academic-years="$academicYears" :school-classes="$schoolClasses" />
-
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            <div class="row mx-2">
+                <x-_filtre_enroll :academic-years="$academicYears" :school-classes="$schoolClasses" />
+            </div>
         </div>
 
         <table class="table table-dark table-striped">

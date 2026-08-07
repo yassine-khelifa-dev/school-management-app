@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EnrollmentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -20,7 +21,8 @@ class Enrollment extends Model
     protected function casts()
     {
         return [
-            'enrolled_at' => 'datetime'
+            'enrolled_at' => 'datetime',
+            'status' => EnrollmentStatus::class
         ];
     }
 
