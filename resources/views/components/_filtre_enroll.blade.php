@@ -79,16 +79,6 @@
      </div>
 
 
-
-
-
-
-
-
-
-
-
-
      <div class="d-flex flex-row-reverse gap-2">
          <button type="submit" class="btn btn-danger">Search</button>
          <a href="{{ route('enrollments.index') }}" class="btn btn-outline-secondary">

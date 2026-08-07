@@ -15,35 +15,29 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-
-
-
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
     private const COUNT_STUDENTS = 5000;
     private const COUNT_TEACHERS = 400;
-    private const COUNT_EXAMS = 400;
 
-    /**
-     * Seed the application's database.
-     */
+    private const STUDENTS_PER_CLASS = 35;
+    private const SUBJECTS_PER_CLASS = 8;
+    private const EXAMS_PER_SUBJECT = 3;
+
     public function run(): void
     {
-
-
-        // $create an admin
+        // Admin
         User::factory()->create([
-            'role' => 'admin'
+            'role' => 'admin',
         ]);
 
-        // Academic Yers:
+        // Academic Years
         $academicYears = collect();
-        $years = range(2000, 2026);
-        foreach ($years as $year) {
-            $academicYears->push(
 
+        foreach (range(2000, 2026) as $year) {
+            $academicYears->push(
                 AcademicYear::factory()->create([
                     'name' => $year . '-' . ($year + 1),
                     'starts_at' => $year . '-09-01',
@@ -52,68 +46,136 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // Classes:
-        $schoolClasses = SchoolClass::factory(70)->create();
+        // Use the latest academic year for our performance dataset
+        $currentAcademicYear = $academicYears->last();
 
+        // Classes
+        // 5000 / ~140 = around 35 students per class
+        $schoolClasses = SchoolClass::factory(140)->create();
 
-        // Students:
-        $userStudents =  User::factory(self::COUNT_STUDENTS)->create([
-            'role' => 'student'
-        ]);
-        $students = $userStudents->map(function (User $user) {
-            return Student::factory()
-                ->for($user)
-                ->create();
-        });
-
-        // Enrollments:
-        foreach ($students as  $student) {
-            Enrollment::factory()->create([
-                'student_id' => $student->id,
-                'class_id' => $schoolClasses->random()->id,
-                'academic_year_id' => $academicYears->random()->id,
-            ]);
-        }
-
-        // Subjects:
+        // Subjects
         $subjects = Subject::factory(50)->create();
 
-        // Teachers:
-        $userTeachers =  User::factory(self::COUNT_TEACHERS)->create([
-            'role' => 'teacher'
+        // Students
+        $userStudents = User::factory(self::COUNT_STUDENTS)->create([
+            'role' => 'student',
         ]);
-        $teachers = $userTeachers->map(function (User $user) {
-            return Teacher::factory()
+
+        $students = $userStudents->map(
+            fn(User $user) =>
+            Student::factory()
                 ->for($user)
-                ->create();
-        });
+                ->create()
+        );
 
+        // Teachers
+        $userTeachers = User::factory(self::COUNT_TEACHERS)->create([
+            'role' => 'teacher',
+        ]);
 
-        // Random assignment is acceptable for development data.
-        // The database unique constraint protects business integrity.
-        // teaching assignments:
+        $teachers = $userTeachers->map(
+            fn(User $user) =>
+            Teacher::factory()
+                ->for($user)
+                ->create()
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Enrollments
+        |--------------------------------------------------------------------------
+        |
+        | Around 35 students per class in the same academic year.
+        |
+        */
+
+        $students
+            ->shuffle()
+            ->chunk(self::STUDENTS_PER_CLASS)
+            ->each(function ($studentGroup, $index) use (
+                $schoolClasses,
+                $currentAcademicYear
+            ) {
+                $class = $schoolClasses[$index % $schoolClasses->count()];
+
+                foreach ($studentGroup as $student) {
+                    Enrollment::factory()->create([
+                        'student_id' => $student->id,
+                        'class_id' => $class->id,
+                        'academic_year_id' => $currentAcademicYear->id,
+                    ]);
+                }
+            });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Teaching Assignments
+        |--------------------------------------------------------------------------
+        |
+        | Each class gets 8 subjects.
+        |
+        */
+
         $teachingAssignments = collect();
-        foreach ($teachers as  $teacher) {
-            $teachingAssignments->push(TeachingAssignment::factory()->create([
-                'teacher_id' => $teacher->id,
-                'class_id' => $schoolClasses->random()->id,
-                'subject_id' => $subjects->random()->id,
-                'academic_year_id' => $academicYears->random()->id
-            ]));
+
+        foreach ($schoolClasses as $class) {
+            $classSubjects = $subjects->random(
+                self::SUBJECTS_PER_CLASS
+            );
+
+            foreach ($classSubjects as $subject) {
+                $teacher = $teachers->random();
+
+                $assignment = TeachingAssignment::factory()->create([
+                    'teacher_id' => $teacher->id,
+                    'class_id' => $class->id,
+                    'subject_id' => $subject->id,
+                    'academic_year_id' => $currentAcademicYear->id,
+                ]);
+
+                $teachingAssignments->push($assignment);
+            }
         }
 
-        // Exams:
-        $exams = Exam::factory(self::COUNT_EXAMS)
-            ->recycle($teachingAssignments)
-            ->create();
+        /*
+        |--------------------------------------------------------------------------
+        | Exams + Grades
+        |--------------------------------------------------------------------------
+        |
+        | Each class/subject gets 3 exams.
+        | Only students enrolled in that class/year receive grades.
+        |
+        */
 
+        foreach ($teachingAssignments as $assignment) {
 
-        // Grades:
-        foreach ($students as $student) {
-            Grade::factory()->create([
-                'exam_id' => $exams->random()->id,
-                'student_id' => $student->id
+            $classStudents = Student::query()
+                ->whereHas('enrollments', function ($query) use ($assignment) {
+                    $query
+                        ->where('class_id', $assignment->class_id)
+                        ->where(
+                            'academic_year_id',
+                            $assignment->academic_year_id
+                        );
+                })
+                ->get();
+
+            if ($classStudents->isEmpty()) {
+                continue;
+            }
+
+            $exams = Exam::factory(self::EXAMS_PER_SUBJECT)->create([
+                'teaching_assignment_id' => $assignment->id,
             ]);
+
+            foreach ($exams as $exam) {
+                foreach ($classStudents as $student) {
+                    Grade::factory()->create([
+                        'exam_id' => $exam->id,
+                        'student_id' => $student->id,
+                    ]);
+                }
+            }
         }
     }
 }
