@@ -17,7 +17,6 @@ class ClassPerformanceQuery
         $direction =  $filters['q_dir_sorted'] ?? 'desc';
 
 
-
         $query = Student::query()
             ->with([
                 'user',
