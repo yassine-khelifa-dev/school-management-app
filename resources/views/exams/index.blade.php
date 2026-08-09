@@ -128,7 +128,7 @@
                             <td>{{ $exam->exam_date }}</td>
                             <td class="text-center">{{ $exam->maximum_score }}</td>
                             <td>
-                                <a href="{{ route('exams.manage-grades', $exam->id) }}" class="btn btn-danger">Manage
+                                <a href="{{ route('exams-grades.index', $exam->id) }}" class="btn btn-danger">Manage
                                     Grades</a>
 
                             </td>

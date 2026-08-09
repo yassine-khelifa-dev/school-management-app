@@ -37,9 +37,4 @@ class ExamController extends Controller
         ));
     }
 
-    public function manageGrades(Request $request, Exam $exam)
-    {
-
-        return $exam;
-    }
 }
