@@ -51,37 +51,77 @@
                 </div>
             </div>
             {{-- students --}}
-            <div class="col-md-8">
-                <h3>Students</h3>
-                @if (count($students) == 0)
-                    <div class="alert alert-warning" role="alert">
-                        No students are enrolled in this class for this academic year.
+            <div class="col-md-8 m-2">
+                <form action="{{ route('exams-grades.store', $exam->id) }}" method="post">
+                    @csrf
+                    <div class="d-flex justify-content-between p-2">
+                        <h3>Students</h3>
+                        <button class="btn btn-success">Submit Scores</button>
                     </div>
-                @else
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Student Full Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Current Score</th>
-                                <th scope="col">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($students as $student)
+
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (count($students) == 0)
+                        <div class="alert alert-warning" role="alert">
+                            No students are enrolled in this class for this academic year.
+                        </div>
+                    @else
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <th scope="row">{{ $student->id }}</th>
-                                    <td>{{ $student->full_name }}</td>
-                                    <td>{{ $student->user->email }}</td>
-                                    <td>{{ $students_grades->get($student->id) ?? '-' }}</td>
-                                    <td>{{ $students_grades->get($student->id) !== null ? 'Graded' : 'Not graded' }}
-                                    </td>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Student Full Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Current Score</th>
+                                    <th scope="col">Status</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
+                            </thead>
+                            <tbody>
+                                @foreach ($students as $index => $student)
+                                    @php
+                                        $grade =
+                                            $students_grades->firstWhere('student_id', $student->id)['score'] ?? null;
+                                    @endphp
+                                    <tr>
+                                        <th scope="row">{{ $student->id }}</th>
+                                        <td>{{ $student->full_name }}</td>
+                                        <td>{{ $student->user->email }}</td>
+                                        <td @class(['bg-danger-subtle' => $grade === null ])>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">%</span>
+
+                                                <input type="number" class="form-control"
+                                                    name="scores[{{ $index }}][score]"
+                                                    value="{{ $grade }}" />
+
+                                                <input type="hidden" class="form-control"
+                                                    name="scores[{{ $index }}][student_id]"
+                                                    value="{{ $student->id }}" />
+                                            </div>
+                                        </td>
+                                        <td>{{ $grade !== null ? 'Graded' : 'Not graded' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </form>
             </div>
         </div>
     </div>

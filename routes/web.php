@@ -15,3 +15,4 @@ Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollm
 Route::get('class-performance', [ClassPerformanceController::class, 'index'])->name('class-performance.index');
 Route::get('exams', [ExamController::class, 'index'])->name('exams.index');
 Route::get('/exams/{exam}/grades', [ExamGradeController::class, 'index'])->name('exams-grades.index');
+Route::post('/exams/{exam}/grades', [ExamGradeController::class, 'store'])->name('exams-grades.store');
