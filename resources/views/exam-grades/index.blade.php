@@ -1,21 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <title>Exam Grades</title>
-</head>
-
+@extends('welcome')
+@section('title', 'Exam Grades')
+@section('content')
 <body>
     <div class="container">
 
         <div class="d-flex justify-content-between p-2">
-            <h1 class="text-primary">Exam Grades</h1>
+            <h2 class="text-primary mt-3">Exam Grades</h2>
             <a href="{{ url()->previous() }}" class="btn btn-primary m-2">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
@@ -81,7 +71,7 @@
                             No students are enrolled in this class for this academic year.
                         </div>
                     @else
-                        <table class="table">
+                        <table class="table table-striped ">
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
@@ -125,6 +115,4 @@
             </div>
         </div>
     </div>
-</body>
-
-</html>
+@endsection

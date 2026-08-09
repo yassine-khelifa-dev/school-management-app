@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>Class performance</title>
-</head>
-
-<body>
+@extends('welcome')
+@section('title', 'Class Performance')
+@section('content')
     <div class="container">
-        <h2>Index</h2>
+
+        <div class="d-flex justify-content-between p-2">
+            <h2 class="text-primary mt-3">Class Performance</h2>
+        </div>
+
 
         {{-- show form's errors --}}
         @if ($errors->any())
@@ -157,7 +151,7 @@
 
         @if (count($students) > 0)
             <div class="container">
-                <table class="table text-center">
+                <table class=" table table-striped  text-center">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -194,6 +188,4 @@
         @endif
 
     </div>
-</body>
-
-</html>
+@endsection

@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('welcome')
+@section('title', 'Exams')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>Exams</title>
-</head>
-
-<body>
+@section('content')
     <div class="container">
 
-        <h1 class="text-primary mt-3">Exam</h1>
+
+        <div class="d-flex justify-content-between p-2">
+            <h2 class="text-primary mt-3">Exams</h2>
+        </div>
 
 
         @if ($errors->any())
@@ -28,7 +22,8 @@
 
         {{-- Filter --}}
         <div class="border border-primary p-3 mb-2">
-            <h4 class="text-dark p-2"> Filter</h4>
+            <h4 class="text-dark">Filtre</h4>
+
 
 
             <form id="exam-filter-form" method="GET" action="{{ route('exams.index') }}">
@@ -140,8 +135,4 @@
             {{ $exams->links() }}
         </div>
     </div>
-
-
-</body>
-
-</html>
+@endsection

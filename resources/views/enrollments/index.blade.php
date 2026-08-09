@@ -1,22 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>Enrollment Index</title>
-</head>
-
-<body>
-
+@extends('welcome')
+@section('title', 'Enrollments')
+@section('content')
     <div class="container">
 
-        <h1 class="text-primary">Enrollments</h1>
-        <div class="border border-danger p-3 my-2">
-            <h2 class="text-danger">Filtre</h2>
+        <div class="d-flex justify-content-between p-2">
+            <h2 class="text-primary mt-3">Enrollments</h2>
+        </div>
+
+
+        <div class="border border-primary p-3 my-2">
+            <h4 class="text-dark">Filtre</h4>
 
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -32,7 +25,7 @@
             </div>
         </div>
 
-        <table class="table table-dark table-striped">
+        <table class="table table-striped ">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -68,10 +61,4 @@
         {{ $enrollments->links() }}
 
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-    </script>
-</body>
-
-</html>
+@endsection
