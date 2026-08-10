@@ -32,7 +32,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
 Route::middleware(['auth', 'role:student'])->group(function () {
-
     // Student :
     Route::get('/my/academic-profile', [StudentAcademicProfileController::class, 'myAcademicProfile'])->name('students.my-academic-profile');
     Route::get('/my/grades', [StudentAcademicProfileController::class, 'myGrades'])->name('students.my-grades');

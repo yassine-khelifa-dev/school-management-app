@@ -12,14 +12,14 @@
                 @auth
                     @if (auth()->user()->role === \App\Enums\RoleEnum::STUDENT->value)
                         <li class="nav-item">
-                            <a class="nav-link  {{ request()->routeIs('my-academic-profile.*') ? 'active' : '' }}"
+                            <a class="nav-link  {{ request()->routeIs('students.my-academic-profile') ? 'active' : '' }}"
                                 aria-current="page" href="{{ route('students.my-academic-profile') }}">
                                 My Academic Profile </a>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link  {{ request()->routeIs('my-grades.*') ? 'active' : '' }}" aria-current="page"
+                            <a class="nav-link  {{ request()->routeIs('students.my-grades') ? 'active' : '' }}" aria-current="page"
                                 href="{{ route('students.my-grades') }}">
                                 My Grades </a>
-                        </li>
                         </li>
                     @elseif (auth()->user()->role === \App\Enums\RoleEnum::TEACHER->value)
                         <a class="nav-link" aria-current="page" href="#">

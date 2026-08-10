@@ -33,8 +33,11 @@
                             <li class="list-group-item"> Email : {{ $student->user->email }}</li>
                             <li class="list-group-item"> Mobile : {{ $student->phone }}</li>
 
-                            <li class="list-group-item"> <a href="{{ route('students.grades', $student->id) }}"
-                                    class="btn btn-success"> View Grade History</a> </li>
+                            @if (auth()->user()->role === \App\Enums\RoleEnum::ADMIN->value)
+                                <li class="list-group-item"> <a href="{{ route('students.grades', $student->id) }}"
+                                        class="btn btn-success"> View Grade History</a> </li>
+                            @endif
+
                         </ul>
                     </div>
 
