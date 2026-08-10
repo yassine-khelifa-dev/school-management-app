@@ -145,10 +145,6 @@
         </div>
 
 
-
-
-
-
         @if (count($students) > 0)
             <div class="container">
                 <table class=" table table-striped  text-center">
