@@ -21,3 +21,4 @@ Route::post('/exams/{exam}/grades', [ExamGradeController::class, 'store'])->name
 
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/students/{student}/academic-profile', [StudentAcademicProfileController::class, 'show'])->name('students.academic-profile');
+Route::get('/students/{student}/grades', [StudentAcademicProfileController::class, 'grades'])->name('students.grades');
