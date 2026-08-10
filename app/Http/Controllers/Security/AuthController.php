@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Security;
 
+use App\Enums\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\LoginRequest;
 use Illuminate\Http\Request;
@@ -30,6 +31,10 @@ class AuthController extends Controller
             $remember
         )) {
             $request->session()->regenerate();
+
+
+            if (Auth::user()->role === RoleEnum::STUDENT->value)
+                return redirect()->route('students.my-academic-profile');
 
             return redirect()->intended('/');
         }

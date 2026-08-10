@@ -10,30 +10,45 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                 @auth
+                    @if (auth()->user()->role === \App\Enums\RoleEnum::STUDENT->value)
+                        <li class="nav-item">
+                            <a class="nav-link  {{ request()->routeIs('my-academic-profile.*') ? 'active' : '' }}"
+                                aria-current="page" href="{{ route('students.my-academic-profile') }}">
+                                My Academic Profile </a>
+                        <li class="nav-item">
+                            <a class="nav-link  {{ request()->routeIs('my-grades.*') ? 'active' : '' }}" aria-current="page"
+                                href="{{ route('students.my-grades') }}">
+                                My Grades </a>
+                        </li>
+                        </li>
+                    @elseif (auth()->user()->role === \App\Enums\RoleEnum::TEACHER->value)
+                        <a class="nav-link" aria-current="page" href="#">
+                            My classes </a>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link  {{ request()->routeIs('enrollments.*') ? 'active' : '' }}"
+                                aria-current="page" href="{{ route('enrollments.index') }}">
+                                <i class="fa-solid fa-person-circle-plus"></i> Enrollments </a>
+                        </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link  {{ request()->routeIs('enrollments.*') ? 'active' : '' }}" aria-current="page"
-                            href="{{ route('enrollments.index') }}">
-                            <i class="fa-solid fa-person-circle-plus"></i> Enrollments </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link  {{ request()->routeIs('students.*') ? 'active' : '' }}"
-                            href="{{ route('students.index') }}"><i class="fa-solid fa-user-graduate"></i> Students</a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link  {{ request()->routeIs('students.*') ? 'active' : '' }}"
+                                href="{{ route('students.index') }}"><i class="fa-solid fa-user-graduate"></i> Students</a>
+                        </li>
 
 
-                    <li class="nav-item">
-                        <a class="nav-link  {{ request()->routeIs('exams.*') ? 'active' : '' }}"
-                            href="{{ route('exams.index') }}"><i class="fa-solid fa-clipboard-check"></i> Exams</a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link  {{ request()->routeIs('exams.*') ? 'active' : '' }}"
+                                href="{{ route('exams.index') }}"><i class="fa-solid fa-clipboard-check"></i> Exams</a>
+                        </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link  {{ request()->routeIs('class-performance.*') ? 'active' : '' }}"
-                            href="{{ route('class-performance.index') }}"> <i class="fa-solid fa-chalkboard-user"></i> Class
-                            Performance</a>
-                    </li>
-
+                        <li class="nav-item">
+                            <a class="nav-link  {{ request()->routeIs('class-performance.*') ? 'active' : '' }}"
+                                href="{{ route('class-performance.index') }}"> <i class="fa-solid fa-chalkboard-user"></i>
+                                Class
+                                Performance</a>
+                        </li>
+                    @endif
                 @endauth
 
 
