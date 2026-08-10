@@ -34,7 +34,8 @@
 
             </ul>
             <span class="navbar-text">
-                Login
+                <a class="nav-link  {{ request()->routeIs('login.*') ? 'active' : '' }}" href="{{ route('login') }}">
+                    Login</a>
             </span>
         </div>
     </div>
