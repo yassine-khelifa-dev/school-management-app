@@ -17,7 +17,9 @@ class StudentAcademicProfileController extends Controller
 
         $enrollments = $student->enrollments->sortByDesc(fn($en)  => $en->academicYear->starts_at)->values();
 
-        return view('students.academic-profile', compact('student', 'enrollments'));
+        $current_enroll = $enrollments?->first() ?? null;
+
+        return view('students.academic-profile', compact('student', 'enrollments', 'current_enroll'));
     }
 
     public function grades(Student $student)

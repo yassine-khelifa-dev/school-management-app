@@ -25,21 +25,38 @@
         <div class="row">
 
             <div class="col-md-3">
-                <div class="card" style="width: 18rem;">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"> ID : {{ $student->id }}</li>
-                        <li class="list-group-item"> Full name : {{ $student->full_name }}</li>
-                        <li class="list-group-item"> Email : {{ $student->user->email }}</li>
-                        <li class="list-group-item"> Mobile : {{ $student->phone }}</li>
+                <div class="row">
+                    <div class="card" style="width: 18rem;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"> ID : {{ $student->id }}</li>
+                            <li class="list-group-item"> Full name : {{ $student->full_name }}</li>
+                            <li class="list-group-item"> Email : {{ $student->user->email }}</li>
+                            <li class="list-group-item"> Mobile : {{ $student->phone }}</li>
 
-                        <li class="list-group-item"> <a href="{{ route('students.grades', $student->id) }}"
-                                class="btn btn-success"> View Grade History</a> </li>
+                            <li class="list-group-item"> <a href="{{ route('students.grades', $student->id) }}"
+                                    class="btn btn-success"> View Grade History</a> </li>
+                        </ul>
+                    </div>
 
+                    {{-- Current Enrollment --}}
+                    <div class="card mt-2" style="width: 18rem;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-primary"> Current Enrollment </li>
+                            @if ($current_enroll === null)
+                                <p class="text-muted m-1">No current enrollment found.</p>
+                            @else
+                                <li class="list-group-item"> Academic Year : {{ $current_enroll->academicYear->name }}</li>
+                                <li class="list-group-item"> School Class : {{ $current_enroll->schoolClass->name }}</li>
+                                <li class="list-group-item"> Enrollment Date :
+                                    {{ $current_enroll->enrolled_at->format('Y-m-d') }}</li>
+                                <li class="list-group-item"> Status : {{ $current_enroll->status }}</li>
+                            @endif
 
+                        </ul>
+                    </div>
 
-
-                    </ul>
                 </div>
+
             </div>
 
 
@@ -72,7 +89,7 @@
                                     <th scope="row">{{ $enrollment->id }}</th>
                                     <td>{{ $enrollment->academicYear->name }}</td>
                                     <td>{{ $enrollment->schoolClass->name }}</td>
-                                    <td>{{ $enrollment->enrolled_at }}</td>
+                                    <td>{{ $enrollment->enrolled_at->format('Y-m-d') }}</td>
                                     <td>{{ $enrollment->status }}</td>
                                 </tr>
                             @endforeach
@@ -82,7 +99,12 @@
                     </table>
                 @endif
             </div>
+
+
         </div>
+
+
+
 
 
 
