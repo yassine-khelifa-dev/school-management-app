@@ -36,6 +36,9 @@ class AuthController extends Controller
             if (Auth::user()->role === RoleEnum::STUDENT->value)
                 return redirect()->route('students.my-academic-profile');
 
+            elseif (Auth::user()->role === RoleEnum::TEACHER->value)
+                return redirect()->route('teacher.assigned-exams');
+
             return redirect()->intended('/');
         }
 

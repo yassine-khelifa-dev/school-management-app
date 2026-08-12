@@ -29,6 +29,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/students/{student}/grades', [StudentAcademicProfileController::class, 'grades'])->name('students.grades');
 });
 
+//
+Route::middleware(['auth', 'role:teacher'])->group(function () {
+
+    Route::get('teacher/assigned-exams',[ExamController::class, 'assignedExams'])->name('teacher.assigned-exams');
+});
+
 
 
 Route::middleware(['auth', 'role:student'])->group(function () {

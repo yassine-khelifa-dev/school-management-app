@@ -17,13 +17,15 @@
                                 My Academic Profile </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link  {{ request()->routeIs('students.my-grades') ? 'active' : '' }}" aria-current="page"
-                                href="{{ route('students.my-grades') }}">
+                            <a class="nav-link  {{ request()->routeIs('students.my-grades') ? 'active' : '' }}"
+                                aria-current="page" href="{{ route('students.my-grades') }}">
                                 My Grades </a>
                         </li>
                     @elseif (auth()->user()->role === \App\Enums\RoleEnum::TEACHER->value)
-                        <a class="nav-link" aria-current="page" href="#">
-                            My classes </a>
+                        <a class="nav-link {{ request()->routeIs('teacher.assigned-exams') ? 'active' : '' }}"
+                            aria-current="page" href="{{ route('teacher.assigned-exams') }}">
+                            My Exams
+                        </a>
                     @else
                         <li class="nav-item">
                             <a class="nav-link  {{ request()->routeIs('enrollments.*') ? 'active' : '' }}"
