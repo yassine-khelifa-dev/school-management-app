@@ -32,7 +32,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 //
 Route::middleware(['auth', 'role:teacher'])->group(function () {
 
-    Route::get('teacher/assigned-exams',[ExamController::class, 'assignedExams'])->name('teacher.assigned-exams');
+    Route::get('teacher/assigned-exams', [ExamController::class, 'assignedExams'])->name('teacher.assigned-exams');
+    Route::get('/exams/{exam}/grades', [ExamGradeController::class, 'teacherGrades'])->name('teacher.assigned-exams.grades');
+    Route::post('/exams/{exam}/grades', [ExamGradeController::class, 'storeTeacherGrades'])->name('teacher.assigned-exams.grades.store');
 });
 
 

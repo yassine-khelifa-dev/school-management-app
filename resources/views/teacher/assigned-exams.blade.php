@@ -109,6 +109,8 @@
                         <th scope="col"> Academic Year </th>
                         <th scope="col"> Exam Date </th>
                         <th scope="col"> Maximum Score </th>
+                        <th scope="col"> Action </th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -121,6 +123,21 @@
                             <td>{{ $exam->teachingAssignment->academicYear->name }}</td>
                             <td>{{ $exam->exam_date }}</td>
                             <td class="text-center">{{ $exam->maximum_score }}</td>
+                            <td>
+
+                                @can('manageGrades', $exam)
+                                    <a href="{{ route('teacher.assigned-exams.grades', $exam->id) }}" class="btn btn-danger">
+                                        Manage Grades
+                                    </a>
+                                @else
+                                    <a class="btn btn-danger disabled" aria-disabled="true">
+                                        Manage Grades
+                                    </a>
+                                @endcan
+
+
+
+                            </td>
                         </tr>
                     @endforeach
 
