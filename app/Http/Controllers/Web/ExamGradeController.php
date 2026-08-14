@@ -59,7 +59,13 @@ class ExamGradeController extends Controller
         $schoolClassID = $exam->teachingAssignment->schoolClass->id;
         $academicYearID = $exam->teachingAssignment->academicYear->id;
 
-        foreach ($validatedScores['scores'] as $key => $row) {
+
+        if (empty($validatedScores['scores'])) {
+            return redirect()->route('exams-grades.index', $exam->id)
+                ->with('warning', 'There are no grades to submite.');
+        }
+
+        foreach ($validatedScores['scores'] ?? [] as $key => $row) {
             $student_id = $row['student_id'];
             $score = $row['score'];
 
