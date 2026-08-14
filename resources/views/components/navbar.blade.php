@@ -1,4 +1,18 @@
-<nav class="navbar navbar-expand-lg   navbar-dark bg-primary">
+@php
+    $role = auth()->user()?->role;
+@endphp
+
+<nav @class([
+    'navbar navbar-expand-lg navbar-dark',
+
+    'bg-danger' => $role === \App\Enums\RoleEnum::ADMIN->value,
+
+    'bg-primary' => $role === \App\Enums\RoleEnum::STUDENT->value,
+
+    'bg-dark' => $role === \App\Enums\RoleEnum::TEACHER->value,
+
+    'bg-secondary' => $role === null,
+])>
     <div class="container-fluid">
         <a class="navbar-brand"> <i class="fa-solid fa-school-flag"></i> POP
             School</a>
@@ -24,13 +38,20 @@
                     @elseif (auth()->user()->role === \App\Enums\RoleEnum::TEACHER->value)
                         <a class="nav-link {{ request()->routeIs('teacher.assigned-exams') ? 'active' : '' }}"
                             aria-current="page" href="{{ route('teacher.assigned-exams') }}">
-                            Exams
+                            <i class="fa-solid fa-folder-tree"></i> Exams
                         </a>
 
                         <a class="nav-link {{ request()->routeIs('teacher.students.index') ? 'active' : '' }}"
                             aria-current="page" href="{{ route('teacher.students.index') }}">
-                            Students
+                            <i class="fa-solid fa-user-graduate"></i> Students
                         </a>
+
+                        <li class="nav-item">
+                            <a class="nav-link  {{ request()->routeIs('teacher.class-performance.index') ? 'active' : '' }}"
+                                href="{{ route('teacher.class-performance.index') }}">
+                                <i class="fa-solid fa-magnifying-glass-chart"></i> Class
+                                Performance</a>
+                        </li>
                     @else
                         <li class="nav-item">
                             <a class="nav-link  {{ request()->routeIs('enrollments.*') ? 'active' : '' }}"

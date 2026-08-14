@@ -35,6 +35,7 @@ Route::prefix('teacher')->middleware(['auth', 'role:teacher'])->group(function (
     Route::get('exams/{exam}/grades', [ExamGradeController::class, 'teacherGrades'])->name('teacher.assigned-exams.grades');
     Route::post('exams/{exam}/grades', [ExamGradeController::class, 'storeTeacherGrades'])->name('teacher.assigned-exams.grades.store');
     Route::get('students', [TeacherController::class, 'students'])->name('teacher.students.index');
+    Route::get('class-performance', [TeacherController::class, 'classPerformance'])->name('teacher.class-performance.index');
 });
 
 

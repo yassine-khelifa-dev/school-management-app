@@ -35,7 +35,7 @@ class ClassPerformanceController extends Controller
         $students = $query
             ->paginate(25)
             ->withQueryString();
-            
+
         return view('class-performance.index', compact(
             'students',
             'academic_years',

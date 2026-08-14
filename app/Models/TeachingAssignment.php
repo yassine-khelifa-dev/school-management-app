@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class TeachingAssignment extends Model
@@ -40,5 +41,20 @@ class TeachingAssignment extends Model
     public function exams()
     {
         return $this->hasMany(Exam::class, 'teaching_assignment_id', 'id');
+    }
+
+
+    public function scopeForTeacherAssignmentContext(
+        Builder $query,
+        ?int $subjectId,
+        ?int $teacherId,
+        ?int $academicYearId,
+        ?int $schoolClassId
+    ): Builder {
+        return $query
+            ->where('teacher_id', $teacherId)
+            ->where('class_id', $schoolClassId)
+            ->where('subject_id', $subjectId)
+            ->where('academic_year_id', $academicYearId);
     }
 }
