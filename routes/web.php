@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\ExamController;
 use App\Http\Controllers\Web\ExamGradeController;
 use App\Http\Controllers\Web\StudentAcademicProfileController;
 use App\Http\Controllers\Web\StudentController;
+use App\Http\Controllers\Web\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
     Route::get('teacher/assigned-exams', [ExamController::class, 'assignedExams'])->name('teacher.assigned-exams');
     Route::get('/exams/{exam}/grades', [ExamGradeController::class, 'teacherGrades'])->name('teacher.assigned-exams.grades');
     Route::post('/exams/{exam}/grades', [ExamGradeController::class, 'storeTeacherGrades'])->name('teacher.assigned-exams.grades.store');
+
+    // my students:
+    Route::get('/teacher/students', [TeacherController::class, 'students'])->name('teacher.students.index');
 });
 
 

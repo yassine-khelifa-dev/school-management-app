@@ -22,10 +22,7 @@
 
         {{-- Filter --}}
         <div class="border border-primary p-3 mb-2">
-            <h4 class="text-dark">Filtre</h4>
-
-
-
+            <h4 class="text-primary">Filtre</h4>
             <form id="exam-filter-form" method="GET" action="{{ route('exams.index') }}">
                 <div class="row">
                     <div class="col-md-4">

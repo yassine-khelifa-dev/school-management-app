@@ -24,7 +24,12 @@
                     @elseif (auth()->user()->role === \App\Enums\RoleEnum::TEACHER->value)
                         <a class="nav-link {{ request()->routeIs('teacher.assigned-exams') ? 'active' : '' }}"
                             aria-current="page" href="{{ route('teacher.assigned-exams') }}">
-                            My Exams
+                            Exams
+                        </a>
+
+                        <a class="nav-link {{ request()->routeIs('teacher.students.index') ? 'active' : '' }}"
+                            aria-current="page" href="{{ route('teacher.students.index') }}">
+                            Students
                         </a>
                     @else
                         <li class="nav-item">
