@@ -91,9 +91,8 @@
                                 <tbody>
                                     @foreach ($students as $index => $student)
                                         @php
-                                            $grade =
-                                                $students_grades->firstWhere('student_id', $student->id)['score'] ??
-                                                null;
+                                            $grade = $student->grades->first()?->score;
+
                                         @endphp
                                         <tr>
                                             <th scope="row">{{ $student->id }}</th>
