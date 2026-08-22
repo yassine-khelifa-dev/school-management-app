@@ -14,4 +14,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::post('students', [StudentController::class, 'store'])->name('students.store');
     Route::patch('students/{student}', [StudentController::class, 'update'])->name('students.update');
     Route::delete('students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+
+
+    Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
