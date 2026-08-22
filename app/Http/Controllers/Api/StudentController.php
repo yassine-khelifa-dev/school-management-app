@@ -77,4 +77,21 @@ class StudentController extends Controller
 
         return new StudentResource($updatedStudent);
     }
+
+
+    public function destroy(Student $student)
+    {
+        $student->load('user');
+
+
+        if ($student->enrollments()->exists()) {
+            return response()->json([
+                'message' => "Student cannot be deleted because related records exist."
+            ], 409);
+        }
+
+        $student->user->delete();
+
+        return response()->noContent();
+    }
 }
