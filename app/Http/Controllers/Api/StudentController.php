@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StudentStoreRequest;
+use App\Http\Requests\Api\StudentUpdateRequest;
 use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -50,5 +52,29 @@ class StudentController extends Controller
             new StudentResource($newStudent),
             201
         );
+    }
+
+
+    public function update(StudentUpdateRequest $request, Student $student)
+    {
+        $data = $request->validated();
+
+        $student->load('user');
+
+        $updatedStudent =  DB::transaction(function () use ($data, $student) {
+
+            if (isset($data['email']))
+                $student->user()->update([
+                    'email' => $data['email']
+                ]);
+
+            $student->update(Arr::except($data, 'email'));
+
+            return $student;
+        });
+
+        $updatedStudent->load('user');
+
+        return new StudentResource($updatedStudent);
     }
 }
