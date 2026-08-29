@@ -9,16 +9,21 @@ use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::with('user')->paginate(10);
+        $qFullName = $request->input('fullname') ?? null;
+        $query = Student::query()->with('user')
+            ->when($qFullName, function ($q)  use ($qFullName) {
+                $q->where('first_name', 'like', "$qFullName%")
+                    ->orWhere('last_name', 'like', "$qFullName%");
+            });
+        $students = $query->paginate(8)->withQueryString();
 
         return   StudentResource::collection($students);
     }
