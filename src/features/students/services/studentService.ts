@@ -3,10 +3,11 @@ import type { StudentListType, StudentQueryType } from "../types";
 
 export async function getStudents(
   query: StudentQueryType,
+  signal?: AbortSignal,
 ): Promise<StudentListType> {
-  console.log(" before::", query);
   const res = await api.get("students", {
-    params: { ...query },
+    params: query,
+    signal,
   });
   return res.data;
 }
