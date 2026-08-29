@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getStudents } from "../services/studentService";
+import { delStudent, getStudents } from "../services/studentService";
 import type { PaginateType, StudentQueryType, StudentType } from "../types";
 import axios from "axios";
 
@@ -15,6 +15,45 @@ export function useStudentList() {
     page: 1,
   });
 
+  function handleErrorsMessage(err: unknown) {
+    if (axios.isCancel(err)) {
+      return "request cancelled";
+    }
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        setErrors(err.response.data?.message || "Backend error");
+      } else if (err.request) {
+        setErrors("Unable to reach the server");
+      } else {
+        setErrors("Request error");
+      }
+    } else {
+      setErrors("Something went wrong");
+    }
+  }
+
+  async function deleteStudent(student: StudentType) {
+    console.log("hook:deleteStudnet ", student.email);
+    try {
+      setLoading(true);
+      setErrors(null);
+      const rep = await delStudent(student);
+
+      const remainingStudents = students.filter((s) => s.id !== student.id);
+      setStudents(remainingStudents);
+
+      if (remainingStudents.length === 0 && paginate?.current_page > 1)
+        setQuery({ ...query, page: paginate.current_page - 1 });
+
+      console.log(rep);
+    } catch (err) {
+      handleErrorsMessage(err);
+    } finally {
+      setLoading(false);
+      console.log("end -- deleteStudnet");
+    }
+  }
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -26,21 +65,7 @@ export function useStudentList() {
         setStudents(data.data);
         setPaginate(data.meta);
       } catch (err) {
-        if (axios.isCancel(err)) {
-          console.log("request cancelled");
-          return;
-        }
-        if (axios.isAxiosError(err)) {
-          if (err.response) {
-            setErrors(err.response.data?.message || "Backend error");
-          } else if (err.request) {
-            setErrors("Unable to reach the server");
-          } else {
-            setErrors("Request error");
-          }
-        } else {
-          setErrors("Something went wrong");
-        }
+        handleErrorsMessage(err);
       } finally {
         setLoading(false);
       }
@@ -53,6 +78,7 @@ export function useStudentList() {
 
   return {
     students,
+    deleteStudent,
 
     query,
     setQuery,

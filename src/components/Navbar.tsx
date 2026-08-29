@@ -29,7 +29,18 @@ export default function Navbar() {
             >
               Students
             </NavLink>
-                {" | "}
+
+            {" | "}
+            <NavLink
+              style={({ isActive }) => ({
+                fontWeight: isActive ? "bold" : "normal",
+                color: isActive ? "blue" : "black",
+              })}
+              to="/enrollments"
+            >
+              Enrollments
+            </NavLink>
+            {" | "}
             <NavLink
               style={({ isActive }) => ({
                 fontWeight: isActive ? "bold" : "normal",

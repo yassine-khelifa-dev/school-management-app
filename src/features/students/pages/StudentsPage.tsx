@@ -1,13 +1,22 @@
-import type { StudentQueryType } from "../types";
+import type { StudentQueryType, StudentType } from "../types";
 import StudentTable from "../components/StudentTable";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import StudentFilter from "../components/StudentFilter";
 import { useStudentList } from "../hooks/useStudentList";
+import DeleteStudentDialog from "../components/DeleteStudentDialog";
+import { useState } from "react";
+import Alert from "@mui/material/Alert";
 
 export default function StudentsPage() {
+  const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(
+    null,
+  );
+  const [open, setOpen] = useState(false);
+
   const {
     students,
+    deleteStudent,
 
     query,
     setQuery,
@@ -24,7 +33,15 @@ export default function StudentsPage() {
   };
 
   const handleDelete = (id: number) => {
-    console.log("handle Delete ", id);
+    setOpen(true);
+    const student = students.find((s) => s.id === id) ?? null;
+    setSelectedStudent(student);
+  };
+
+  const handleConfirmDel = () => {
+    if (!selectedStudent) return;
+    deleteStudent(selectedStudent);
+    setOpen(false);
   };
   const handleEdit = (id: number) => {
     console.log("handle Edit ", id);
@@ -33,6 +50,13 @@ export default function StudentsPage() {
   return (
     <>
       <h1>Student</h1>
+
+      <DeleteStudentDialog
+        open={open}
+        setOpen={setOpen}
+        student={selectedStudent}
+        confirm={handleConfirmDel}
+      />
 
       <StudentFilter onQueryChange={handleQuery} value={query} />
 
@@ -47,7 +71,7 @@ export default function StudentsPage() {
         </div>
       )}
 
-      {errors && <span style={{ color: "red" }}>{errors}</span>}
+      {errors && <Alert severity="error">{errors}</Alert>}
 
       {students.length > 0 && (
         <>
