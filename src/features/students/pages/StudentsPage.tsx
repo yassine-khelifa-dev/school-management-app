@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { delayTestFetachData, getStudents } from "../services/studentService";
-import type { StudentType } from "../types";
+import type { PaginateType, StudentType } from "../types";
 import StudentTable from "../components/StudentTable";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
@@ -8,24 +8,30 @@ import axios from "axios";
 
 export default function StudentsPage() {
   const [students, setStudents] = useState<StudentType[]>([]);
+  const [paginate, setPaginate] = useState<PaginateType | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (page?: number) => {
     try {
       setLoading(true);
       setErrors(null);
       await delayTestFetachData(2000);
 
-      const data = await getStudents();
-      setStudents(data);
+      const data = await getStudents(page);
+      setStudents(data.data);
+      setPaginate(data.meta);
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setErrors(err.response?.data?.message || "Something went wrong");
+        const message = err.response?.data?.message || "Something went wrong";
+
+        setErrors(message);
+        console.log(message);
       } else {
         setErrors("Something went wrong");
+        console.log(err);
       }
-      console.log(err.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -36,6 +42,10 @@ export default function StudentsPage() {
   };
   const handleEdit = (id: number) => {
     console.log("handle Edit ", id);
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page > 0 && page <= paginate?.last_page) fetchData(page);
   };
 
   useEffect(() => {
@@ -65,6 +75,8 @@ export default function StudentsPage() {
           students={students}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onPageChange={handlePageChange}
+          paginate={paginate}
         />
       )}
 

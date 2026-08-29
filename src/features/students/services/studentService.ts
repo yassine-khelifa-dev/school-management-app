@@ -1,9 +1,11 @@
 import { api } from "../../../api";
-import type { StudentType } from "../types";
+import type { StudentListType } from "../types";
 
-export async function getStudents(): Promise<StudentType[]> {
-  const res = await api.get("student");
-  return res.data.data;
+export async function getStudents(page?: number): Promise<StudentListType> {
+  const res = await api.get("students", {
+    params: { page },
+  });
+  return res.data;
 }
 
 export const delayTestFetachData = (ms: number) => {
