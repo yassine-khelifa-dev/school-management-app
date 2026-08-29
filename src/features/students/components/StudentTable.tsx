@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import type { PaginateType, StudentType } from "../types";
+import type { PaginateType, StudentQueryType, StudentType } from "../types";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
@@ -37,14 +37,16 @@ type Props = {
   paginate: PaginateType | null;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
-  onPageChange: (page: number) => void;
+  query: StudentQueryType;
+  onQueryChange: React.Dispatch<React.SetStateAction<StudentQueryType>>;
 };
 
 export default function StudentTable({
   students,
   onEdit,
   onDelete,
-  onPageChange,
+  onQueryChange,
+  query,
   paginate,
 }: Props) {
   return (
@@ -93,18 +95,27 @@ export default function StudentTable({
           </TableBody>
         </Table>
       </TableContainer>
-      <Pagination
+      <div
         style={{
-          textAlign: "right",
-          paddingTop: "10px",
+          width: "100%",
+          display: "flex",
+          justifyContent: "end",
         }}
-        count={paginate?.last_page ?? 1}
-        page={paginate?.current_page ?? 1}
-        color="primary"
-        onChange={(_, page) => {
-          onPageChange(page);
-        }}
-      />
+      >
+        <Pagination
+          style={{
+            paddingTop: "10px",
+            marginLeft: "auto",
+            width: "fit-content",
+          }}
+          count={paginate?.last_page ?? 1}
+          page={paginate?.current_page ?? 1}
+          color="primary"
+          onChange={(_, page) => {
+            onQueryChange({ ...query, page });
+          }}
+        />
+      </div>
     </div>
   );
 }

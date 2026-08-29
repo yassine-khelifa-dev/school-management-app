@@ -1,9 +1,12 @@
 import { api } from "../../../api";
-import type { StudentListType } from "../types";
+import type { StudentListType, StudentQueryType } from "../types";
 
-export async function getStudents(page?: number): Promise<StudentListType> {
+export async function getStudents(
+  query: StudentQueryType,
+): Promise<StudentListType> {
+  console.log(" before::", query);
   const res = await api.get("students", {
-    params: { page },
+    params: { ...query },
   });
   return res.data;
 }

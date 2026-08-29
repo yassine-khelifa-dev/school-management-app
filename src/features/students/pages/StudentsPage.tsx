@@ -1,40 +1,26 @@
-import { useEffect, useState } from "react";
-import { delayTestFetachData, getStudents } from "../services/studentService";
-import type { PaginateType, StudentType } from "../types";
+import type { StudentQueryType } from "../types";
 import StudentTable from "../components/StudentTable";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
-import axios from "axios";
+import StudentFilter from "../components/StudentFilter";
+import { useStudentList } from "../hooks/useStudentList";
 
 export default function StudentsPage() {
-  const [students, setStudents] = useState<StudentType[]>([]);
-  const [paginate, setPaginate] = useState<PaginateType | null>(null);
+  const {
+    students,
 
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<string | null>(null);
+    query,
+    setQuery,
 
-  const fetchData = async (page?: number) => {
-    try {
-      setLoading(true);
-      setErrors(null);
-      await delayTestFetachData(2000);
+    errors,
 
-      const data = await getStudents(page);
-      setStudents(data.data);
-      setPaginate(data.meta);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const message = err.response?.data?.message || "Something went wrong";
+    loading,
 
-        setErrors(message);
-        console.log(message);
-      } else {
-        setErrors("Something went wrong");
-        console.log(err);
-      }
-    } finally {
-      setLoading(false);
-    }
+    paginate,
+  } = useStudentList();
+
+  const handleQuery = (newQuery: StudentQueryType) => {
+    setQuery(newQuery);
   };
 
   const handleDelete = (id: number) => {
@@ -44,18 +30,11 @@ export default function StudentsPage() {
     console.log("handle Edit ", id);
   };
 
-  const handlePageChange = (page: number) => {
-    if (page > 0 && page <= paginate?.last_page) fetchData(page);
-  };
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchData();
-  }, []);
-
   return (
     <>
       <h1>Student</h1>
+
+      <StudentFilter onQueryChange={handleQuery} value={query} />
 
       {loading && (
         <div>
@@ -71,13 +50,16 @@ export default function StudentsPage() {
       {errors && <span style={{ color: "red" }}>{errors}</span>}
 
       {students.length > 0 && (
-        <StudentTable
-          students={students}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onPageChange={handlePageChange}
-          paginate={paginate}
-        />
+        <>
+          <StudentTable
+            students={students}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onQueryChange={handleQuery}
+            query={query}
+            paginate={paginate}
+          />
+        </>
       )}
 
       {students.length === 0 && !loading && !errors && (

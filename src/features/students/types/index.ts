@@ -13,3 +13,9 @@ export type StudentListType = {
   data: StudentType[];
   meta: PaginateType;
 };
+
+export type StudentQueryType = {
+  fullname?: string;
+  dir?: "ASC" | "DESC";
+  page?: number;
+};
