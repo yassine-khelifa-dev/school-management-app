@@ -8,7 +8,7 @@ export default function ProtectedRoute() {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 700));
 
         const res = await api.get("me");
 

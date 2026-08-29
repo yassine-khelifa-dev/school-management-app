@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import StudentsPage from "../pages/StudentsPage";
 import LoginPage from "../pages/LoginPage";
 import ProtectedRoute from "./ProtectedRoute";
 import { Logout } from "../components/Logout";
+import StudentsPage from "../features/students/pages/StudentsPage";
 export default function AppRoute() {
   return (
     <Routes>
