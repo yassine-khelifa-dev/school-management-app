@@ -6,9 +6,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import type { StudentType } from "../types";
+import { Alert } from "@mui/material";
+
 
 type Props = {
   open: boolean;
+  backerrors: string | null;
+
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   student: StudentType | null;
   confirm: () => void;
@@ -19,6 +23,7 @@ export default function DeleteStudentDialog({
   setOpen,
   student,
   confirm,
+  backerrors,
 }: Props) {
   return (
     <React.Fragment>
@@ -32,6 +37,17 @@ export default function DeleteStudentDialog({
         <DialogTitle id="alert-dialog-title">
           {"Are sure you want to delete this student?"}
         </DialogTitle>
+        {backerrors && (
+          <Alert
+            style={{
+              width: 500,
+            }}
+            severity="error"
+          >
+            {backerrors}
+          </Alert>
+        )}
+
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Student ID : {student?.id} <br />
@@ -45,7 +61,6 @@ export default function DeleteStudentDialog({
           </Button>
           <Button
             onClick={() => {
-              setOpen(false);
               confirm();
             }}
           >

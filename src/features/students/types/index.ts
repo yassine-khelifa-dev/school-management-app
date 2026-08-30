@@ -19,3 +19,10 @@ export type StudentQueryType = {
   dir?: "ASC" | "DESC";
   page?: number;
 };
+
+export type FormStudentInputs = {
+  id: number;
+  fullname?: string;
+  email?: string;
+  phone?: string;
+};

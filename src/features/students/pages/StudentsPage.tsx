@@ -1,4 +1,8 @@
-import type { StudentQueryType, StudentType } from "../types";
+import type {
+  FormStudentInputs,
+  StudentQueryType,
+  StudentType,
+} from "../types";
 import StudentTable from "../components/StudentTable";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
@@ -7,16 +11,19 @@ import { useStudentList } from "../hooks/useStudentList";
 import DeleteStudentDialog from "../components/DeleteStudentDialog";
 import { useState } from "react";
 import Alert from "@mui/material/Alert";
+import { EditStudentDialog } from "../components/EditStudentDialog";
 
 export default function StudentsPage() {
   const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(
     null,
   );
-  const [open, setOpen] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const {
     students,
     deleteStudent,
+    editStudent,
 
     query,
     setQuery,
@@ -33,18 +40,33 @@ export default function StudentsPage() {
   };
 
   const handleDelete = (id: number) => {
-    setOpen(true);
+    setOpenDeleteDialog(true);
     const student = students.find((s) => s.id === id) ?? null;
     setSelectedStudent(student);
   };
 
-  const handleConfirmDel = () => {
+  const handleConfirmDel = async () => {
     if (!selectedStudent) return;
-    deleteStudent(selectedStudent);
-    setOpen(false);
+    const success = await deleteStudent(selectedStudent);
+    if (success) setOpenDeleteDialog(false);
   };
+
   const handleEdit = (id: number) => {
-    console.log("handle Edit ", id);
+    setOpenEditDialog(true);
+    const student = students.find((s) => s.id === id) ?? null;
+    setSelectedStudent(student);
+  };
+
+  const handleConfirEdit = async (data: FormStudentInputs) => {
+    if (!selectedStudent) return;
+
+    console.log("student edited ! old value", selectedStudent);
+    console.log("student edited ! new value", data);
+    console.log("**", errors);
+
+    const success = await editStudent(data, selectedStudent);
+
+    if (success) setOpenEditDialog(false);
   };
 
   return (
@@ -52,10 +74,19 @@ export default function StudentsPage() {
       <h1>Student</h1>
 
       <DeleteStudentDialog
-        open={open}
-        setOpen={setOpen}
+        open={openDeleteDialog}
+        setOpen={setOpenDeleteDialog}
         student={selectedStudent}
         confirm={handleConfirmDel}
+        backerrors={errors}
+      />
+
+      <EditStudentDialog
+        open={openEditDialog}
+        setOpen={setOpenEditDialog}
+        student={selectedStudent}
+        confirm={handleConfirEdit}
+        backerrors={errors}
       />
 
       <StudentFilter onQueryChange={handleQuery} value={query} />

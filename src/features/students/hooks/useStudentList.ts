@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import { delStudent, getStudents } from "../services/studentService";
-import type { PaginateType, StudentQueryType, StudentType } from "../types";
+import {
+  delStudent,
+  getStudents,
+  updateStudent,
+} from "../services/studentService";
+import type {
+  FormStudentInputs,
+  PaginateType,
+  StudentQueryType,
+  StudentType,
+} from "../types";
 import axios from "axios";
 
 export function useStudentList() {
@@ -45,12 +54,46 @@ export function useStudentList() {
       if (remainingStudents.length === 0 && paginate?.current_page > 1)
         setQuery({ ...query, page: paginate.current_page - 1 });
 
-      console.log(rep);
+      console.log("ééé",rep);
+      return true;
     } catch (err) {
       handleErrorsMessage(err);
+      return false;
     } finally {
       setLoading(false);
-      console.log("end -- deleteStudnet");
+    }
+  }
+
+  async function editStudent(
+    newStudent: FormStudentInputs,
+    oldStudent: StudentType,
+  ) {
+    if (newStudent.id !== oldStudent.id) return;
+    console.log("hook:deleteStudnet ", oldStudent.email);
+    try {
+      setLoading(true);
+      setErrors(null);
+      const rep = await updateStudent(newStudent);
+
+      setStudents((prev) =>
+        prev.map((student) =>
+          student.id === newStudent.id
+            ? {
+                id: newStudent.id,
+                full_name: newStudent.fullname,
+                email: newStudent.email,
+              }
+            : student,
+        ),
+      );
+      console.log("success: editStudent: ", rep);
+      return true;
+    } catch (err) {
+      handleErrorsMessage(err);
+      return false;
+    } finally {
+      setLoading(false);
+      console.log("end -- editStudent");
     }
   }
 
@@ -79,6 +122,7 @@ export function useStudentList() {
   return {
     students,
     deleteStudent,
+    editStudent,
 
     query,
     setQuery,
