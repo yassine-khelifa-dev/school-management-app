@@ -42,7 +42,7 @@ export function EditStudentDialog({
         id: student.id,
         fullname: student.full_name,
         email: student.email,
-        phone: "" + Math.floor(1000000000 + Math.random() * 9000000000),
+        phone: student.phone,
       });
     }
   }, [student, reset]);

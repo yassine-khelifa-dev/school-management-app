@@ -54,7 +54,7 @@ export function useStudentList() {
       if (remainingStudents.length === 0 && paginate?.current_page > 1)
         setQuery({ ...query, page: paginate.current_page - 1 });
 
-      console.log("ééé",rep);
+      console.log("ééé", rep);
       return true;
     } catch (err) {
       handleErrorsMessage(err);
@@ -75,13 +75,19 @@ export function useStudentList() {
       setErrors(null);
       const rep = await updateStudent(newStudent);
 
+      const [firstName, ...rest] = newStudent.fullname.trim().split(" ");
+      const lastName = rest.join(" ");
+
       setStudents((prev) =>
         prev.map((student) =>
           student.id === newStudent.id
             ? {
                 id: newStudent.id,
                 full_name: newStudent.fullname,
+                first_name: firstName,
+                last_name: lastName,
                 email: newStudent.email,
+                phone: newStudent.phone,
               }
             : student,
         ),

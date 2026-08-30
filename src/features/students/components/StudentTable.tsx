@@ -56,8 +56,10 @@ export default function StudentTable({
           <TableHead>
             <TableRow>
               <StyledTableCell>ID</StyledTableCell>
-              <StyledTableCell align="left">Full Name</StyledTableCell>
+              <StyledTableCell align="left">First Name</StyledTableCell>
+              <StyledTableCell>Last name</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Phone</StyledTableCell>
               <StyledTableCell>Actions</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -65,8 +67,11 @@ export default function StudentTable({
             {students.map((row) => (
               <StyledTableRow key={row.id}>
                 <StyledTableCell>{row.id}</StyledTableCell>
-                <StyledTableCell>{row.full_name}</StyledTableCell>
+                <StyledTableCell>{row.first_name}</StyledTableCell>
+                <StyledTableCell>{row.last_name}</StyledTableCell>
                 <StyledTableCell>{row.email}</StyledTableCell>
+                <StyledTableCell>{row.phone}</StyledTableCell>
+
                 <StyledTableCell>
                   <div>
                     <Button
