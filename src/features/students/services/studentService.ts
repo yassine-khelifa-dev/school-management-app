@@ -1,6 +1,7 @@
 import { api } from "../../../api";
 import type {
   FormStudentInputs,
+  InputsCreateStudentValues,
   StudentListType,
   StudentQueryType,
   StudentType,
@@ -36,6 +37,11 @@ export async function updateStudent(student: FormStudentInputs) {
     phone: student.phone,
   });
   return res.data;
+}
+
+export async function createStudent(student: InputsCreateStudentValues) {
+  const rep = await api.post("students", student);
+  return rep.data;
 }
 
 export const delayTestFetachData = (ms: number) => {

@@ -1,27 +1,33 @@
 import type {
   FormStudentInputs,
+  InputsCreateStudentValues,
   StudentQueryType,
   StudentType,
 } from "../types";
 import StudentTable from "../components/StudentTable";
-import Box from "@mui/material/Box";
-import Skeleton from "@mui/material/Skeleton";
 import StudentFilter from "../components/StudentFilter";
 import { useStudentList } from "../hooks/useStudentList";
 import DeleteStudentDialog from "../components/DeleteStudentDialog";
 import { useState } from "react";
 import Alert from "@mui/material/Alert";
 import { EditStudentDialog } from "../components/EditStudentDialog";
+import { Button } from "@mui/material";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import CreateStudentDialog from "../components/CreateStudentDialog";
+import { LoadingUI } from "../../../components/ui/LoadingUI";
 
 export default function StudentsPage() {
   const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(
     null,
   );
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const {
     students,
+    storeStudent,
     deleteStudent,
     editStudent,
 
@@ -29,6 +35,7 @@ export default function StudentsPage() {
     setQuery,
 
     errors,
+    messages,
 
     loading,
 
@@ -66,13 +73,49 @@ export default function StudentsPage() {
 
     const success = await editStudent(data, selectedStudent);
 
-    if (success) setOpenEditDialog(false);
+    if (success) {
+      setOpenEditDialog(false);
+    }
   };
+
+  const handleCreate = async (data: InputsCreateStudentValues) => {
+    console.log("parant :", data);
+
+    const success = await storeStudent(data);
+
+    if (success) setOpenCreateDialog(false);
+
+    return success;
+  };
+
+  const handleClickOpenCreateDialog = () => setOpenCreateDialog(true);
 
   return (
     <>
-      <h1>Student</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h1>Student</h1>
 
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleClickOpenCreateDialog}
+        >
+          <AddBoxIcon sx={{ paddingRight: "2px" }} /> Student
+        </Button>
+      </div>
+
+      <CreateStudentDialog
+        open={openCreateDialog}
+        setOpen={setOpenCreateDialog}
+        confirm={handleCreate}
+        backerrors={errors}
+      />
       <DeleteStudentDialog
         open={openDeleteDialog}
         setOpen={setOpenDeleteDialog}
@@ -80,7 +123,6 @@ export default function StudentsPage() {
         confirm={handleConfirmDel}
         backerrors={errors}
       />
-
       <EditStudentDialog
         open={openEditDialog}
         setOpen={setOpenEditDialog}
@@ -89,20 +131,18 @@ export default function StudentsPage() {
         backerrors={errors}
       />
 
+      <div
+        style={{
+          padding: "5px 0px",
+        }}
+      >
+        {errors && <Alert severity="error">{errors}</Alert>}
+        {messages && <Alert severity="info">{messages}</Alert>}
+      </div>
+
       <StudentFilter onQueryChange={handleQuery} value={query} />
-
-      {loading && (
-        <div>
-          <span> load students' list...</span>
-          <Box sx={{ width: 300 }}>
-            <Skeleton />
-            <Skeleton animation="wave" />
-            <Skeleton animation={false} />
-          </Box>
-        </div>
-      )}
-
-      {errors && <Alert severity="error">{errors}</Alert>}
+      
+      {loading && <LoadingUI />}
 
       {students.length > 0 && (
         <>
@@ -116,7 +156,6 @@ export default function StudentsPage() {
           />
         </>
       )}
-
       {students.length === 0 && !loading && !errors && (
         <span>There are no Students! </span>
       )}

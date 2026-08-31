@@ -1,3 +1,5 @@
+import z from "zod";
+
 export type StudentType = {
   id: number;
   full_name: string;
@@ -29,3 +31,14 @@ export type FormStudentInputs = {
   email?: string;
   phone?: string;
 };
+
+export const CreateStudentSchema = z.object({
+  first_name: z.string().min(3),
+  last_name: z.string().min(3),
+  email: z.email(),
+  phone: z.string().min(10).max(15),
+});
+
+export type InputsCreateStudentValues = z.infer<
+  typeof CreateStudentSchema
+>;

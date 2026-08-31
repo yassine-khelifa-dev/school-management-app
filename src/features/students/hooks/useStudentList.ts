@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import {
+  createStudent,
   delStudent,
   getStudents,
   updateStudent,
 } from "../services/studentService";
 import type {
   FormStudentInputs,
+  InputsCreateStudentValues,
   PaginateType,
   StudentQueryType,
   StudentType,
@@ -19,6 +21,7 @@ export function useStudentList() {
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
+  const [messages, setMessages] = useState<string | null>(null);
 
   const [query, setQuery] = useState<StudentQueryType>({
     page: 1,
@@ -54,9 +57,35 @@ export function useStudentList() {
       if (remainingStudents.length === 0 && paginate?.current_page > 1)
         setQuery({ ...query, page: paginate.current_page - 1 });
 
-      console.log("ééé", rep);
+      console.log(rep);
       return true;
     } catch (err) {
+      handleErrorsMessage(err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function storeStudent(student: InputsCreateStudentValues) {
+    try {
+      setLoading(true);
+      setErrors(null);
+      setMessages(null);
+
+      const rep = await createStudent(student);
+
+      if (rep?.id >= 0) {
+        setMessages("Student has been created successfully with ID: " + rep.id);
+        setQuery({ ...query, page: 1 });
+        return true;
+      } else {
+        console.log("storeStudent: Something went wrong");
+        handleErrorsMessage(rep);
+        return false;
+      }
+    } catch (err) {
+      console.log(err);
       handleErrorsMessage(err);
       return false;
     } finally {
@@ -127,6 +156,7 @@ export function useStudentList() {
 
   return {
     students,
+    storeStudent,
     deleteStudent,
     editStudent,
 
@@ -134,6 +164,7 @@ export function useStudentList() {
     setQuery,
 
     errors,
+    messages,
 
     loading,
 

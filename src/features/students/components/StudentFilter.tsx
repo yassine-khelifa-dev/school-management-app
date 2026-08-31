@@ -11,31 +11,36 @@ type Props = {
 
 export default function StudentFilter({ onQueryChange, value }: Props) {
   return (
-    <Paper
-      component="form"
-      sx={{
-        p: "px 4px",
-        display: "flex",
-        m: "10px 0px",
-        alignItems: "center",
-        width: "100%",
+    <div
+      style={{
+        padding: "20px 0px",
       }}
     >
-      <h4 style={{ paddingLeft: "5px" }}>Filter</h4>
-      <InputBase
-        sx={{ ml: 1, flex: 1 }}
-        placeholder="Search by first name or last name"
-        inputProps={{ "aria-label": "search google maps" }}
-        onChange={(e) => {
-          onQueryChange({ ...value, fullname: e.target.value, page: 1 });
-        }}
-        value={value?.fullname}
-      />
-      <SearchIcon
+      <Paper
+        component="form"
         sx={{
-          p: "0px 10px",
+          display: "flex",
+          margin: "5px 0px",
+          alignItems: "center",
+          width: "100%",
         }}
-      />
-    </Paper>
+      >
+        <h4 style={{ paddingLeft: "15px" }}>Filter</h4>
+        <InputBase
+          sx={{ ml: 1, flex: 1 }}
+          placeholder="Search by first name or last name"
+          inputProps={{ "aria-label": "search google maps" }}
+          onChange={(e) => {
+            onQueryChange({ ...value, fullname: e.target.value, page: 1 });
+          }}
+          value={value?.fullname}
+        />
+        <SearchIcon
+          sx={{
+            p: "0px 10px",
+          }}
+        />
+      </Paper>
+    </div>
   );
 }
