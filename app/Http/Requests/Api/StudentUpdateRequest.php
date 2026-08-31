@@ -27,11 +27,12 @@ class StudentUpdateRequest extends FormRequest
         $student = $request->route('student');
 
         return  [
-            'first_name' => ['sometimes'],
-            'last_name' => ['sometimes'],
-            'phone' => ['sometimes', 'min:10', 'max:14'],
+            'first_name' => ['sometimes', 'required', 'min:3'],
+            'last_name' => ['sometimes', 'required', 'min:3'],
+            'phone' => ['sometimes', 'required', 'min:10', 'max:14'],
             'email' => [
                 'sometimes',
+                'required',
                 'email',
                 Rule::unique('users', 'email')->ignore($student->user_id)
             ]

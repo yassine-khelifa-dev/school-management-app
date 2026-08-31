@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EnrollmentController;
 use App\Http\Controllers\Api\Security\AuthController;
 use App\Http\Controllers\Api\StudentController;
 use Illuminate\Support\Facades\Auth;
@@ -29,10 +30,14 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
     Route::middleware('role:admin')->group(function () {
 
+        // students :
         Route::get('students', [StudentController::class, 'index'])->name('students.index');
         Route::post('students', [StudentController::class, 'store'])->name('students.store');
         Route::patch('students/{student}', [StudentController::class, 'update'])->name('students.update');
         Route::delete('students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+
+        // Enrolls:
+        Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
     });
 
     Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');

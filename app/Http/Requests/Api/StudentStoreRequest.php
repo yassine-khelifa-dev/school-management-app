@@ -23,8 +23,8 @@ class StudentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required'],
-            'last_name' => ['required'],
+            'first_name' => ['required', "min:3"],
+            'last_name' => ['required', "min:3"],
             'email' => ['required', 'email', 'unique:users,email'],
             'phone' => ['required', 'min:10', 'max:14'],
         ];

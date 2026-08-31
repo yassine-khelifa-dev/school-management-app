@@ -23,7 +23,7 @@ class StudentController extends Controller
                 $q->where('first_name', 'like', "$qFullName%")
                     ->orWhere('last_name', 'like', "$qFullName%");
             });
-        $students = $query->paginate(8)->withQueryString();
+        $students = $query->latest()->paginate(8)->withQueryString();
 
         return   StudentResource::collection($students);
     }
