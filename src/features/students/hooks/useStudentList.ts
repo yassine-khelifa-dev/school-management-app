@@ -56,6 +56,7 @@ export function useStudentList() {
 
       if (remainingStudents.length === 0 && paginate?.current_page > 1)
         setQuery({ ...query, page: paginate.current_page - 1 });
+      else setQuery({ ...query, page: paginate?.current_page });
 
       console.log(rep);
       return true;

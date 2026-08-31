@@ -36,9 +36,11 @@ export const CreateStudentSchema = z.object({
   first_name: z.string().min(3),
   last_name: z.string().min(3),
   email: z.email(),
-  phone: z.string().min(10).max(15),
+  phone: z
+    .string()
+    .regex(/^\d+$/, "Phone must contain digits only")
+    .min(10, "Phone must be at least 10 digits")
+    .max(15, "Phone must not exceed 15 digits"),
 });
 
-export type InputsCreateStudentValues = z.infer<
-  typeof CreateStudentSchema
->;
+export type InputsCreateStudentValues = z.infer<typeof CreateStudentSchema>;
