@@ -16,12 +16,13 @@ class EnrollmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            "class_id" =>  new ClassResource($this->schoolClass),
+            "schoolClass" =>  new ClassResource($this->schoolClass),
             "student" =>  new StudentResource($this->student),
 
-            "academic_year_id" =>  new AcademicResource($this->academicYear),
+            "academicYear" =>  new AcademicResource($this->academicYear),
 
-            "status" => $this->status
+            "status" => $this->status,
+            "enrolled_at" => $this->enrolled_at
         ];
     }
 }

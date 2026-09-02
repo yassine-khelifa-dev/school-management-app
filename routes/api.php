@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\EnrollmentController;
+use App\Http\Controllers\Api\SchoolClassController;
 use App\Http\Controllers\Api\Security\AuthController;
 use App\Http\Controllers\Api\StudentController;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +40,10 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
         // Enrolls:
         Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
+        // SchoolClass:
+        Route::get('school-class', [SchoolClassController::class, 'index'])->name('school-class.index');
+        // AcademicYear:
+        Route::get('academic-year', [AcademicYearController::class, 'index'])->name('academic-year.index');
     });
 
     Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
