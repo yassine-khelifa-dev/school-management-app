@@ -5,13 +5,17 @@ import { getEnrollments } from "../services/enrollmentService";
 import { getAcademicYears } from "../../academicYears/services/academicYears";
 import getSchoolClasses from "../../schoolClasses/services/schoolClass";
 import type { SchoolClassType } from "../../schoolClasses/types";
+import axios from "axios";
 
 export function useEnrollment() {
   const [enrollmentList, setEnrollmentList] =
     useState<EnrollmentListType>(null);
 
-  const [academicYers, setAcademicYers] = useState<AcademicYearsType[]>([null]);
+  const [academicYers, setAcademicYers] = useState<AcademicYearsType[]>([]);
   const [schoolClasses, setSchoolClasses] = useState<SchoolClassType[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<string>("");
 
   const [query, setQuery] = useState<EnrollQueryType>({
     page: 1,
@@ -19,6 +23,23 @@ export function useEnrollment() {
       status: "all",
     },
   });
+
+  const handleErrorsMessage = (err: unknown) => {
+    if (axios.isCancel(err)) {
+      return "request cancelled";
+    }
+    if (axios.isAxiosError(err)) {
+      if (err.response) {
+        setErrors(err.response.data?.message || "Backend error");
+      } else if (err.request) {
+        setErrors("Unable to reach the server");
+      } else {
+        setErrors("Request error");
+      }
+    } else {
+      setErrors("Something went wrong");
+    }
+  };
 
   useEffect(() => {
     const getData = async () => {
@@ -31,26 +52,59 @@ export function useEnrollment() {
   }, []);
 
   useEffect(() => {
-    const getData = async () => {
-      const resEnroll = await getEnrollments(query);
-      //  console.log('res: useeff:', res)
-      setEnrollmentList(resEnroll);
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      const getData = async () => {
+        try {
+          setLoading(true);
+
+          setErrors("");
+
+          const resEnroll = await getEnrollments(query, controller.signal);
+          // console.log("getData->resEnroll: ", resEnroll);
+          setEnrollmentList(resEnroll);
+        } catch (err) {
+          console.log("errors: ", err);
+          handleErrorsMessage(err);
+        } finally {
+          if (!controller.signal.aborted) {
+            setLoading(false);
+          }
+        }
+      };
+      getData();
+    }, 500);
+
+    return () => {
+      // cleanUp
+      clearTimeout(timer);
+      controller.abort();
     };
-    getData();
   }, [query]);
 
-  const handleQuery = (q: EnrollQueryType) => {
-    setQuery(q);
-  };
+  const changePage = (page: number) =>
+    setQuery((prev) => ({ ...prev, page: page }));
 
-  const changePage = (page: number) => setQuery({ ...query, page: page });
+  const changeFilter = (
+    field: keyof EnrollQueryType["filter"],
+    value: string,
+  ) =>
+    setQuery({
+      ...query,
+      page: 1,
+      filter: { ...query.filter, [field]: value },
+    });
+
+  // export :
 
   return {
     enrollmentList,
     academicYers,
-    query,
-    handleQuery,
     schoolClasses,
+    query,
+    loading,
+    errors,
     changePage,
+    changeFilter,
   };
 }

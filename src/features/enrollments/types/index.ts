@@ -34,6 +34,7 @@ export type EnrollQueryType = {
   page: number;
   filter: {
     status?: string;
+    search?: string;
     academicYearSelected?: string;
     schoolClassesSelected?: string;
   };

@@ -5,49 +5,31 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import type { EnrollQueryType } from "../types";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
-import { useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import type { AcademicYearsType } from "../../academicYears/types";
 import type { SchoolClassType } from "../../schoolClasses/types";
+import TextField from "@mui/material/TextField";
 
 type Props = {
   query: EnrollQueryType;
-  setQuery: (query: EnrollQueryType) => void;
   academicYers: AcademicYearsType[];
   schoolClasses: SchoolClassType[];
+  changeFilter: (field: keyof EnrollQueryType["filter"], value: string) => void;
 };
 
 export default function EnrollmentFilter({
   query,
-  setQuery,
   academicYers,
   schoolClasses,
+  changeFilter,
 }: Props) {
-  const [academicYearSelected, setAcademicYearSelected] = useState<
-    string | null
-  >(null);
-
-  const [schoolClassesSelected, setSchoolClassesSelected] = useState<
-    string | null
-  >(null);
-
   const handleChangeAcademicYear = (event: SelectChangeEvent) => {
-    setQuery({
-      ...query,
-      page: 1,
-      filter: { ...query.filter, academicYearSelected: event.target.value },
-    });
-    setAcademicYearSelected(event.target.value as string);
+    changeFilter("academicYearSelected", event.target.value);
   };
 
   const handleChangeSchoolClass = (event: SelectChangeEvent) => {
-    setQuery({
-      ...query,
-      page: 1,
-      filter: { ...query.filter, schoolClassesSelected: event.target.value },
-    });
-    setSchoolClassesSelected(event.target.value as string);
+    changeFilter("schoolClassesSelected", event.target.value);
   };
 
   return (
@@ -59,56 +41,78 @@ export default function EnrollmentFilter({
       }}
     >
       <h3>Filter</h3>
-      <FormControl>
-        <FormLabel id="q_status">Status</FormLabel>
-        <RadioGroup
-          row
-          aria-labelledby="q_status"
-          name="row-radio-buttons-group"
-          value={query.filter.status}
-          onChange={(e) =>
-            setQuery({
-              ...query,
-              page: 1,
-              filter: { ...query.filter, status: e.target.value },
-            })
-          }
-        >
-          <FormControlLabel value="all" control={<Radio />} label="All" />
-
-          <FormControlLabel value="active" control={<Radio />} label="Active" />
-          <FormControlLabel
-            value="completed"
-            control={<Radio />}
-            label="Completed"
-          />
-          <FormControlLabel
-            value="cancelled"
-            control={<Radio />}
-            label="Cancelled"
-          />
-        </RadioGroup>
-      </FormControl>
 
       <div
-        style={{ 
+        style={{
           display: "flex",
           gap: "10px",
-          padding: "10px 0px"
-         }}
+          alignContent: "end",
+        }}
+      >
+        <TextField
+          sx={{
+            width: "50%",
+          }}
+          id="outlined-basic"
+          label="Full Name"
+          variant="outlined"
+          value={query?.filter.search ?? ""}
+          onChange={(e) => changeFilter("search", e.target.value)}
+        />
+
+        <FormControl>
+          <FormLabel id="q_status">Status</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="q_status"
+            name="row-radio-buttons-group"
+            value={query.filter.status}
+            onChange={(e) => changeFilter("status", e.target.value)}
+          >
+            <FormControlLabel value="all" control={<Radio />} label="All" />
+
+            <FormControlLabel
+              value="active"
+              control={<Radio />}
+              label="Active"
+            />
+            <FormControlLabel
+              value="completed"
+              control={<Radio />}
+              label="Completed"
+            />
+            <FormControlLabel
+              value="cancelled"
+              control={<Radio />}
+              label="Cancelled"
+            />
+          </RadioGroup>
+        </FormControl>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          padding: "10px 0px",
+        }}
       >
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Academic Year</InputLabel>
+          <InputLabel id="demo-simple-select-Academic">
+            Academic Year
+          </InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={academicYearSelected}
+            labelId="demo-simple-select-Academic"
+            id="demo-simple-select-Academic"
+            value={query.filter.academicYearSelected ?? ""}
             label="Academic Year"
             onChange={handleChangeAcademicYear}
           >
-            <MenuItem value={null}>All</MenuItem>
+            <MenuItem value="">All</MenuItem>
             {academicYers?.map((ac) => (
-              <MenuItem value={ac?.id}>{ac?.name}</MenuItem>
+              <MenuItem key={ac.id} value={ac?.id}>
+                {ac?.name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -118,13 +122,15 @@ export default function EnrollmentFilter({
           <Select
             labelId="demo-simple-select-schoolClasses"
             id="demo-simple-select-schoolClasses"
-            value={schoolClassesSelected}
+            value={query.filter.schoolClassesSelected ?? ""}
             label="Class"
             onChange={handleChangeSchoolClass}
           >
-            <MenuItem value={null}>All</MenuItem>
+            <MenuItem value="">All</MenuItem>
             {schoolClasses?.map((sc) => (
-              <MenuItem value={sc?.id}>{sc?.name}</MenuItem>
+              <MenuItem key={sc.id} value={sc?.id}>
+                {sc?.name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
