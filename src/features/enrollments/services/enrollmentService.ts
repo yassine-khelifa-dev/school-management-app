@@ -28,9 +28,11 @@ export async function getEnrollments(
 
 export async function createEnrollment(data: EnrollmentFormType) {
   console.log("createEnrollment: before : ", data);
+  const res = api.post("enrollments",  data);
 
-  //const res = api.post("enrollments", { data});
-  // return res;
+  console.log(res);
+
+  return res;
 }
 
 export const delay = (ms: number) =>

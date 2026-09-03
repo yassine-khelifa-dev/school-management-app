@@ -1,3 +1,4 @@
+import * as z from "zod";
 export type EnrollmentType = {
   id: number;
   schoolClass: {
@@ -30,13 +31,15 @@ export type EnrollmentListType = {
   };
 };
 
-export type EnrollmentFormType = {
-  student_id: number;
-  class_id: number;
-  academic_year_id: number;
-  enrolled_at: string;
-  status: string;
-};
+export const EnrollmentFormSchema = z.object({
+  student_id: z.number(),
+  class_id: z.number(),
+  academic_year_id: z.number(),
+  enrolled_at: z.string(),
+  status: z.string(),
+});
+
+export type EnrollmentFormType = z.infer<typeof EnrollmentFormSchema>;
 
 export type EnrollQueryType = {
   page?: number;

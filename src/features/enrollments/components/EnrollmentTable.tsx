@@ -39,7 +39,7 @@ export default function EnrollmentTable({ enrollments, changePage }: Props) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.student.id}
+                  {row.id}
                 </TableCell>
                 <TableCell>{row.student.full_name}</TableCell>
                 <TableCell>{row.student.email}</TableCell>

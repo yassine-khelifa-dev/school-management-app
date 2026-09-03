@@ -19,11 +19,14 @@ import type { StudentType } from "../../students/types";
 import { getStudents } from "../../students/services/studentService";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import { Radio } from "@mui/material";
+import { Alert, Radio } from "@mui/material";
 import { createEnrollment } from "../services/enrollmentService";
 import moment from "moment";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EnrollmentFormSchema, type EnrollmentFormType } from "../types";
+import { Controller, useForm } from "react-hook-form";
+import useApiError from "../../../hooks/useApiError";
+
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -39,22 +42,35 @@ const Transition = forwardRef(function Transition(
 });
 
 export default function CreateEnrollmentDialog({ open, setOpen }: Props) {
+  const { error, clearError, handleError } = useApiError();
+  const [successMessage, setSuccessMessage] = useState("");
   const [students, setStudents] = useState<StudentType[]>([]);
   const [serach, setSearch] = useState<string>("");
-  const [selectEnrollAt, setSelectEnrollAt] = useState<string>(
-    moment().format("YYYY-MM-DD"),
-  );
+
   const [academicYersList, setAcademicYersList] = useState<AcademicYearsType[]>(
     [],
   );
   const [classList, setClassList] = useState<SchoolClassType[]>([]);
 
-  const [selectStudent, setSelectStudent] = useState<StudentType | null>(null);
-  const [selectAcademicYear, setSelectAcademicYear] =
-    useState<AcademicYearsType | null>(null);
-  const [selectClass, setSelectClass] = useState<SchoolClassType | null>(null);
+  const [selectedOptions, setSelectedOptions] = useState({
+    student: null,
+    year: null,
+    class: null,
+  });
 
-  const [selectStatus, setSelectStatus] = useState<string | null>("active");
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EnrollmentFormType>({
+    resolver: zodResolver(EnrollmentFormSchema),
+    defaultValues: {
+      status: "active",
+      enrolled_at: moment().format("YYYY-MM-DD"),
+    },
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -107,26 +123,25 @@ export default function CreateEnrollmentDialog({ open, setOpen }: Props) {
     setOpen(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("handleSubmit");
+  const handleEnrollSubmit = async (data: EnrollmentFormType) => {
+    try {
+      clearError();
+      setSuccessMessage("");
+      console.log("handleSubmit", data);
+      const res = await createEnrollment({ ...data });
+      if (res.data.data.id > 0) {
+        reset();
+        setSelectedOptions({ student: null, year: null, class: null });
+        setSuccessMessage("The enrollment has created successfuly!");
+      }
 
-    console.log("student", selectStudent);
-    console.log("academic", selectAcademicYear);
-    console.log("class", selectClass);
-    console.log("status", selectStatus);
-
-    // store Data
-
-    const res = await createEnrollment({
-      student_id: selectStudent.id,
-      academic_year_id: selectAcademicYear.id,
-      class_id: selectClass.id,
-      status: selectStatus,
-      enrolled_at: selectEnrollAt,
-    });
-
-    console.log(res);
+      // store Data
+    } catch (err) {
+      const r = handleError(err);
+      console.log(r);
+    } finally {
+      console.log("end submit");
+    }
 
     //  handleClose();
   };
@@ -141,7 +156,7 @@ export default function CreateEnrollmentDialog({ open, setOpen }: Props) {
           transition: Transition,
         }}
       >
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(handleEnrollSubmit)}>
           <AppBar sx={{ position: "relative" }}>
             <Toolbar>
               <IconButton
@@ -166,43 +181,97 @@ export default function CreateEnrollmentDialog({ open, setOpen }: Props) {
                 padding: "20px 30px",
               }}
             >
-              <Autocomplete
-                disablePortal
-                id="students"
-                options={students}
-                getOptionKey={(st) => st.id}
-                getOptionLabel={(st) => st.full_name}
-                onChange={(_, val) => setSelectStudent(val)}
-                onInputChange={(_, val) => setSearch(val)}
-                sx={{ width: "70%", paddingBottom: "20px" }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Students" />
+              {error && <Alert severity="warning">{error.message}</Alert>}
+              {successMessage && (
+                <Alert severity="success">{successMessage}</Alert>
+              )}
+
+              <Controller
+                name="student_id"
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    options={students}
+                    getOptionLabel={(student) => student.full_name}
+                    getOptionKey={(student) => student.id}
+                    sx={{ width: "70%", padding: "20px 0px" }}
+                    onInputChange={(_, value) => setSearch(value)}
+                    value={selectedOptions.student}
+                    onChange={(_, student) => {
+                      setSelectedOptions({
+                        ...selectedOptions,
+                        student: student,
+                      });
+                      field.onChange(student?.id ?? undefined);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Students"
+                        error={!!errors.student_id}
+                        helperText={errors.student_id?.message}
+                      />
+                    )}
+                  />
                 )}
               />
 
-              <Autocomplete
-                disablePortal
-                id="academicyears"
-                options={academicYersList}
-                getOptionLabel={(ay) => ay.name}
-                getOptionKey={(ay) => ay.id}
-                onChange={(_, val) => setSelectAcademicYear(val)}
-                sx={{ width: "70%", paddingBottom: "20px" }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Academic Years" />
+              <Controller
+                name="academic_year_id"
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    options={academicYersList}
+                    sx={{ width: "70%", paddingBottom: "20px" }}
+                    getOptionKey={(st) => st.id}
+                    getOptionLabel={(ay) => ay.name}
+                    value={selectedOptions.year}
+                    onChange={(_, year) => {
+                      setSelectedOptions({
+                        ...selectedOptions,
+                        year: year,
+                      });
+                      field.onChange(year?.id ?? undefined);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Academic Years"
+                        error={!!errors.student_id}
+                        helperText={errors.student_id?.message}
+                      />
+                    )}
+                  />
                 )}
               />
 
-              <Autocomplete
-                id="classess"
-                options={classList}
-                getOptionLabel={(ca) => ca.name}
-                getOptionKey={(ca) => ca.id}
-                sx={{ width: "70%", paddingBottom: "20px" }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Classes" />
+              <Controller
+                name="class_id"
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    options={classList}
+                    sx={{ width: "70%", paddingBottom: "20px" }}
+                    getOptionKey={(st) => st.id}
+                    getOptionLabel={(ca) => ca.name}
+                    value={selectedOptions.class}
+                    onChange={(_, sc) => {
+                      setSelectedOptions({
+                        ...selectedOptions,
+                        class: sc,
+                      });
+                      field.onChange(sc?.id ?? undefined);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Classes"
+                        error={!!errors.student_id}
+                        helperText={errors.student_id?.message}
+                      />
+                    )}
+                  />
                 )}
-                onChange={(_, value) => setSelectClass(value)}
               />
 
               <TextField
@@ -210,44 +279,38 @@ export default function CreateEnrollmentDialog({ open, setOpen }: Props) {
                   width: "70%",
                   paddingBottom: "20px",
                 }}
-                value={selectEnrollAt}
-                onChange={(e) => setSelectEnrollAt(e.target.value)}
                 label="Enroll at"
                 type="date"
+                {...register("enrolled_at")}
               />
+              {errors.enrolled_at && errors.enrolled_at.message}
 
-              <FormControl
-                style={{
-                  width: "70%",
-                  paddingBottom: "20px",
-                }}
-              >
-                <FormLabel id="status-label">Status</FormLabel>
-                <RadioGroup
-                  row
-                  aria-labelledby="status-label"
-                  name="row-radio-buttons-group"
-                  value={selectStatus}
-                  onChange={(e) => setSelectStatus(e.target.value)}
-                >
-                  <FormControlLabel
-                    value="active"
-                    control={<Radio />}
-                    label="Active"
-                  />
-                  <FormControlLabel
-                    value="completed"
-                    control={<Radio />}
-                    label="Completed"
-                  />
-                  <FormControlLabel
-                    value="cancelled"
-                    disabled
-                    control={<Radio />}
-                    label="Cancelled"
-                  />
-                </RadioGroup>
-              </FormControl>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup row {...field}>
+                    <FormControlLabel
+                      value="active"
+                      control={<Radio />}
+                      label="Active"
+                    />
+
+                    <FormControlLabel
+                      value="completed"
+                      control={<Radio />}
+                      label="Completed"
+                    />
+
+                    <FormControlLabel
+                      value="cancelled"
+                      disabled
+                      control={<Radio />}
+                      label="Cancelled"
+                    />
+                  </RadioGroup>
+                )}
+              />
             </div>
           </List>
         </form>
