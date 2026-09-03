@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { AcademicYearsType } from "../../academicYears/types";
 import type { EnrollmentListType, EnrollQueryType } from "../types";
-import { getEnrollments } from "../services/enrollmentService";
+import { delay, getEnrollments } from "../services/enrollmentService";
 import { getAcademicYears } from "../../academicYears/services/academicYears";
 import getSchoolClasses from "../../schoolClasses/services/schoolClass";
 import type { SchoolClassType } from "../../schoolClasses/types";
@@ -57,6 +57,7 @@ export function useEnrollment() {
       const getData = async () => {
         try {
           setLoading(true);
+          await delay(500);
 
           setErrors("");
 

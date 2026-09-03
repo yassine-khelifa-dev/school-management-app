@@ -8,7 +8,7 @@ import type {
 } from "../types";
 
 export async function getStudents(
-  query: StudentQueryType,
+  query?: StudentQueryType,
   signal?: AbortSignal,
 ): Promise<StudentListType> {
   const res = await api.get("students", {

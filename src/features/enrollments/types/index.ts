@@ -30,9 +30,17 @@ export type EnrollmentListType = {
   };
 };
 
+export type EnrollmentFormType = {
+  student_id: number;
+  class_id: number;
+  academic_year_id: number;
+  enrolled_at: string;
+  status: string;
+};
+
 export type EnrollQueryType = {
-  page: number;
-  filter: {
+  page?: number;
+  filter?: {
     status?: string;
     search?: string;
     academicYearSelected?: string;
