@@ -83,6 +83,10 @@ export function useEnrollment() {
     };
   }, [query]);
 
+  const refresh = () => {
+    changePage(query.page);
+  };
+
   const changePage = (page: number) =>
     setQuery((prev) => ({ ...prev, page: page }));
 
@@ -107,5 +111,6 @@ export function useEnrollment() {
     errors,
     changePage,
     changeFilter,
+    refresh,
   };
 }

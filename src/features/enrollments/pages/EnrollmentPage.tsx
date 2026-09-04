@@ -7,10 +7,16 @@ import Button from "@mui/material/Button";
 import LinkIcon from "@mui/icons-material/Link";
 import CreateEnrollmentDialog from "../components/CreateEnrollmentDialog";
 import { useState } from "react";
+import EditEnrollmentDialog from "../components/EditEnrollmentDialog";
+import type { EnrollmentType } from "../types";
 
 export default function EnrollmentPage() {
   //
   const [openCreateDialog, setOpenCreateDialog] = useState<boolean>(false);
+  const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
+
+  const [selecteEnrollEdit, setSelecteEnrollEdit] =
+    useState<EnrollmentType | null>(null);
 
   const handleOpenCreateDialog = (open: boolean) => setOpenCreateDialog(open);
 
@@ -23,7 +29,13 @@ export default function EnrollmentPage() {
     errors,
     changePage,
     changeFilter,
+    refresh,
   } = useEnrollment();
+
+  const handleEdit = (enroll: EnrollmentType) => {
+    setSelecteEnrollEdit(enroll);
+    setOpenEditDialog(true);
+  };
 
   return (
     <>
@@ -46,10 +58,21 @@ export default function EnrollmentPage() {
         </Button>
       </div>
 
-      <CreateEnrollmentDialog
-        open={openCreateDialog}
-        setOpen={handleOpenCreateDialog}
-      />
+      {openCreateDialog && (
+        <CreateEnrollmentDialog
+          open={openCreateDialog}
+          setOpen={handleOpenCreateDialog}
+        />
+      )}
+
+      {selecteEnrollEdit && openEditDialog && (
+        <EditEnrollmentDialog
+          open={openEditDialog}
+          setOpen={setOpenEditDialog}
+          selecteEnroll={selecteEnrollEdit}
+          refresh={refresh}
+        />
+      )}
 
       {loading && (
         <div
@@ -80,7 +103,11 @@ export default function EnrollmentPage() {
       )}
 
       {enrollmentList?.data.length > 0 && (
-        <EnrollmentTable enrollments={enrollmentList} changePage={changePage} />
+        <EnrollmentTable
+          onEdit={handleEdit}
+          enrollments={enrollmentList}
+          changePage={changePage}
+        />
       )}
     </>
   );

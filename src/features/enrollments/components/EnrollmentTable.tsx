@@ -1,4 +1,4 @@
-import type { EnrollmentListType } from "../types";
+import type { EnrollmentListType, EnrollmentType } from "../types";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,16 +6,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Pagination } from "@mui/material";
-
+import { Button, Pagination } from "@mui/material";
+import RebaseEditIcon from "@mui/icons-material/RebaseEdit";
 import moment from "moment";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 type Props = {
   enrollments: EnrollmentListType;
   changePage: (page: number) => void;
+  onEdit: (enroll: EnrollmentType) => void;
 };
 
-export default function EnrollmentTable({ enrollments, changePage }: Props) {
+export default function EnrollmentTable({
+  enrollments,
+  changePage,
+  onEdit,
+}: Props) {
   return (
     <>
       <TableContainer component={Paper}>
@@ -50,7 +55,29 @@ export default function EnrollmentTable({ enrollments, changePage }: Props) {
                   {moment(row.enrolled_at).format("MM-DD-YYYY")}
                 </TableCell>
                 <TableCell align="right">{row.status}</TableCell>
-                <TableCell align="right">EDIT | DELETE</TableCell>
+                <TableCell align="right">
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "5px",
+                    }}
+                  >
+                    <Button
+                      onClick={() => onEdit(row)}
+                      variant="outlined"
+                      startIcon={<RebaseEditIcon />}
+                      color="secondary"
+                      title="Edit"
+                    ></Button>
+
+                    <Button
+                      color="error"
+                      variant="outlined"
+                      startIcon={<DeleteIcon />}
+                      title="delete"
+                    ></Button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -43,7 +43,7 @@ export type EnrollmentFormType = z.infer<typeof EnrollmentFormSchema>;
 
 export type EnrollQueryType = {
   page?: number;
-  filter?: {
+  filter: {
     status?: string;
     search?: string;
     academicYearSelected?: string;

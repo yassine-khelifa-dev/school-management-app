@@ -6,8 +6,12 @@ import type { SchoolClassType } from "../../schoolClasses/types";
 import { getAcademicYears } from "../../academicYears/services/academicYears";
 import getSchoolClasses from "../../schoolClasses/services/schoolClass";
 import { getStudents } from "../../students/services/studentService";
-import { createEnrollment, delay } from "../services/enrollmentService";
-import type { EnrollmentFormType } from "../types";
+import {
+  createEnrollment,
+  delay,
+  editEnrollment,
+} from "../services/enrollmentService";
+import type { EnrollmentFormType, EnrollmentType } from "../types";
 
 type SelectedOptionsType = {
   student: StudentType | null;
@@ -17,6 +21,8 @@ type SelectedOptionsType = {
 
 export default function useEnrollmentForm() {
   const [creating, setCreating] = useState<boolean>(false);
+  const [editing, setEditing] = useState<boolean>(false);
+
   const { error, clearError, handleError } = useApiError();
   const [successMessage, setSuccessMessage] = useState("");
   const [students, setStudents] = useState<StudentType[]>([]);
@@ -108,16 +114,49 @@ export default function useEnrollmentForm() {
     }
   };
 
+  const handleEnrollEditSubmit = async (
+    data: EnrollmentFormType,
+    enroll: EnrollmentType,
+  ) => {
+    if (editing) return false;
+    try {
+      setEditing(true);
+      clearError();
+      setSuccessMessage("");
+      console.log("handleEnrollEditSubmit", data);
+      const res = await editEnrollment(data, enroll);
+      if (res.data.data.id > 0) {
+        setSuccessMessage("The enrollment has updated successfuly!");
+        return true;
+      }
+      return false;
+      // store Data
+    } catch (err) {
+      const r = handleError(err);
+      console.log(r);
+      return false;
+    } finally {
+      await delay(1000);
+
+      console.log("end submit");
+      setEditing(false);
+    }
+  };
+
   return {
     creating,
+    editing,
     setSelectedOptions,
     error,
+    clearError,
     successMessage,
     academicYersList,
     selectedOptions,
     students,
     classList,
+    setSuccessMessage,
     setSearch,
     handleEnrollSubmit,
+    handleEnrollEditSubmit,
   };
 }

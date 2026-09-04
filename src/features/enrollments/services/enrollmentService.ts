@@ -2,6 +2,7 @@ import { api } from "../../../api";
 import type {
   EnrollmentFormType,
   EnrollmentListType,
+  EnrollmentType,
   EnrollQueryType,
 } from "../types";
 
@@ -28,7 +29,19 @@ export async function getEnrollments(
 
 export async function createEnrollment(data: EnrollmentFormType) {
   console.log("createEnrollment: before : ", data);
-  const res = api.post("enrollments",  data);
+  const res = api.post("enrollments", data);
+
+  console.log(res);
+
+  return res;
+}
+
+export async function editEnrollment(
+  data: EnrollmentFormType,
+  enroll: EnrollmentType,
+) {
+  console.log("editEnrollment: before : ", data);
+  const res = api.patch("enrollments/" + enroll.id, data);
 
   console.log(res);
 
