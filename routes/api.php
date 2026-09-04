@@ -40,6 +40,9 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
         // Enrolls:
         Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
+        Route::post('enrollments', [EnrollmentController::class, 'store'])->name('enrollments.store');
+        Route::patch('enrollments/{enrollment}', [EnrollmentController::class, 'update'])->name('enrollments.update');
+
         // SchoolClass:
         Route::get('school-class', [SchoolClassController::class, 'index'])->name('school-class.index');
         // AcademicYear:
