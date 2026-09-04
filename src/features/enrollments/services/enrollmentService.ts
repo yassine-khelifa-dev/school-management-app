@@ -48,5 +48,10 @@ export async function editEnrollment(
   return res;
 }
 
+export async function deleteEnrollment(enroll: EnrollmentType) {
+  const res = await api.delete("enrollments/" + enroll.id);
+  return res;
+}
+
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));

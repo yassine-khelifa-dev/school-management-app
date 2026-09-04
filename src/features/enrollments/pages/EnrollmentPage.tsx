@@ -9,11 +9,16 @@ import CreateEnrollmentDialog from "../components/CreateEnrollmentDialog";
 import { useState } from "react";
 import EditEnrollmentDialog from "../components/EditEnrollmentDialog";
 import type { EnrollmentType } from "../types";
+import DeleteEnrollmentDialog from "../components/DeleteEnrollmentDialog";
 
 export default function EnrollmentPage() {
   //
   const [openCreateDialog, setOpenCreateDialog] = useState<boolean>(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+
+  const [selecteEnrollDelete, setSelecteEnrollDelete] =
+    useState<EnrollmentType | null>(null);
 
   const [selecteEnrollEdit, setSelecteEnrollEdit] =
     useState<EnrollmentType | null>(null);
@@ -26,15 +31,33 @@ export default function EnrollmentPage() {
     schoolClasses,
     query,
     loading,
-    errors,
+    error,
+    deleting,
     changePage,
     changeFilter,
     refresh,
+    messages,
+    handledeleteEnrollment,
   } = useEnrollment();
 
   const handleEdit = (enroll: EnrollmentType) => {
     setSelecteEnrollEdit(enroll);
     setOpenEditDialog(true);
+  };
+
+  const handleDelete = (enroll: EnrollmentType) => {
+    setSelecteEnrollDelete(enroll);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selecteEnrollDelete) return;
+
+    const success = await handledeleteEnrollment(selecteEnrollDelete);
+    if (success) {
+      setOpenDeleteDialog(false);
+      setSelecteEnrollDelete(null);
+    }
   };
 
   return (
@@ -58,6 +81,8 @@ export default function EnrollmentPage() {
         </Button>
       </div>
 
+      {messages && <Alert severity="info">{messages}</Alert>}
+
       {openCreateDialog && (
         <CreateEnrollmentDialog
           open={openCreateDialog}
@@ -71,6 +96,15 @@ export default function EnrollmentPage() {
           setOpen={setOpenEditDialog}
           selecteEnroll={selecteEnrollEdit}
           refresh={refresh}
+        />
+      )}
+
+      {selecteEnrollDelete && openDeleteDialog && (
+        <DeleteEnrollmentDialog
+          open={openDeleteDialog}
+          setOpen={setOpenDeleteDialog}
+          selecteEnroll={selecteEnrollDelete}
+          confirm={handleDeleteConfirm}
         />
       )}
 
@@ -96,7 +130,7 @@ export default function EnrollmentPage() {
         changeFilter={changeFilter}
       />
 
-      {errors && <Alert severity="error">{errors}</Alert>}
+      {error && <Alert severity="error">{error.message}</Alert>}
 
       {enrollmentList?.data.length === 0 && (
         <Alert severity="info">There are no enrollments!</Alert>
@@ -105,6 +139,8 @@ export default function EnrollmentPage() {
       {enrollmentList?.data.length > 0 && (
         <EnrollmentTable
           onEdit={handleEdit}
+          onDelete={handleDelete}
+          deleting={deleting}
           enrollments={enrollmentList}
           changePage={changePage}
         />

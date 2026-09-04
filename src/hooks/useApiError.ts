@@ -9,7 +9,9 @@ export default function useApiError() {
   const handleError = (err: unknown) => {
     const parsedError = parseApiError(err);
 
-    setErrors(parsedError);
+    if (parsedError.type !== "cancelled") {
+      setErrors(parsedError);
+    }
 
     return parsedError;
   };

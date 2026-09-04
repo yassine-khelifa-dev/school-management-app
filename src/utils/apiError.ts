@@ -16,9 +16,20 @@ export function parseApiError(err: unknown): ApiErrorType {
 
   if (isAxiosError(err)) {
     if (err.response) {
+      const status = err.response.status;
+
+      if (status >= 500) {
+        return {
+          type: "backend",
+          status,
+          message:
+            "An unexpected server error occurred. Please try again later.",
+        };
+      }
+
       return {
         type: "backend",
-        status: err.response.status,
+        status,
         message: err.response.data?.message ?? "Backend error",
       };
     }

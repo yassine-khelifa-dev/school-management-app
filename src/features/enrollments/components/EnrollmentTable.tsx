@@ -14,12 +14,16 @@ type Props = {
   enrollments: EnrollmentListType;
   changePage: (page: number) => void;
   onEdit: (enroll: EnrollmentType) => void;
+  onDelete: (enroll: EnrollmentType) => void;
+  deleting: boolean;
 };
 
 export default function EnrollmentTable({
   enrollments,
   changePage,
   onEdit,
+  onDelete,
+  deleting,
 }: Props) {
   return (
     <>
@@ -71,8 +75,11 @@ export default function EnrollmentTable({
                     ></Button>
 
                     <Button
+                      onClick={() => onDelete(row)}
                       color="error"
                       variant="outlined"
+                      loading={deleting}
+                      disabled={deleting}
                       startIcon={<DeleteIcon />}
                       title="delete"
                     ></Button>
