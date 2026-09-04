@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
         Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
         Route::post('enrollments', [EnrollmentController::class, 'store'])->name('enrollments.store');
         Route::patch('enrollments/{enrollment}', [EnrollmentController::class, 'update'])->name('enrollments.update');
+        Route::delete('enrollments/{enrollment}', [EnrollmentController::class, 'destroy'])->name('enrollments.destroy');
 
         // SchoolClass:
         Route::get('school-class', [SchoolClassController::class, 'index'])->name('school-class.index');

@@ -46,7 +46,8 @@ class EnrollmentController extends Controller
             }));
 
 
-        $enrlls =  $query->paginate(10)
+        $enrlls =  $query->orderBy('enrolled_at', 'desc')
+            ->paginate(10)
             ->withQueryString();
 
         return EnrollmentResource::collection($enrlls);
@@ -86,5 +87,14 @@ class EnrollmentController extends Controller
         return response()->json([
             'data' => $enrollment,
         ], 200);
+    }
+
+
+    public function destroy(Enrollment $enrollment)
+    {
+
+        $enrollment->delete();
+
+        return response()->noContent();
     }
 }
