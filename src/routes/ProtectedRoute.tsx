@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { Navigate, Outlet } from "react-router-dom";
+import axios from "axios";
 
-export default function ProtectedRoute() {
+type Props = {
+  role: string;
+};
+
+export default function ProtectedRoute({ role }: Props) {
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
@@ -12,36 +17,47 @@ export default function ProtectedRoute() {
 
         const res = await api.get("me");
 
-        const data = await res.data;
-        const role = data?.role;
+        const data =  res.data;
+        const user_role = data?.role;
 
-        if (role === "admin") setStatus("allowed");
+        console.log("me: ",user_role, "props: ",role);
+
+        if (user_role === role) setStatus("allowed");
         else setStatus("forbidden");
       } catch (error) {
-        if (error.response?.status === 401) {
-          console.log("message: Unauthenticated.");
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 401) {
+            setStatus("unauthenticated");
+            return;
+          }
 
-          setStatus("unauthenticated");
+          if (error.response?.status === 403) {
+            setStatus("forbidden");
+            return;
+          }
         }
-        if (error.response?.status === 403) {
-          setStatus("forbidden");
-          return;
-        }
+
+        setStatus("forbidden");
       }
     };
 
     checkUser();
-  }, []);
+  }, [role]);
 
   if (status === "loading") {
+    console.log("loading");
     return <p>Checking access...</p>;
   }
 
   if (status === "unauthenticated") {
+    console.log("unauthenticated");
+
     return <Navigate to="/login" replace />;
   }
 
   if (status === "forbidden") {
+    console.log("forbidden");
+
     return <Navigate to="/forbidden" replace />;
   }
 

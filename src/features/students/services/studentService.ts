@@ -1,4 +1,5 @@
 import { api } from "../../../api";
+import type { EnrollmentType } from "../../enrollments/types";
 import type {
   FormStudentInputs,
   InputsCreateStudentValues,
@@ -49,3 +50,10 @@ export const delayTestFetachData = (ms: number) => {
     setTimeout(resolve, ms);
   });
 };
+
+export async function getStudentEnrollments(
+  student_id: number,
+): Promise<EnrollmentType[]> {
+  const res = await api.get("students/" + student_id + "/enrollments");
+  return res.data.data;
+}

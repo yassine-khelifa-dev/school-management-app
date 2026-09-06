@@ -1,4 +1,5 @@
 import z from "zod";
+import type { EnrollmentType } from "../../enrollments/types";
 
 export type StudentType = {
   id: number;
@@ -7,6 +8,8 @@ export type StudentType = {
   last_name?: string;
   phone?: string;
   email: string;
+  enrollments_count?: number;
+  enrollment?: EnrollmentType;
 };
 
 export type PaginateType = {

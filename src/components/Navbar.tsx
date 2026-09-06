@@ -18,7 +18,31 @@ export default function Navbar() {
           </NavLink>
         )}
 
-        {user && (
+        {user?.user.role === "teacher" && (
+          <>
+            <NavLink
+              style={({ isActive }) => ({
+                fontWeight: isActive ? "bold" : "normal",
+                color: isActive ? "blue" : "black",
+              })}
+              to="/teacher/students"
+            >
+              My Students
+            </NavLink>
+            {" | "}
+            <NavLink
+              style={({ isActive }) => ({
+                fontWeight: isActive ? "bold" : "normal",
+                color: isActive ? "blue" : "black",
+              })}
+              to="/logout"
+            >
+              Logout
+            </NavLink>
+          </>
+        )}
+
+        {user?.user.role === "admin" && (
           <>
             <NavLink
               style={({ isActive }) => ({

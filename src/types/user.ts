@@ -3,7 +3,7 @@ export type LoginType = {
   password: string;
 };
 
-export type UserRole = "STUDENT" | "TEACHER" | "ADMIN";
+export type UserRole = "student" | "teacher" | "admin";
 
 export type UserType = {
   user: {

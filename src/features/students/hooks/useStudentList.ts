@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   createStudent,
   delStudent,
+  getStudentEnrollments,
   getStudents,
   updateStudent,
 } from "../services/studentService";
@@ -133,6 +134,17 @@ export function useStudentList() {
     }
   }
 
+  async function myEnrollments(student_id: number) {
+    const res = await getStudentEnrollments(student_id);
+
+
+
+    console.log("student id: ", student_id);
+    console.log("student id: ", res);
+
+    return res;
+  }
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -143,6 +155,8 @@ export function useStudentList() {
         const data = await getStudents(query, controller.signal);
         setStudents(data.data);
         setPaginate(data.meta);
+
+        console.log("data", data.data);
       } catch (err) {
         handleErrorsMessage(err);
       } finally {
@@ -170,5 +184,6 @@ export function useStudentList() {
     loading,
 
     paginate,
+    myEnrollments,
   };
 }

@@ -15,6 +15,7 @@ import { Button } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import CreateStudentDialog from "../components/CreateStudentDialog";
 import { LoadingUI } from "../../../components/ui/LoadingUI";
+import useStudentPolicy from "../permissions";
 
 export default function StudentsPage() {
   const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(
@@ -41,6 +42,8 @@ export default function StudentsPage() {
 
     paginate,
   } = useStudentList();
+
+  const { canAdd } = useStudentPolicy();
 
   const handleQuery = (newQuery: StudentQueryType) => {
     setQuery(newQuery);
@@ -90,6 +93,8 @@ export default function StudentsPage() {
 
   const handleClickOpenCreateDialog = () => setOpenCreateDialog(true);
 
+  
+
   return (
     <>
       <div
@@ -101,14 +106,18 @@ export default function StudentsPage() {
       >
         <h1>Student</h1>
 
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleClickOpenCreateDialog}
-        >
-          <AddBoxIcon sx={{ paddingRight: "2px" }} /> Student
-        </Button>
+        {canAdd && (
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleClickOpenCreateDialog}
+          >
+            <AddBoxIcon sx={{ paddingRight: "2px" }} /> Student
+          </Button>
+        )}
       </div>
+
+     
 
       <CreateStudentDialog
         open={openCreateDialog}
@@ -116,6 +125,7 @@ export default function StudentsPage() {
         confirm={handleCreate}
         backerrors={errors}
       />
+
       <DeleteStudentDialog
         open={openDeleteDialog}
         setOpen={setOpenDeleteDialog}
@@ -141,10 +151,10 @@ export default function StudentsPage() {
       </div>
 
       <StudentFilter onQueryChange={handleQuery} value={query} />
-      
+
       {loading && <LoadingUI />}
 
-      {students.length > 0 && (
+      {students?.length > 0 && (
         <>
           <StudentTable
             students={students}
@@ -156,7 +166,7 @@ export default function StudentsPage() {
           />
         </>
       )}
-      {students.length === 0 && !loading && !errors && (
+      {students?.length === 0 && !loading && !errors && (
         <span>There are no Students! </span>
       )}
     </>

@@ -11,6 +11,11 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import Pagination from "@mui/material/Pagination";
+import useStudentPolicy from "../permissions";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
+import ConfirmationDialogRaw from "./ListEnrollmentDialog";
+import { useState } from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -49,8 +54,23 @@ export default function StudentTable({
   query,
   paginate,
 }: Props) {
+  const { canDelete, canEdit, hasActions } = useStudentPolicy();
+  const [openEnrollDetails, setOpenEnrollDetails] = useState(false);
+  const [selectStudent, setSelectStudent] = useState<StudentType | null>(null);
+
+  const handleEnrollDetails = () => {
+    setOpenEnrollDetails(false);
+    setSelectStudent(null)
+  };
+
   return (
     <div>
+      <ConfirmationDialogRaw
+        open={openEnrollDetails}
+        setClose={handleEnrollDetails}
+        selectStudent={selectStudent}
+      />
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -60,7 +80,12 @@ export default function StudentTable({
               <StyledTableCell>Last name</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
               <StyledTableCell>Phone</StyledTableCell>
-              <StyledTableCell>Actions</StyledTableCell>
+              <StyledTableCell>Current Class</StyledTableCell>
+              <StyledTableCell>Current Academic Year</StyledTableCell>
+              <StyledTableCell>Status</StyledTableCell>
+              <StyledTableCell>Enrollments</StyledTableCell>
+
+              {hasActions && <StyledTableCell>Actions</StyledTableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -71,30 +96,59 @@ export default function StudentTable({
                 <StyledTableCell>{row.last_name}</StyledTableCell>
                 <StyledTableCell>{row.email}</StyledTableCell>
                 <StyledTableCell>{row.phone}</StyledTableCell>
+                <StyledTableCell>
+                  {row.enrollment?.schoolClass?.name ?? <RemoveCircleIcon />}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {row.enrollment?.academicYear?.name ?? <RemoveCircleIcon />}
+                </StyledTableCell>
 
                 <StyledTableCell>
-                  <div>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => onEdit(row.id)}
-                      sx={{
-                        textAlign: "center",
-                        marginRight: "2px",
-                      }}
-                      endIcon={<EditNoteIcon />}
-                    ></Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => onDelete(row.id)}
-                      sx={{
-                        textAlign: "center",
-                      }}
-                      endIcon={<DeleteIcon />}
-                    ></Button>
-                  </div>
+                  {row.enrollment?.status ?? <RemoveCircleIcon />}
                 </StyledTableCell>
+
+                <StyledTableCell>
+                  <Button
+                    disabled={!row.enrollments_count}
+                    onClick={() => {
+                      setOpenEnrollDetails(true);
+                      setSelectStudent(row);
+                    }}
+                  >
+                    <ExpandCircleDownIcon /> {row.enrollments_count ?? 0}
+                  </Button>
+                </StyledTableCell>
+
+                {hasActions && (
+                  <StyledTableCell>
+                    <div>
+                      {canEdit && (
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => onEdit(row.id)}
+                          sx={{
+                            textAlign: "center",
+                            marginRight: "2px",
+                          }}
+                          endIcon={<EditNoteIcon />}
+                        ></Button>
+                      )}
+
+                      {canDelete && (
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => onDelete(row.id)}
+                          sx={{
+                            textAlign: "center",
+                          }}
+                          endIcon={<DeleteIcon />}
+                        ></Button>
+                      )}
+                    </div>
+                  </StyledTableCell>
+                )}
               </StyledTableRow>
             ))}
           </TableBody>

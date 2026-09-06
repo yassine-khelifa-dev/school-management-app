@@ -2,7 +2,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import loginService from "../services/auth";
-import type { LoginType } from "../types/user";
+import type { LoginType, UserType } from "../types/user";
 import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 export default function LoginPage() {
@@ -13,21 +13,26 @@ export default function LoginPage() {
     password: "password",
   });
 
+  const redUser = (user: UserType) => {
+    if (user.user.role === "admin") navigate("/students");
+    if (user.user.role === "teacher") navigate("/teacher/students");
+  };
+
   useEffect(() => {
-    if (user) navigate("/students");
+    if (user?.user.role === "admin") navigate("/students");
+    if (user?.user.role === "teacher") navigate("/teacher/students");
   }, [user, navigate]);
 
   async function handleLogin(e) {
     e.preventDefault();
     const user = await loginService(credi);
-    // console.log(user);
+    //console.log("hi I am ..",user.user.role);
 
     // save:
     localStorage.setItem("user", JSON.stringify(user));
 
     setUser(user);
-
-    navigate("/students");
+    redUser(user);
   }
 
   return (
