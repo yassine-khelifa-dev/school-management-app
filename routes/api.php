@@ -30,20 +30,25 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
         ];
     });
 
-    Route::middleware('role:admin')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
 
+
+    // Get students list for Admin and Teacher :
+    Route::get('students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('students/{student}/enrollments', [StudentController::class, 'studentEnrollments'])->name('students.enrollments');
+
+
+
+    Route::middleware('role:admin')->group(function () {
         // students :
-        Route::get('students', [StudentController::class, 'index'])->name('students.index');
         Route::post('students', [StudentController::class, 'store'])->name('students.store');
         Route::patch('students/{student}', [StudentController::class, 'update'])->name('students.update');
         Route::delete('students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
-
         // Enrolls:
         Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
         Route::post('enrollments', [EnrollmentController::class, 'store'])->name('enrollments.store');
         Route::patch('enrollments/{enrollment}', [EnrollmentController::class, 'update'])->name('enrollments.update');
         Route::delete('enrollments/{enrollment}', [EnrollmentController::class, 'destroy'])->name('enrollments.destroy');
-
         // SchoolClass:
         Route::get('school-class', [SchoolClassController::class, 'index'])->name('school-class.index');
         // AcademicYear:
@@ -51,5 +56,4 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     });
 
     Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
-    Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
 });

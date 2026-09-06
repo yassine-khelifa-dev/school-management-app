@@ -33,6 +33,13 @@ class Student extends Model
         return $this->hasMany(Enrollment::class, 'student_id', 'id');
     }
 
+    public function enrollment()
+    {
+        return $this->hasOne(Enrollment::class, 'student_id', 'id')
+            ->where('status', 'active')
+            ->latestOfMany('enrolled_at');
+    }
+
 
     public function getFullNameAttribute()
     {
