@@ -37,6 +37,7 @@ export default function EnrollmentPage() {
     changeFilter,
     refresh,
     messages,
+    resetFilter,
     handledeleteEnrollment,
   } = useEnrollment();
 
@@ -128,6 +129,7 @@ export default function EnrollmentPage() {
         schoolClasses={schoolClasses}
         query={query}
         changeFilter={changeFilter}
+        resetFilter={resetFilter}
       />
 
       {error && <Alert severity="error">{error.message}</Alert>}

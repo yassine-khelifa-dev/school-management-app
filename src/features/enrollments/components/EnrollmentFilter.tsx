@@ -10,12 +10,15 @@ import MenuItem from "@mui/material/MenuItem";
 import type { AcademicYearsType } from "../../academicYears/types";
 import type { SchoolClassType } from "../../schoolClasses/types";
 import TextField from "@mui/material/TextField";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { Button } from "@mui/material";
 
 type Props = {
   query: EnrollQueryType;
   academicYers: AcademicYearsType[];
   schoolClasses: SchoolClassType[];
   changeFilter: (field: keyof EnrollQueryType["filter"], value: string) => void;
+  resetFilter: () => void;
 };
 
 export default function EnrollmentFilter({
@@ -23,6 +26,7 @@ export default function EnrollmentFilter({
   academicYers,
   schoolClasses,
   changeFilter,
+  resetFilter,
 }: Props) {
   const handleChangeAcademicYear = (event: SelectChangeEvent) => {
     changeFilter("academicYearSelected", event.target.value);
@@ -40,7 +44,19 @@ export default function EnrollmentFilter({
         margin: "5px 0px",
       }}
     >
-      <h3>Filter</h3>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h3>Filter</h3>
+
+        <Button color="secondary" onClick={resetFilter} variant="contained">
+          <RestartAltIcon />{" "}
+        </Button>
+      </div>
 
       <div
         style={{

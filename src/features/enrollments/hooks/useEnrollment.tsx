@@ -17,7 +17,7 @@ import useApiError from "../../../hooks/useApiError";
 
 export function useEnrollment() {
   const [enrollmentList, setEnrollmentList] =
-    useState<EnrollmentListType|null>(null);
+    useState<EnrollmentListType | null>(null);
 
   const [academicYers, setAcademicYers] = useState<AcademicYearsType[]>([]);
   const [schoolClasses, setSchoolClasses] = useState<SchoolClassType[]>([]);
@@ -95,12 +95,22 @@ export function useEnrollment() {
       filter: { ...prev.filter, [field]: value },
     }));
 
+  const resetFilter = () => {
+    setQuery({
+      page: 1,
+      filter: {
+        status: "all",
+        search: "",
+      },
+    });
+  };
+
   const handledeleteEnrollment = async (enroll: EnrollmentType) => {
     // console.log(enroll);
     try {
       setMessages("");
       setDeleting(true);
-      clearError()
+      clearError();
       const res = await deleteEnrollment(enroll);
       //console.log(res.status);
 
@@ -150,5 +160,6 @@ export function useEnrollment() {
     messages,
     deleting,
     handledeleteEnrollment,
+    resetFilter,
   };
 }
