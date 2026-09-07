@@ -10,10 +10,11 @@ import Grid from "@mui/material/Grid";
 
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { Alert } from "@mui/material";
+import type { ApiErrorType } from "../../../utils/apiError";
 
 type Props = {
   open: boolean;
-  backerrors: string | null;
+  backerrors: ApiErrorType | null;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   student: StudentType;
   confirm: (data: FormStudentInputs) => void;
@@ -74,7 +75,7 @@ export function EditStudentDialog({
                   }}
                   severity="error"
                 >
-                  {backerrors}
+                  {backerrors.message}
                 </Alert>
               )}
 

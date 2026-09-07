@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   createStudent,
   delStudent,
-  getStudentEnrollments,
   getStudents,
   updateStudent,
 } from "../services/studentService";
@@ -13,7 +12,7 @@ import type {
   StudentQueryType,
   StudentType,
 } from "../types";
-import axios from "axios";
+import useApiError from "../../../hooks/useApiError";
 
 export function useStudentList() {
   const [students, setStudents] = useState<StudentType[]>([]);
@@ -21,48 +20,31 @@ export function useStudentList() {
   const [paginate, setPaginate] = useState<PaginateType | null>(null);
 
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<string | null>(null);
   const [messages, setMessages] = useState<string | null>(null);
+  const { error, clearError, handleError } = useApiError();
 
   const [query, setQuery] = useState<StudentQueryType>({
     page: 1,
   });
 
-  function handleErrorsMessage(err: unknown) {
-    if (axios.isCancel(err)) {
-      return "request cancelled";
-    }
-    if (axios.isAxiosError(err)) {
-      if (err.response) {
-        setErrors(err.response.data?.message || "Backend error");
-      } else if (err.request) {
-        setErrors("Unable to reach the server");
-      } else {
-        setErrors("Request error");
-      }
-    } else {
-      setErrors("Something went wrong");
-    }
-  }
-
   async function deleteStudent(student: StudentType) {
     console.log("hook:deleteStudnet ", student.email);
     try {
       setLoading(true);
-      setErrors(null);
-      const rep = await delStudent(student);
+      clearError();
+
+      await delStudent(student);
 
       const remainingStudents = students.filter((s) => s.id !== student.id);
-      setStudents(remainingStudents);
 
       if (remainingStudents.length === 0 && paginate?.current_page > 1)
-        setQuery({ ...query, page: paginate.current_page - 1 });
-      else setQuery({ ...query, page: paginate?.current_page });
+        setQuery((prev) => ({ ...prev, page: paginate.current_page - 1 }));
+      else setQuery((prev) => ({ ...prev, page: paginate?.current_page ?? 1 }));
 
-      console.log(rep);
+      //console.log(rep);
       return true;
     } catch (err) {
-      handleErrorsMessage(err);
+      handleError(err);
       return false;
     } finally {
       setLoading(false);
@@ -72,23 +54,23 @@ export function useStudentList() {
   async function storeStudent(student: InputsCreateStudentValues) {
     try {
       setLoading(true);
-      setErrors(null);
+      clearError();
       setMessages(null);
 
       const rep = await createStudent(student);
 
       if (rep?.id >= 0) {
         setMessages("Student has been created successfully with ID: " + rep.id);
-        setQuery({ ...query, page: 1 });
+        setQuery((prev) => ({ ...prev, page: 1 }));
         return true;
       } else {
         console.log("storeStudent: Something went wrong");
-        handleErrorsMessage(rep);
+        handleError(rep);
         return false;
       }
     } catch (err) {
       console.log(err);
-      handleErrorsMessage(err);
+      handleError(err);
       return false;
     } finally {
       setLoading(false);
@@ -103,7 +85,7 @@ export function useStudentList() {
     console.log("hook:deleteStudnet ", oldStudent.email);
     try {
       setLoading(true);
-      setErrors(null);
+      clearError();
       const rep = await updateStudent(newStudent);
 
       const [firstName, ...rest] = newStudent.fullname.trim().split(" ");
@@ -113,6 +95,7 @@ export function useStudentList() {
         prev.map((student) =>
           student.id === newStudent.id
             ? {
+                ...student,
                 id: newStudent.id,
                 full_name: newStudent.fullname,
                 first_name: firstName,
@@ -126,23 +109,12 @@ export function useStudentList() {
       console.log("success: editStudent: ", rep);
       return true;
     } catch (err) {
-      handleErrorsMessage(err);
+      handleError(err);
       return false;
     } finally {
       setLoading(false);
       console.log("end -- editStudent");
     }
-  }
-
-  async function myEnrollments(student_id: number) {
-    const res = await getStudentEnrollments(student_id);
-
-
-
-    console.log("student id: ", student_id);
-    console.log("student id: ", res);
-
-    return res;
   }
 
   useEffect(() => {
@@ -151,14 +123,14 @@ export function useStudentList() {
     const timer = setTimeout(async () => {
       try {
         setLoading(true);
-        setErrors(null);
+        clearError();
         const data = await getStudents(query, controller.signal);
         setStudents(data.data);
         setPaginate(data.meta);
 
         console.log("data", data.data);
       } catch (err) {
-        handleErrorsMessage(err);
+        handleError(err);
       } finally {
         setLoading(false);
       }
@@ -178,12 +150,11 @@ export function useStudentList() {
     query,
     setQuery,
 
-    errors,
+    error,
     messages,
 
     loading,
 
     paginate,
-    myEnrollments,
   };
 }

@@ -7,11 +7,12 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import type { StudentType } from "../types";
 import { Alert } from "@mui/material";
+import type { ApiErrorType } from "../../../utils/apiError";
 
 
 type Props = {
   open: boolean;
-  backerrors: string | null;
+  backerrors: ApiErrorType | null;
 
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   student: StudentType | null;
@@ -44,7 +45,7 @@ export default function DeleteStudentDialog({
             }}
             severity="error"
           >
-            {backerrors}
+            {backerrors.message}
           </Alert>
         )}
 

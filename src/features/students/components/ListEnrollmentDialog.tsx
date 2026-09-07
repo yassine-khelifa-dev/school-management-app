@@ -5,10 +5,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import type { StudentType } from "../types";
-import { useStudentList } from "../hooks/useStudentList";
 import type { EnrollmentType } from "../../enrollments/types";
 import moment from "moment";
 import {
+  Alert,
   Avatar,
   CardContent,
   CardHeader,
@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { delay } from "../../enrollments/services/enrollmentService";
+import { useStudentEnrollments } from "../hooks/useStudentEnrollments";
 type Props = {
   open: boolean;
   setClose: () => void;
@@ -31,7 +32,7 @@ export default function ConfirmationDialogRaw({
 }: Props) {
   const radioGroupRef = useRef<HTMLElement>(null);
 
-  const { myEnrollments } = useStudentList();
+  const { myEnrollments, loading, error, clearError } = useStudentEnrollments();
   const [myEnrollmentsList, setMyEnrollmentsList] = useState<EnrollmentType[]>(
     [],
   );
@@ -43,7 +44,7 @@ export default function ConfirmationDialogRaw({
   };
 
   useEffect(() => {
-    if (!selectStudent) return;
+    if (!open  ||  !selectStudent) return;
     const getData = async () => {
       const res = await myEnrollments(selectStudent?.id);
       await delay(500);
@@ -51,11 +52,12 @@ export default function ConfirmationDialogRaw({
     };
 
     getData();
-  }, [selectStudent]);
+  }, [open, selectStudent]);
 
   const handleCancel = () => {
     setMyEnrollmentsList([]);
     setClose();
+    clearError();
   };
   return (
     <Dialog
@@ -70,7 +72,7 @@ export default function ConfirmationDialogRaw({
     >
       <DialogTitle>Student {selectStudent?.full_name}</DialogTitle>
       <DialogContent dividers>
-        {myEnrollmentsList.length === 0 && (
+        {loading && (
           <>
             <div
               style={{
@@ -83,6 +85,12 @@ export default function ConfirmationDialogRaw({
               <CircularProgress color="success" aria-label="Loading…" />
             </div>
           </>
+        )}
+
+        {error && <Alert severity="error">{error.message}</Alert>}
+
+        {!loading && !error && myEnrollmentsList.length === 0 && (
+          <Alert severity="info">No enrollment history.</Alert>
         )}
 
         {myEnrollmentsList?.map((option) => (

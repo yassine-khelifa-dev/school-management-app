@@ -10,11 +10,12 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateStudentSchema, type InputsCreateStudentValues } from "../types";
 import { Alert } from "@mui/material";
+import type { ApiErrorType } from "../../../utils/apiError";
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   confirm: (data: InputsCreateStudentValues) => Promise<boolean>;
-  backerrors: string | null;
+  backerrors: ApiErrorType | null;
 };
 
 export default function CreateStudentDialog({
@@ -66,7 +67,7 @@ export default function CreateStudentDialog({
                 }}
                 severity="error"
               >
-                {backerrors}
+                {backerrors.message}
               </Alert>
             )}
 

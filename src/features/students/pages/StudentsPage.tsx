@@ -35,7 +35,7 @@ export default function StudentsPage() {
     query,
     setQuery,
 
-    errors,
+    error,
     messages,
 
     loading,
@@ -72,7 +72,7 @@ export default function StudentsPage() {
 
     console.log("student edited ! old value", selectedStudent);
     console.log("student edited ! new value", data);
-    console.log("**", errors);
+    console.log("**", error.message);
 
     const success = await editStudent(data, selectedStudent);
 
@@ -123,7 +123,7 @@ export default function StudentsPage() {
         open={openCreateDialog}
         setOpen={setOpenCreateDialog}
         confirm={handleCreate}
-        backerrors={errors}
+        backerrors={error}
       />
 
       <DeleteStudentDialog
@@ -131,14 +131,14 @@ export default function StudentsPage() {
         setOpen={setOpenDeleteDialog}
         student={selectedStudent}
         confirm={handleConfirmDel}
-        backerrors={errors}
+        backerrors={error}
       />
       <EditStudentDialog
         open={openEditDialog}
         setOpen={setOpenEditDialog}
         student={selectedStudent}
         confirm={handleConfirEdit}
-        backerrors={errors}
+        backerrors={error}
       />
 
       <div
@@ -146,7 +146,7 @@ export default function StudentsPage() {
           padding: "5px 0px",
         }}
       >
-        {errors && <Alert severity="error">{errors}</Alert>}
+        {error && <Alert severity="error">{error.message}</Alert>}
         {messages && <Alert severity="info">{messages}</Alert>}
       </div>
 
@@ -166,7 +166,7 @@ export default function StudentsPage() {
           />
         </>
       )}
-      {students?.length === 0 && !loading && !errors && (
+      {students?.length === 0 && !loading && !error && (
         <span>There are no Students! </span>
       )}
     </>
