@@ -15,24 +15,21 @@ class StudentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'full_name' => $this->full_name,
-            'last_name' => $this->last_name,
-            'first_name' => $this->first_name,
-            'email' => $this->user->email,
-            'phone' => $this->phone,
+
+            ...((new StudentSummaryResource($this->resource))->toArray($request)),
+
             "enrollments_count" => $this->enrollments_count,
-            'enrollment' => $this->whenLoaded('enrollment', function () {
+            'enrollment' => $this->whenLoaded('currentEnrollment', function () {
                 return [
-                    'id' => $this->enrollment->id,
+                    'id' => $this->currentEnrollment->id,
                     'schoolClass' => new ClassResource(
-                        $this->enrollment->schoolClass
+                        $this->currentEnrollment->schoolClass
                     ),
                     'academicYear' => new AcademicResource(
-                        $this->enrollment->academicYear
+                        $this->currentEnrollment->academicYear
                     ),
-                    'status' => $this->enrollment->status,
-                    'enrolled_at' => $this->enrollment->enrolled_at,
+                    'status' => $this->currentEnrollment->status,
+                    'enrolled_at' => $this->currentEnrollment->enrolled_at,
                 ];
             }),
         ];

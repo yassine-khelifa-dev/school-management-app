@@ -33,6 +33,10 @@ class TeacherMyStudentsRequest extends FormRequest
                 'nullable',
                 'integer',
                 Rule::exists('classes', 'id'),
+            ],
+            'fullname' => [
+                'nullable',
+                'string',
             ]
         ];
     }

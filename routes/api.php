@@ -11,15 +11,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login'])->name('auth.login');
 
-Route::get("/test", function () {
-
-    return response()->json([
-        'id' => 1,
-        'name' => 'Yassine'
-    ]);
-});
-
-
 Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
     Route::get('me', function () {

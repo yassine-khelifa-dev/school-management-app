@@ -17,7 +17,7 @@ class EnrollmentResource extends JsonResource
         return [
             'id' => $this->id,
             "schoolClass" =>  new ClassResource($this->schoolClass),
-            "student" =>  new StudentResource($this->student),
+            "student" =>  new StudentSummaryResource($this->whenLoaded('student')),
 
             "academicYear" =>  new AcademicResource($this->academicYear),
 
