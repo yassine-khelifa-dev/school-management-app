@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Enums\RoleEnum;
 use App\Models\Exam;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ExamPolicy
 {
@@ -14,7 +13,9 @@ class ExamPolicy
      */
     public function viewAny(User $user): bool
     {
-        return  $user->role === RoleEnum::ADMIN->value;
+        return  $user->role === RoleEnum::ADMIN->value
+            ||
+            $user->role ===  RoleEnum::TEACHER->value;
     }
 
     /**
@@ -23,7 +24,11 @@ class ExamPolicy
     public function view(User $user, Exam $exam): bool
     {
         return $user->role === RoleEnum::ADMIN->value ||
-            ($user->role === RoleEnum::TEACHER->value && $user->teacher->id == $exam->teachingAssignment->teacher->id);
+            (
+                $user->role === RoleEnum::TEACHER->value
+                &&
+                $user->teacher->id == $exam->teachingAssignment->teacher->id
+            );
     }
 
     /**
@@ -31,8 +36,9 @@ class ExamPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === RoleEnum::ADMIN->value ||
-            ($user->role === RoleEnum::TEACHER->value );
+        return (
+            $user->role === RoleEnum::TEACHER->value
+        );
     }
 
     /**
@@ -40,14 +46,19 @@ class ExamPolicy
      */
     public function update(User $user, Exam $exam): bool
     {
-        return $user->role === RoleEnum::ADMIN->value ||
-            ($user->role === RoleEnum::TEACHER->value && $user->teacher->id == $exam->teachingAssignment->teacher->id);
+        return (
+            $user->role === RoleEnum::TEACHER->value
+            &&
+            $user->teacher->id == $exam->teachingAssignment->teacher->id
+        );
     }
 
-     public function manageGrades(User $user, Exam $exam): bool
+    public function manageGrades(User $user, Exam $exam): bool
     {
-        return $user->role === RoleEnum::ADMIN->value ||
-            ($user->role === RoleEnum::TEACHER->value && $user->teacher->id == $exam->teachingAssignment->teacher->id);
+        return
+            $user->role === RoleEnum::TEACHER->value
+            &&
+            $user->teacher->id == $exam->teachingAssignment->teacher->id;
     }
 
 
@@ -57,7 +68,12 @@ class ExamPolicy
      */
     public function delete(User $user, Exam $exam): bool
     {
-        return  $user->role === RoleEnum::ADMIN->value;
+        return $user->role === RoleEnum::ADMIN->value ||
+            (
+                $user->role === RoleEnum::TEACHER->value
+                &&
+                $user->teacher->id == $exam->teachingAssignment->teacher->id
+            );
     }
 
     /**

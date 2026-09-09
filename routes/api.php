@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\EnrollmentController;
 use App\Http\Controllers\Api\SchoolClassController;
 use App\Http\Controllers\Api\Security\AuthController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\ExamController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -24,9 +25,25 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 
-    // Get students list for Admin and Teacher :
+    //  students  for Admin and Teacher :
     Route::get('students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
     Route::get('students/{student}/enrollments', [StudentController::class, 'studentEnrollments'])->name('students.enrollments');
+
+
+    //  Exams  for Admin and Teacher
+    Route::get('exams', [ExamController::class, 'index'])->name('exams.index');
+    Route::get('exams/{exam}', [ExamController::class, 'show'])->name('exams.show');
+    Route::delete('exams/{exam}', [ExamController::class, 'destroy'])->name('exams.destroy');
+
+
+    Route::middleware('role:teacher')->group(function () {
+        Route::post('exams', [ExamController::class, 'store'])->name('exams.store');
+        Route::patch('exams/{exam}', [ExamController::class, 'update'])->name('exams.update');
+    });
+
+
+
 
 
 
@@ -45,6 +62,4 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
         // AcademicYear:
         Route::get('academic-year', [AcademicYearController::class, 'index'])->name('academic-year.index');
     });
-
-    Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
 });

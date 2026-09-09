@@ -57,4 +57,9 @@ class TeachingAssignment extends Model
             ->where('subject_id', $subjectId)
             ->where('academic_year_id', $academicYearId);
     }
+
+    public function scopeForTeacher(Builder $builder, Teacher $teacher): Builder
+    {
+        return  $builder->where('teacher_id', $teacher->id);
+    }
 }

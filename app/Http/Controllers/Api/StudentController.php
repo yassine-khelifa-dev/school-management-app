@@ -50,7 +50,6 @@ class StudentController extends Controller
         }
     }
 
-
     public function getStudentForAdmin(TeacherMyStudentsRequest $request,)
     {
         $fullname = $request->input('fullname') ?? null;
@@ -88,7 +87,6 @@ class StudentController extends Controller
 
         return   StudentResource::collection($students);
     }
-
 
     public function studentEnrollments(Request $request, Student $student)
     {
