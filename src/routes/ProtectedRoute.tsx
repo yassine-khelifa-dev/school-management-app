@@ -17,14 +17,15 @@ export default function ProtectedRoute({ role }: Props) {
 
         const res = await api.get("me");
 
-        const data =  res.data;
+        const data = res.data;
         const user_role = data?.role;
 
-        console.log("me: ",user_role, "props: ",role);
+        console.log("me: ", user_role, "props: ", role);
 
         if (user_role === role) setStatus("allowed");
         else setStatus("forbidden");
       } catch (error) {
+        // console.log('eProtectedRoute:err => ', error)
         if (axios.isAxiosError(error)) {
           if (error.response?.status === 401) {
             setStatus("unauthenticated");
@@ -36,8 +37,7 @@ export default function ProtectedRoute({ role }: Props) {
             return;
           }
         }
-
-        setStatus("forbidden");
+        setStatus("network");
       }
     };
 
@@ -47,6 +47,11 @@ export default function ProtectedRoute({ role }: Props) {
   if (status === "loading") {
     console.log("loading");
     return <p>Checking access...</p>;
+  }
+
+  if (status === "network") {
+    console.log("NetWork erro");
+    return <p>Error network...</p>;
   }
 
   if (status === "unauthenticated") {

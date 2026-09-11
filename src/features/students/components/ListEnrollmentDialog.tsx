@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -44,7 +44,7 @@ export default function ConfirmationDialogRaw({
   };
 
   useEffect(() => {
-    if (!open  ||  !selectStudent) return;
+    if (!open || !selectStudent) return;
     const getData = async () => {
       const res = await myEnrollments(selectStudent?.id);
       await delay(500);
@@ -94,7 +94,7 @@ export default function ConfirmationDialogRaw({
         )}
 
         {myEnrollmentsList?.map((option) => (
-          <>
+          <Fragment key={option.id}>
             <CardHeader
               avatar={
                 <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
@@ -112,16 +112,16 @@ export default function ConfirmationDialogRaw({
 
             <CardContent>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                <h4> Status: {option.status}</h4>
-                <h4>
-                  {" "}
-                  Enrolled at: {moment(option.enrolled_at).format("YYYY-MM-DD")}
-                </h4>
+                Status: {option.status}
+              </Typography>
+
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                Enrolled at: {moment(option.enrolled_at).format("YYYY-MM-DD")}
               </Typography>
             </CardContent>
 
             <hr />
-          </>
+          </Fragment>
         ))}
       </DialogContent>
       <DialogActions>
