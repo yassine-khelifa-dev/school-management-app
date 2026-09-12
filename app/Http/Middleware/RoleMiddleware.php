@@ -14,11 +14,21 @@ class RoleMiddleware
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next,string $role): Response
+    public function handle(Request $request, Closure $next, string $role): Response
     {
-        if (! Auth::check()) abort(401);
+        if (! Auth::check()) {
+            abort(
+                401,
+                'You must be authenticated to access this resource.'
+            );
+        }
 
-        if (Auth::user()->role !== $role) abort(403);
+        if (Auth::user()->role !== $role) {
+            abort(
+                403,
+                'You are not allowed to access this action.'
+            );
+        }
 
         return $next($request);
     }

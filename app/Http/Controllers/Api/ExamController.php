@@ -7,12 +7,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Exam\ExamStoreRequest;
 use App\Http\Requests\Exam\ExamUpdateRequest;
 use App\Http\Requests\ExamIndexRequest;
+use App\Http\Resources\AcademicResource;
+use App\Http\Resources\ClassResource;
 use App\Http\Resources\ExamResource;
+use App\Http\Resources\SubjectResource;
+use App\Models\AcademicYear;
 use App\Models\Exam;
+use App\Models\SchoolClass;
+use App\Models\Subject;
 use App\Models\Teacher;
 use App\Queries\ExamIndexQuery;
-use Exception;
 use Illuminate\Support\Facades\Auth;
+use Request;
 
 class ExamController extends Controller
 {
@@ -40,7 +46,6 @@ class ExamController extends Controller
         }
     }
 
-
     public function getExamsForAdmin(ExamIndexRequest $request, ExamIndexQuery $query)
     {
         $exams = $query->buildForAdmin($request->validated())
@@ -57,6 +62,41 @@ class ExamController extends Controller
             ->withQueryString();
 
         return ExamResource::collection($exams);
+    }
+
+
+    public function filterOptions(Request $request)
+    {
+        $this->authorize('viewAny', Exam::class);
+
+        $user = Auth::user();
+
+        switch ($user?->role) {
+
+            case RoleEnum::ADMIN->value:
+                $academicYers = AcademicResource::collection(AcademicYear::latest('name')->get());
+                $subjects = SubjectResource::collection(Subject::latest()->get());
+                $classes = ClassResource::collection(SchoolClass::latest()->get());
+                return response()->json(compact('academicYers', 'subjects', 'classes'), 200);
+
+            case RoleEnum::TEACHER->value:
+                $academicYers =
+                    AcademicResource::collection(AcademicYear::query()->withWhereHas(
+                        'teachingAssignments',
+                        fn($q) => $q->where('teacher_id', $user->teacher->id)
+                    )->get());
+                $subjects =  SubjectResource::collection(Subject::query()->withWhereHas(
+                    'teachingAssignments',
+                    fn($q) => $q->where('teacher_id', $user->teacher->id)
+                )->get());
+                $classes =  ClassResource::collection(SchoolClass::query()->withWhereHas(
+                    'teachingAssignments',
+                    fn($q) => $q->where('teacher_id', $user->teacher->id)
+                )->get());
+                return response()->json(compact('academicYers', 'subjects', 'classes'), 200);
+            default:
+                return response()->noContent();
+        };
     }
 
 

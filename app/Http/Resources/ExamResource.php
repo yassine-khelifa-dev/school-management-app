@@ -18,6 +18,7 @@ class ExamResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'exam_date' =>  date('Y-m-d', strtotime($this->exam_date)),
+            'description' => $this->description,
             'maximum_score' => $this->maximum_score,
             'teaching_assignment_id' => $this->teaching_assignment_id,
             'teacher' =>  $this->whenLoaded('teachingAssignment', function () {

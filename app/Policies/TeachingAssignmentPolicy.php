@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\RoleEnum;
 use App\Models\TeachingAssignment;
 use App\Models\User;
 use Auth;
@@ -15,6 +16,14 @@ class TeachingAssignmentPolicy
     public function viewAny(User $user): bool
     {
         return false;
+    }
+
+
+    public function options(User $user)
+    {
+        return  $user->role === RoleEnum::ADMIN->value
+            ||
+            $user->role ===  RoleEnum::TEACHER->value;
     }
 
     /**

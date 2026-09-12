@@ -15,6 +15,7 @@ class Exam extends Model
         'teaching_assignment_id',
         'title',
         'exam_date',
+        'description',
         'maximum_score',
     ];
 

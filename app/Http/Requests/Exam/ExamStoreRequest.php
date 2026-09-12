@@ -5,6 +5,7 @@ namespace App\Http\Requests\Exam;
 use App\Models\TeachingAssignment;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
 class ExamStoreRequest extends FormRequest
@@ -19,6 +20,15 @@ class ExamStoreRequest extends FormRequest
         if (! $teaching_assignment) return false;
 
         return  Gate::allows('createExam', $teaching_assignment);
+    }
+
+    protected function failedAuthorization(): void
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'You are not allowed to create an exam for this teaching assignment.',
+            ], 403)
+        );
     }
 
     /**
