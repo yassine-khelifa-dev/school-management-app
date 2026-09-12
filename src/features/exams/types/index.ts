@@ -2,11 +2,13 @@ import type { AcademicYearsType } from "../../academicYears/types";
 import type { SchoolClassType } from "../../schoolClasses/types";
 import type { SubjectType } from "../../subjects/types";
 import type { TeacherType } from "../../teachers/types";
+import * as z from "zod";
 
 export type ExamType = {
   id: number;
   title: string;
   exam_date: string;
+  description?: string;
   maximum_score: number;
   teaching_assignment_id: number;
   teacher: TeacherType;
@@ -42,3 +44,13 @@ export type ExamFilterType = {
   subjects: SubjectType[];
   classes: SchoolClassType[];
 };
+
+export const FormSchemaExam = z.object({
+  title: z.string().min(5),
+  description: z.string(),
+  teaching_assignment_id: z.number()
+    .positive("Teaching assignment is required"),
+  exam_date: z.string(),
+  maximum_score: z.number().max(1000).min(1),
+});
+export type FormExam = z.infer<typeof FormSchemaExam>;

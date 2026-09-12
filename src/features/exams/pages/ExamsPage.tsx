@@ -5,10 +5,15 @@ import ExamTable from "../components/ExamTable";
 import ExamFilter from "../components/ExamFilter";
 import DeleteExamDialog from "../components/DeleteExamDialog";
 import { useState } from "react";
-import type { ExamType } from "../types";
+import type { ExamType, FormExam } from "../types";
 import CheckIcon from "@mui/icons-material/Check";
+import EditExamDialog from "../components/EditExamDialog";
+import CreateExamDialog from "../components/CreateExamDialog";
+import { useExamPolicy } from "../permissions";
 
 export default function ExamsPage() {
+  const { canCreate } = useExamPolicy();
+
   const {
     examList,
     handleDeleteExam,
@@ -18,6 +23,8 @@ export default function ExamsPage() {
     loading,
     error,
     changeFilter,
+    handleEditExam,
+    handleCreateExam,
   } = useExam();
 
   const [examSelected, setExamSelected] = useState<ExamType | null>(null);
@@ -25,15 +32,42 @@ export default function ExamsPage() {
   const [openDeleteExamDialog, setOpenDeleteExamDialog] =
     useState<boolean>(false);
 
+  const [openEditExamDialog, setOpenEditExamDialog] = useState<boolean>(false);
+  const [openCreateExamDialog, setOpenCreateExamDialog] =
+    useState<boolean>(false);
+
+  const handleCreate = async (data: FormExam) => {
+    if (!openCreateExamDialog) return false;
+    console.log("handleCreate", data);
+    const res = await handleCreateExam(data);
+    return res;
+  };
+
+  const handleOnEdit = (exam: ExamType) => {
+    setExamSelected(exam);
+    setOpenEditExamDialog(true);
+  };
+
+  const handleConfirmEdit = async (data: FormExam) => {
+    if (!(examSelected && openEditExamDialog)) return false;
+    const res = await handleEditExam(examSelected, data);
+    if (res === true) setExamSelected(null);
+
+    return res;
+  };
+
   const handleOndelete = (exam: ExamType) => {
     setExamSelected(exam);
     setOpenDeleteExamDialog(true);
   };
 
   const handleConfirmDeleteDialog = async () => {
-    if (!examSelected) return;
+    if (!(examSelected && openDeleteExamDialog)) return;
     const success = await handleDeleteExam(examSelected);
-    if (success) setOpenDeleteExamDialog(false);
+    if (success) {
+      setExamSelected(null);
+      setOpenDeleteExamDialog(false);
+    }
   };
 
   return (
@@ -47,13 +81,15 @@ export default function ExamsPage() {
       >
         <h1>Exams</h1>
 
-        <Button
-          variant="contained"
-          color="success"
-          //  onClick={handleClickOpenCreateDialog}
-        >
-          <AddIcon sx={{ paddingRight: "2px" }} /> Exam
-        </Button>
+        {canCreate && (
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => setOpenCreateExamDialog(true)}
+          >
+            <AddIcon sx={{ paddingRight: "2px" }} /> Exam
+          </Button>
+        )}
       </div>
 
       {error && (
@@ -72,12 +108,31 @@ export default function ExamsPage() {
 
       <ExamFilter query={query} changeFilter={changeFilter} />
 
-      {examSelected && (
+      {examSelected && openDeleteExamDialog && (
         <DeleteExamDialog
           open={openDeleteExamDialog}
           setClose={setOpenDeleteExamDialog}
           exam={examSelected}
           handleConfirm={handleConfirmDeleteDialog}
+          error={error?.message}
+        />
+      )}
+
+      {examSelected && openEditExamDialog && (
+        <EditExamDialog
+          exam={examSelected}
+          open={openEditExamDialog}
+          setClose={setOpenEditExamDialog}
+          confirmEdit={handleConfirmEdit}
+          error={error?.message}
+        />
+      )}
+
+      {openCreateExamDialog && (
+        <CreateExamDialog
+          open={openCreateExamDialog}
+          setClose={setOpenCreateExamDialog}
+          confirmCreate={handleCreate}
           error={error?.message}
         />
       )}
@@ -102,6 +157,7 @@ export default function ExamsPage() {
         examList={examList}
         changePage={changePage}
         onDelete={handleOndelete}
+        onEdit={handleOnEdit}
       />
     </>
   );

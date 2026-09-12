@@ -1,7 +1,17 @@
-import { type ExamListType, type ExamQueryType, type ExamType } from "../types";
+import {
+  type ExamListType,
+  type ExamQueryType,
+  type ExamType,
+  type FormExam,
+} from "../types";
 import { useEffect, useState } from "react";
 import useApiError from "../../../hooks/useApiError";
-import { deleteExam, getExams } from "../services/examService";
+import {
+  createExam,
+  deleteExam,
+  EditExam,
+  getExams,
+} from "../services/examService";
 
 export default function useExam() {
   const [examList, setExamList] = useState<ExamListType | null>(null);
@@ -38,6 +48,25 @@ export default function useExam() {
     };
   }, [query]);
 
+  const handleEditExam = async (exam: ExamType, data: FormExam) => {
+    try {
+      clearError();
+      setLoading(true);
+      const res = await EditExam(exam, data);
+      if (res.status === 200) {
+        changePage(query.page);
+        setMessages("Exam has been updated successfully with ID: " + exam.id);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      handleError(err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const changeFilter = (field: string, value: string) =>
     setQuery((prev) => ({
       ...prev,
@@ -53,7 +82,6 @@ export default function useExam() {
 
     try {
       setMessages("");
-
       clearError();
       setLoading(true);
 
@@ -80,6 +108,28 @@ export default function useExam() {
     }
   };
 
+  const handleCreateExam = async (exam: FormExam) => {
+    try {
+      setMessages("");
+      clearError();
+      setLoading(true);
+
+      const res = await createExam(exam);
+
+      if (res.status === 201) {
+        changePage(query.page);
+
+        setMessages("Exam has been created successfully");
+        return true;
+      }
+      return false;
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     examList,
     loading,
@@ -89,5 +139,8 @@ export default function useExam() {
     query,
     changeFilter,
     message,
+    clearError,
+    handleEditExam,
+    handleCreateExam,
   };
 }

@@ -5,6 +5,7 @@ import type {
   ExamListType,
   ExamQueryType,
   ExamType,
+  FormExam,
 } from "../types";
 
 export async function getExams(query: ExamQueryType): Promise<ExamListType> {
@@ -16,13 +17,23 @@ export async function getExams(query: ExamQueryType): Promise<ExamListType> {
     },
   });
 
-  await delay(100);
+  await delay(500);
   return res.data;
 }
 
 export async function getFilterOptions(): Promise<ExamFilterType> {
   const res = await api.get("exams/filter-options");
   return res.data;
+}
+
+export async function createExam(exam: FormExam) {
+  const res = await api.post("exams", exam);
+  return res;
+}
+
+export async function EditExam(exam: ExamType, data: FormExam) {
+  const res = await api.patch("exams/" + exam.id, data);
+  return res;
 }
 
 export async function deleteExam(exam: ExamType) {

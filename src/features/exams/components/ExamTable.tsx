@@ -9,14 +9,23 @@ import Paper from "@mui/material/Paper";
 import { Button, Pagination } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from "@mui/icons-material/EditSquare";
+import { useExamPolicy } from "../permissions";
 
 type Props = {
   examList: ExamListType;
   changePage: (page: number) => void;
   onDelete: (exam: ExamType) => void;
+  onEdit: (exam: ExamType) => void;
 };
 
-export default function ExamTable({ examList, changePage, onDelete }: Props) {
+export default function ExamTable({
+  examList,
+  changePage,
+  onDelete,
+  onEdit,
+}: Props) {
+  const { canEdit, canDelete } = useExamPolicy();
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -55,16 +64,21 @@ export default function ExamTable({ examList, changePage, onDelete }: Props) {
                       justifyContent: "right",
                     }}
                   >
-                    <Button variant="contained">
-                      <EditSquareIcon />
-                    </Button>
-                    <Button
-                      color="error"
-                      onClick={() => onDelete(exam)}
-                      variant="contained"
-                    >
-                      <DeleteIcon />
-                    </Button>
+                    {canEdit && (
+                      <Button onClick={() => onEdit(exam)} variant="contained">
+                        <EditSquareIcon />
+                      </Button>
+                    )}
+
+                    {canDelete && (
+                      <Button
+                        color="error"
+                        onClick={() => onDelete(exam)}
+                        variant="contained"
+                      >
+                        <DeleteIcon />
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
