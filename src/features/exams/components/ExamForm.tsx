@@ -43,7 +43,7 @@ export default function ExamForm({
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormExam>({
     resolver: zodResolver(FormSchemaExam),
     defaultValues: {
@@ -186,7 +186,11 @@ export default function ExamForm({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setClose(false)}>Cancel</Button>
-          <Button type="submit" form="subscription-form">
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            form="subscription-form"
+          >
             {action == "CREATE" && "Create"}
             {action == "EDIT" && "Edit"}
           </Button>

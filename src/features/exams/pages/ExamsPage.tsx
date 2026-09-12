@@ -1,6 +1,5 @@
 import { Alert, Button, CircularProgress } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import useExam from "../hooks/useExam";
 import ExamTable from "../components/ExamTable";
 import ExamFilter from "../components/ExamFilter";
 import DeleteExamDialog from "../components/DeleteExamDialog";
@@ -10,22 +9,13 @@ import CheckIcon from "@mui/icons-material/Check";
 import EditExamDialog from "../components/EditExamDialog";
 import CreateExamDialog from "../components/CreateExamDialog";
 import { useExamPolicy } from "../permissions";
+import useExamList from "../hooks/useExamList";
+import useExamActions from "../hooks/useExamActions";
 
 export default function ExamsPage() {
   const { canCreate } = useExamPolicy();
-
-  const {
-    examList,
-    handleDeleteExam,
-    message,
-    changePage,
-    query,
-    loading,
-    error,
-    changeFilter,
-    handleEditExam,
-    handleCreateExam,
-  } = useExam();
+  const list = useExamList();
+  const actions = useExamActions();
 
   const [examSelected, setExamSelected] = useState<ExamType | null>(null);
 
@@ -36,37 +26,56 @@ export default function ExamsPage() {
   const [openCreateExamDialog, setOpenCreateExamDialog] =
     useState<boolean>(false);
 
+  const handleOpenCreate = () => {
+    actions.clearError();
+    setOpenCreateExamDialog(true);
+  };
+
   const handleCreate = async (data: FormExam) => {
     if (!openCreateExamDialog) return false;
     console.log("handleCreate", data);
-    const res = await handleCreateExam(data);
-    return res;
+    const success = await actions.create(data);
+
+    if (success) {
+      list.changePage(1);
+    }
+
+    return success;
   };
 
   const handleOnEdit = (exam: ExamType) => {
+    actions.clearError();
     setExamSelected(exam);
     setOpenEditExamDialog(true);
   };
 
   const handleConfirmEdit = async (data: FormExam) => {
     if (!(examSelected && openEditExamDialog)) return false;
-    const res = await handleEditExam(examSelected, data);
-    if (res === true) setExamSelected(null);
-
-    return res;
+    const success = await actions.edit(examSelected, data);
+    if (success === true) {
+      setExamSelected(null);
+      list.refresh();
+    }
+    return success;
   };
 
   const handleOndelete = (exam: ExamType) => {
+    actions.clearError();
     setExamSelected(exam);
     setOpenDeleteExamDialog(true);
   };
 
   const handleConfirmDeleteDialog = async () => {
     if (!(examSelected && openDeleteExamDialog)) return;
-    const success = await handleDeleteExam(examSelected);
+    const success = await actions.del(examSelected);
     if (success) {
       setExamSelected(null);
       setOpenDeleteExamDialog(false);
+      if (list.examList?.data.length === 1 && list.query.page > 1) {
+        list.changePage(list.query.page - 1);
+      } else {
+        list.refresh();
+      }
     }
   };
 
@@ -85,28 +94,35 @@ export default function ExamsPage() {
           <Button
             variant="contained"
             color="success"
-            onClick={() => setOpenCreateExamDialog(true)}
+            onClick={handleOpenCreate}
+            disabled={actions.loading}
           >
-            <AddIcon sx={{ paddingRight: "2px" }} /> Exam
+            {actions.loading ? (
+              <CircularProgress size={20} />
+            ) : (
+              <>
+                <AddIcon sx={{ paddingRight: "2px" }} /> Exam
+              </>
+            )}
           </Button>
         )}
       </div>
 
-      {error && (
+      {list.error && (
         <div style={{ margin: "10px 0px" }}>
-          <Alert severity="error">{error.message}</Alert>
+          <Alert severity="error">{list.error.message}</Alert>
         </div>
       )}
 
-      {message && (
+      {actions.message && (
         <div style={{ margin: "px 0px" }}>
           <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-            {message}
+            {actions.message}
           </Alert>
         </div>
       )}
 
-      <ExamFilter query={query} changeFilter={changeFilter} />
+      <ExamFilter query={list.query} changeFilter={list.changeFilter} />
 
       {examSelected && openDeleteExamDialog && (
         <DeleteExamDialog
@@ -114,7 +130,8 @@ export default function ExamsPage() {
           setClose={setOpenDeleteExamDialog}
           exam={examSelected}
           handleConfirm={handleConfirmDeleteDialog}
-          error={error?.message}
+          error={actions.error?.message}
+          loading={actions.loading}
         />
       )}
 
@@ -124,7 +141,7 @@ export default function ExamsPage() {
           open={openEditExamDialog}
           setClose={setOpenEditExamDialog}
           confirmEdit={handleConfirmEdit}
-          error={error?.message}
+          error={actions.error?.message}
         />
       )}
 
@@ -133,11 +150,11 @@ export default function ExamsPage() {
           open={openCreateExamDialog}
           setClose={setOpenCreateExamDialog}
           confirmCreate={handleCreate}
-          error={error?.message}
+          error={actions.error?.message}
         />
       )}
 
-      {loading && (
+      {list.loading && (
         <div
           style={{
             position: "absolute",
@@ -154,8 +171,8 @@ export default function ExamsPage() {
       )}
 
       <ExamTable
-        examList={examList}
-        changePage={changePage}
+        examList={list.examList}
+        changePage={list.changePage}
         onDelete={handleOndelete}
         onEdit={handleOnEdit}
       />

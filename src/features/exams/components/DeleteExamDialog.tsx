@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import type { ExamType } from "../types";
-import { Alert } from "@mui/material";
+import { Alert, CircularProgress } from "@mui/material";
 
 type Props = {
   exam: ExamType;
@@ -14,6 +14,7 @@ type Props = {
   setClose: (open: boolean) => void;
   handleConfirm: () => void;
   error: string;
+  loading: boolean;
 };
 
 export default function DeleteExamDialog({
@@ -21,7 +22,8 @@ export default function DeleteExamDialog({
   open,
   setClose,
   handleConfirm,
-  error
+  error,
+  loading,
 }: Props) {
   return (
     <Fragment>
@@ -47,7 +49,9 @@ export default function DeleteExamDialog({
           <Button onClick={() => setClose(false)} autoFocus>
             Disagree
           </Button>
-          <Button onClick={handleConfirm}>Delete</Button>
+          <Button disabled={loading} onClick={handleConfirm}>
+            {loading ? <CircularProgress size={20} /> : "Delete"}
+          </Button>
         </DialogActions>
       </Dialog>
     </Fragment>
