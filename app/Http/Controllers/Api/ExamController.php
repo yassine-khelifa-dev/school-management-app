@@ -18,7 +18,8 @@ use App\Models\Subject;
 use App\Models\Teacher;
 use App\Queries\ExamIndexQuery;
 use Illuminate\Support\Facades\Auth;
-use Request;
+use Illuminate\Http\Request;
+
 
 class ExamController extends Controller
 {

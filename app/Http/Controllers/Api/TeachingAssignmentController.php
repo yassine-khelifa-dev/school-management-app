@@ -64,10 +64,7 @@ class TeachingAssignmentController extends Controller
 
 
         if ($user->teacher) {
-            $query->where(
-                'teacher_id',
-                $user->teacher->id
-            );
+            $query->forTeacher($user->teacher);
         }
         return response()->json(
             TeachingAssignmentSummaryResource::collection(
