@@ -17,6 +17,7 @@ export default function ExamsPage() {
   const list = useExamList();
   const actions = useExamActions();
 
+
   const [examSelected, setExamSelected] = useState<ExamType | null>(null);
 
   const [openDeleteExamDialog, setOpenDeleteExamDialog] =

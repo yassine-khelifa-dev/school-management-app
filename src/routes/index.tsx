@@ -7,6 +7,7 @@ import EnrollmentPage from "../features/enrollments/pages/EnrollmentPage";
 import ForbiddenPage from "../pages/ForbiddenPage";
 import AuthenticatedRoute from "./AuthenticatedRoute";
 import ExamsPage from "../features/exams/pages/ExamsPage";
+import ExamDetailsPage from "../features/exams/pages/ExamDetailsPage";
 
 export default function AppRoute() {
   return (
@@ -18,6 +19,7 @@ export default function AppRoute() {
       <Route element={<AuthenticatedRoute />}>
         <Route path="/logout" element={<Logout />} />
         <Route path="/exams" element={<ExamsPage />} />
+        <Route path="/exams/:id" element={<ExamDetailsPage />} />
       </Route>
 
       <Route element={<ProtectedRoute role="admin" />}>

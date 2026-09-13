@@ -10,7 +10,8 @@ import { Button, Pagination } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from "@mui/icons-material/EditSquare";
 import { useExamPolicy } from "../permissions";
-
+import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
+import { useNavigate } from "react-router";
 type Props = {
   examList: ExamListType;
   changePage: (page: number) => void;
@@ -24,7 +25,8 @@ export default function ExamTable({
   onDelete,
   onEdit,
 }: Props) {
-  const { canEdit, canDelete } = useExamPolicy();
+  const { canEdit, canViewAny, canDelete } = useExamPolicy();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -61,9 +63,21 @@ export default function ExamTable({
                     style={{
                       display: "flex",
                       gap: "3px",
-                      justifyContent: "right",
+                      justifyContent: "center",
                     }}
                   >
+                    {canViewAny && (
+                      <Button
+                        color="warning"
+                        onClick={() =>
+                          navigate("/exams/"+exam.id)
+                        }
+                        variant="contained"
+                      >
+                        <DocumentScannerIcon />
+                      </Button>
+                    )}
+
                     {canEdit && (
                       <Button onClick={() => onEdit(exam)} variant="contained">
                         <EditSquareIcon />

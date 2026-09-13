@@ -12,7 +12,7 @@ export async function getExams(
   query: ExamQueryType,
   signal?: AbortSignal,
 ): Promise<ExamListType> {
- // console.log("before: getExams query:", query);
+  // console.log("before: getExams query:", query);
   const res = await api.get("exams", {
     params: {
       page: query.page,
@@ -23,6 +23,11 @@ export async function getExams(
 
   await delay(500);
   return res.data;
+}
+
+export async function getExamDetails(id: string): Promise<ExamType> {
+  const res = await api.get("exams/" + id);
+  return res.data.data;
 }
 
 export async function getFilterOptions(): Promise<ExamFilterType> {
