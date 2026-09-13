@@ -16,7 +16,7 @@ export default function ExamFilter({ changeFilter, query }: Props) {
   useEffect(() => {
     const getData = async () => {
       const res = await getFilterOptions();
-      console.log(res);
+   //   console.log(res);
       setFilterOptions(res);
     };
 

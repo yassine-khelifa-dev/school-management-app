@@ -55,10 +55,22 @@ export default function ExamForm({
     },
   });
 
+  const [optionsLoading, setOptionsLoading] = useState(false);
+  const [optionsError, setOptionsError] = useState<string | null>(null);
+
   useEffect(() => {
     const getOptions = async () => {
-      const res = await getOptionsTeachingAssignment();
-      setOptionsTeachingAssignment(res);
+      try {
+        setOptionsLoading(true);
+        setOptionsError(null);
+
+        const res = await getOptionsTeachingAssignment();
+        setOptionsTeachingAssignment(res);
+      } catch (err) {
+        setOptionsError("Unable to load teaching assignments.");
+      } finally {
+        setOptionsLoading(false);
+      }
     };
 
     getOptions();
@@ -91,6 +103,8 @@ export default function ExamForm({
                 <Alert severity="error">{error}</Alert>
               </div>
             )}
+
+            {optionsError && <Alert severity="error">{optionsError}</Alert>}
 
             <TextField
               {...register("title")}
@@ -159,6 +173,7 @@ export default function ExamForm({
                   </InputLabel>
                   <Select
                     {...field}
+                    disabled={optionsLoading || !!optionsError}
                     aria-describedby={`${exam?.teaching_assignment_id}-helper-text`}
                     labelId={`${exam?.teaching_assignment_id}-label`}
                     id={"" + exam?.teaching_assignment_id}

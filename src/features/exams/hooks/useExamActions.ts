@@ -37,7 +37,7 @@ export default function useExamActions() {
 
 
   const del = async (exam: ExamType) => {
-    console.log(exam);
+   // console.log(exam);
 
     try {
       setMessages("");

@@ -3,7 +3,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ExamTable from "../components/ExamTable";
 import ExamFilter from "../components/ExamFilter";
 import DeleteExamDialog from "../components/DeleteExamDialog";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ExamType, FormExam } from "../types";
 import CheckIcon from "@mui/icons-material/Check";
 import EditExamDialog from "../components/EditExamDialog";
@@ -26,6 +26,11 @@ export default function ExamsPage() {
   const [openCreateExamDialog, setOpenCreateExamDialog] =
     useState<boolean>(false);
 
+  const examListIsEmpty = useMemo(
+    () => !!list.examList && list.examList.data.length === 0,
+    [list.examList],
+  );
+
   const handleOpenCreate = () => {
     actions.clearError();
     setOpenCreateExamDialog(true);
@@ -33,7 +38,7 @@ export default function ExamsPage() {
 
   const handleCreate = async (data: FormExam) => {
     if (!openCreateExamDialog) return false;
-    console.log("handleCreate", data);
+    //console.log("handleCreate", data);
     const success = await actions.create(data);
 
     if (success) {
@@ -124,6 +129,16 @@ export default function ExamsPage() {
 
       <ExamFilter query={list.query} changeFilter={list.changeFilter} />
 
+      {!list.loading && !list.error && examListIsEmpty && (
+        <div
+          style={{
+            margin: "5px 0px",
+          }}
+        >
+          <Alert severity="info">No exams found.</Alert>
+        </div>
+      )}
+
       {examSelected && openDeleteExamDialog && (
         <DeleteExamDialog
           open={openDeleteExamDialog}
@@ -170,12 +185,14 @@ export default function ExamsPage() {
         </div>
       )}
 
-      <ExamTable
-        examList={list.examList}
-        changePage={list.changePage}
-        onDelete={handleOndelete}
-        onEdit={handleOnEdit}
-      />
+      {list.examList && list.examList.data.length > 0 && (
+        <ExamTable
+          examList={list.examList}
+          changePage={list.changePage}
+          onDelete={handleOndelete}
+          onEdit={handleOnEdit}
+        />
+      )}
     </>
   );
 }

@@ -8,13 +8,17 @@ import type {
   FormExam,
 } from "../types";
 
-export async function getExams(query: ExamQueryType): Promise<ExamListType> {
-  console.log("before: getExams query:", query);
+export async function getExams(
+  query: ExamQueryType,
+  signal?: AbortSignal,
+): Promise<ExamListType> {
+ // console.log("before: getExams query:", query);
   const res = await api.get("exams", {
     params: {
       page: query.page,
       ...query.filtre,
     },
+    signal,
   });
 
   await delay(500);
