@@ -25,6 +25,8 @@ class StudentGradeResource extends JsonResource
                 'id' => $grade?->id,
                 'score' => $grade?->score,
                 'graded_at' => $grade?->graded_at,
+                'comment' => $grade?->comment,
+
             ]
         ];
     }

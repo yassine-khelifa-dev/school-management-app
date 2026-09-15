@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
     Route::middleware('role:teacher')->group(function () {
         //Grade:
-        Route::put('exam/{exam}/grades', [GradeConroller::class, 'manage'])->name('exam.grades.manage');
+        Route::patch('exam/{exam}/grades', [GradeConroller::class, 'manage'])->name('exam.grades.manage');
         Route::delete('exam/{exam}/grades/{grade}', [GradeConroller::class, 'destroy'])->name('exam.grades.destroy');
 
         // Exam :

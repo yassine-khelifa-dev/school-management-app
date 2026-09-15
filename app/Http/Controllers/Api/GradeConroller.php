@@ -7,6 +7,7 @@ use App\Http\Requests\Grade\GradeMangeRequest;
 use App\Http\Resources\StudentGradeResource;
 use App\Models\Exam;
 use App\Models\Grade;
+use Carbon\Carbon;
 use DB;
 
 class GradeConroller extends Controller
@@ -24,49 +25,22 @@ class GradeConroller extends Controller
 
         $data = $request->validated();
 
-        // grades: [...[student_id, score]]
-        $grades = collect($data['grades'])->values();
+        $grades = collect($data['grades'])
+            ->filter(fn($row) => $row['score'] !== null)
+            ->map(fn($r) =>  [
+                ...$r,
+                'graded_at' => Carbon::now()->toDateTimeString(),
+                'exam_id' => $exam->id,
+                'comment' => $r['comment'] ?? null,
+            ])
+            ->values();
 
+        $exam->grades()->upsert(
+            $grades->all(),
+            uniqueBy: ['student_id', 'exam_id'],
+            update: ['score', 'graded_at', 'comment']
+        );
 
-        $exam = DB::transaction(function () use ($exam, $grades) {
-
-            $myStudents = $exam->getStudents();
-
-            $myStudents->each(function ($student) use ($exam, $grades) {
-
-                $exist = Grade::where('student_id', $student->id)
-                    ->where('exam_id', $exam->id)
-                    ->exists();
-
-                // Grade doesn't exist.
-                if (! $exist) {
-                    // has graded ?
-                    $score = $grades->firstWhere('student_id', $student->id)['score'] ?? null;
-
-                    if (! $score) return true; // not yet graded
-                    // create:
-                    $exam->grades()->create([
-                        'score' => $score,
-                        'student_id' => $student->id,
-                        'graded_at' => now(),
-                    ]);
-                }
-                // Grade exists.
-                else {
-                    // exist ->check:update:
-                    $score = $grades->firstWhere('student_id', $student->id)['score'] ?? null;
-                    if (! $score) return true;  // keep the old value
-
-                    // update :
-                    $exam->grades()->where('student_id', $student->id)->update([
-                        'score' => $score,
-                        'graded_at' => now(),
-                    ]);
-                }
-            });
-            return $exam;
-            // END: transaction
-        });
 
         $exam->refresh();
 
@@ -97,7 +71,7 @@ class GradeConroller extends Controller
         $this->authorize('manageGrades', $exam);
         if ($grade->exam_id !== $exam->id) return response()->json([
             'message' => "This grande do not belong to this exam."
-        ], 422);
+        ], 404);
         $grade->delete();
         return response()->noContent();
     }
