@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\StudentResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,5 +45,21 @@ class Exam extends Model
         return $builder->WhereHas('teachingAssignment', function ($q)  use ($teacher) {
             $q->where('teacher_id', $teacher->id);
         });
+    }
+
+
+    public function getStudents()
+    {
+
+        return Student::query()->withCount('enrollments')
+            ->whereHas('enrollments', function ($enroll) {
+                $enroll->whereExists(function ($q) {
+                    $q->selectRaw(1)
+                        ->from('teaching_assignments')
+                        ->where('teaching_assignments.id', $this->teaching_assignment_id)
+                        ->whereColumn('teaching_assignments.academic_year_id', 'enrollments.academic_year_id')
+                        ->whereColumn('teaching_assignments.class_id', 'enrollments.class_id');
+                });
+            })->get();
     }
 }

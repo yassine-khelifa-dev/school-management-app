@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\SchoolClassController;
 use App\Http\Controllers\Api\Security\AuthController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\ExamController;
+use App\Http\Controllers\Api\GradeConroller;
 use App\Http\Controllers\Api\TeachingAssignmentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,8 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::get('students', [StudentController::class, 'index'])->name('students.index');
     Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
     Route::get('students/{student}/enrollments', [StudentController::class, 'studentEnrollments'])->name('students.enrollments');
+    // Grade:
+    Route::get('exam/{exam}/grades', [GradeConroller::class, 'index'])->name('exam.grades.index');
     //  Exams
     Route::get('exams', [ExamController::class, 'index'])->name('exams.index');
     Route::get("exams/filter-options", [ExamController::class, 'filterOptions'])->name('exam.filter-options');
@@ -58,6 +61,10 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
 
     Route::middleware('role:teacher')->group(function () {
+        //Grade:
+        Route::put('exam/{exam}/grades', [GradeConroller::class, 'manage'])->name('exam.grades.manage');
+        Route::delete('exam/{exam}/grades/{grade}', [GradeConroller::class, 'destroy'])->name('exam.grades.destroy');
+
         // Exam :
         Route::post('exams', [ExamController::class, 'store'])->name('exams.store');
         Route::patch('exams/{exam}', [ExamController::class, 'update'])->name('exams.update');
