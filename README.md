@@ -1,126 +1,109 @@
 # School Management Application
 
-A full-stack school management application built with Laravel and React.
+A full-stack school management platform built with Laravel and React for managing students, enrollments, teaching assignments, exams, and grades.
 
-The project focuses on real application concerns rather than simple CRUD screens: role-based access, teacher-scoped data, student enrollment history, exam management, bulk grade management, validation, API security, pagination, filtering, reusable authorization rules, and clean separation between frontend and backend responsibilities.
+The application is designed around practical school workflows with role-based access, secure REST APIs, teacher-scoped data, bulk grade management, validation, database integrity, filtering, pagination, and a structured frontend architecture.
 
-It is being developed as a portfolio project to demonstrate practical full-stack engineering with Laravel, REST APIs, React, TypeScript, and relational data modeling.
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Current Features](#current-features)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Grade Management Workflow](#grade-management-workflow)
+- [Security and Data Integrity](#security-and-data-integrity)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Backend Setup](#backend-setup)
+- [Frontend Setup](#frontend-setup)
+- [Running the Application](#running-the-application)
+- [Useful Commands](#useful-commands)
+- [Roadmap](#roadmap)
 
 ## Project Overview
 
-The application currently supports two main roles:
-
-- Admin
-- Teacher
-
-The backend is responsible for authentication, authorization, business rules, validation, database integrity, and API resources.
-
-The frontend provides role-aware interfaces for managing students, enrollments, exams, and grades.
-
-The repository is organized as:
+The project is organized as a single full-stack application with a dedicated Laravel backend and React frontend:
 
 ```text
 /
 ├── backend/
-└── frontend/
+├── frontend/
+└── README.md
 ```
 
-A single root README is used because the backend and frontend belong to the same product and are designed to run together.
+The backend handles authentication, authorization, validation, business rules, database access, API resources, and data integrity.
+
+The frontend provides role-aware interfaces for managing school data and operational workflows.
+
+The current implementation mainly supports:
+
+- Admin
+- Teacher
+
+Additional student-facing features are planned.
 
 ## Current Features
 
-### Authentication and authorization
+### Authentication and Authorization
 
-- Token-based authentication with Laravel Sanctum
+- Authentication with Laravel Sanctum
 - Login and logout
-- Role-aware API access
+- Role-based access control
 - Laravel Policies for resource authorization
 - Teacher-scoped access to exams and teaching assignments
-- Frontend permission helpers for role-aware UI actions
-- Backend remains the source of truth for authorization
+- Frontend permission helpers for role-aware actions
+- Backend authorization as the source of truth
 
-### Student management
+### Student Management
 
 - Student listing
 - Student details
-- Create, update, and delete flows for administrators
+- Student creation, update, and deletion for administrators
 - Enrollment history
 - Current enrollment information
 - Enrollment count
-- Teacher-scoped student access
+- Teacher-scoped access to students
 
-### Enrollment management
+### Enrollment Management
 
 - Student enrollment management
 - Academic year and class association
-- Validation of enrollment data
-- Admin-only mutation endpoints
+- Enrollment validation
+- Admin-only enrollment mutations
 - Student enrollment history API
 
-### Exam management
+### Exam Management
 
-- Exam listing with server-side pagination
+- Exam listing
+- Server-side pagination
 - Filtering by academic year, class, and subject
 - Sorting
-- URL-based persistence for pagination and filters
+- URL-based persistence for filters, pagination, and sorting
 - Exam creation
 - Exam editing
 - Exam deletion
 - Exam details page
 - Teacher-scoped exam access
-- Teaching-assignment validation
+- Teaching assignment validation
 - Protection against deleting exams that already contain grades
 
-### Grade management
+### Grade Management
 
-Teachers can manage grades for students belonging to the class and academic year associated with an exam.
+Teachers can manage grades for students associated with the class and academic year of an exam.
 
-The grade workflow is designed around the real use case rather than a traditional one-record-at-a-time CRUD interface.
+The grade workflow supports:
 
-The API returns every eligible student for an exam:
+- Listing all eligible students for an exam
+- Displaying existing grades
+- Representing ungraded students with a null score
+- Bulk grade creation and update
+- Grade comments
+- Grade deletion
+- Maximum-score validation
+- Graded and ungraded student counts
+- Unique grade per student and exam
 
-```text
-Student with existing grade  -> score
-Student without grade         -> null
-```
-
-The frontend then provides one grade-management screen where the teacher can:
-
-- View all eligible students
-- See existing grades
-- Enter new scores
-- Update existing scores
-- Add or remove comments
-- Save multiple grades in one request
-- Delete an existing grade
-- See graded and ungraded student counts
-
-Grade updates use a bulk upsert workflow with a unique database constraint on:
-
-```text
-student_id + exam_id
-```
-
-This guarantees that a student cannot have multiple grades for the same exam.
-
-## Engineering Highlights
-
-Some of the main technical decisions in the project include:
-
-- Laravel Policies instead of frontend-only authorization
-- Form Requests for validation and authorization
-- Eloquent query scopes for reusable teacher ownership rules
-- API Resources for controlled response structures
-- Database constraints for business invariants
-- Bulk `upsert` for efficient grade persistence
-- Transactions where multiple database operations must remain atomic
-- Eager loading to avoid N+1 queries
-- AbortController support for cancellable frontend requests
-- Dedicated hooks for list state and mutation state
-- Zod schemas shared with React Hook Form
-- URL search parameters for persistent list filters
-- Explicit loading, success, error, and empty states
-- TypeScript contracts that reflect API nullability
+The frontend provides a dedicated grade-management page where a teacher can manage multiple scores in one workflow.
 
 ## Technology Stack
 
@@ -164,38 +147,64 @@ Laravel API
         | Policies
         | Form Requests
         | Controllers
-        | Resources
+        | API Resources
         | Eloquent Models / Scopes
         v
 Relational Database
 ```
 
-The frontend is organized around feature responsibilities rather than putting all application logic into page components.
+### Backend Responsibilities
 
-Typical flow:
+The backend keeps responsibilities separated:
+
+```text
+Form Request
+→ validation and request authorization
+
+Policy
+→ resource authorization
+
+Controller
+→ request coordination
+
+Model / Query Scope
+→ reusable data access rules
+
+API Resource
+→ response structure
+
+Database Constraints
+→ data integrity
+```
+
+### Frontend Responsibilities
+
+The frontend follows a feature-oriented structure:
 
 ```text
 Page
-  -> custom hook
-      -> service
-          -> API
+→ custom hook
+→ service
+→ API
 ```
 
-The backend keeps controllers relatively small and delegates responsibility to:
+List fetching and mutation logic are separated where appropriate.
 
-```text
-Form Request -> validation / request authorization
-Policy       -> resource authorization
-Model/Scope  -> reusable query rules
-Resource     -> API representation
-Database     -> integrity constraints
-```
+The frontend also handles:
 
-## Example Grade Workflow
+- Loading states
+- Error states
+- Empty states
+- Success feedback
+- URL-based list state
+- Form validation
+- Role-aware actions
+
+## Grade Management Workflow
 
 An exam belongs to a teaching assignment.
 
-The teaching assignment connects:
+A teaching assignment connects:
 
 ```text
 Teacher
@@ -204,27 +213,30 @@ School Class
 Academic Year
 ```
 
-Eligible students are resolved through enrollments using the exam's class and academic year.
+Eligible students are resolved through enrollments using the exam's class and academic year:
 
 ```text
 Exam
-  -> Teaching Assignment
-      -> School Class
-      -> Academic Year
-          -> Enrollments
-              -> Students
+→ Teaching Assignment
+→ School Class + Academic Year
+→ Enrollments
+→ Students
 ```
 
-Grades are then matched using:
+Grades are matched using:
 
 ```text
 exam_id + student_id
 ```
 
-A missing grade is represented to the frontend as:
+The API returns all eligible students, including students without an existing grade.
+
+Example:
 
 ```json
 {
+  "id": 2148,
+  "full_name": "Student Name",
   "grade": {
     "id": null,
     "score": null,
@@ -234,253 +246,32 @@ A missing grade is represented to the frontend as:
 }
 ```
 
-This allows the UI to display the whole class without creating empty grade rows in the database.
+This allows the frontend to display the full class without creating empty grade records in the database.
 
-## Main API Areas
-
-Examples of the current API structure:
+Bulk grade updates use an upsert workflow while the database enforces a unique constraint on:
 
 ```text
-POST   /api/login
-POST   /api/logout
-
-GET    /api/students
-GET    /api/students/{student}
-GET    /api/students/{student}/enrollments
-
-GET    /api/exams
-GET    /api/exams/filter-options
-GET    /api/exams/{exam}
-POST   /api/exams
-PATCH  /api/exams/{exam}
-DELETE /api/exams/{exam}
-
-GET    /api/exam/{exam}/grades
-PATCH  /api/exam/{exam}/grades
-DELETE /api/exam/{exam}/grades/{grade}
-
-GET    /api/teaching-assignments/options
-```
-
-Route names may evolve while the project is being refined.
-
-## Installation
-
-### Requirements
-
-Make sure the following are installed:
-
-```text
-PHP 8.3+
-Composer
-Node.js
-npm
-A supported relational database
-```
-
-## Backend Setup
-
-From the project root:
-
-```bash
-cd backend
-```
-
-Install PHP dependencies:
-
-```bash
-composer install
-```
-
-Create the environment file:
-
-```bash
-cp .env.example .env
-```
-
-Generate the Laravel application key:
-
-```bash
-php artisan key:generate
-```
-
-Configure your database connection in `.env`.
-
-Example:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=school_app
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-Run migrations:
-
-```bash
-php artisan migrate
-```
-
-If seeders are available:
-
-```bash
-php artisan db:seed
-```
-
-Start the API:
-
-```bash
-php artisan serve
-```
-
-The Laravel development server normally runs at:
-
-```text
-http://127.0.0.1:8000
-```
-
-### Backend development commands
-
-Run tests:
-
-```bash
-php artisan test
-```
-
-Run Laravel Pint:
-
-```bash
-./vendor/bin/pint
-```
-
-Clear application caches when needed:
-
-```bash
-php artisan optimize:clear
-```
-
-Laravel also provides Composer scripts:
-
-```bash
-composer test
-composer dev
-```
-
-## Frontend Setup
-
-Open another terminal:
-
-```bash
-cd frontend
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Vite normally runs at:
-
-```text
-http://localhost:5173
-```
-
-### Frontend commands
-
-Development:
-
-```bash
-npm run dev
-```
-
-Production build:
-
-```bash
-npm run build
-```
-
-Lint:
-
-```bash
-npm run lint
-```
-
-Preview production build:
-
-```bash
-npm run preview
-```
-
-## Environment Configuration
-
-The frontend must point to the Laravel API.
-
-If the project uses a Vite environment variable, create:
-
-```text
-frontend/.env
-```
-
-Example:
-
-```env
-VITE_API_URL=http://127.0.0.1:8000/api
-```
-
-The exact variable name must match the Axios configuration used by the project.
-
-For Sanctum authentication, backend CORS and stateful-domain settings must also match the frontend development URL.
-
-## Running the Full Project
-
-Terminal 1:
-
-```bash
-cd backend
-php artisan serve
-```
-
-Terminal 2:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Then open:
-
-```text
-http://localhost:5173
+student_id + exam_id
 ```
 
 ## Security and Data Integrity
 
-The project applies security rules at the API level.
+The application enforces authorization and validation on the backend.
 
 Examples:
 
 - A teacher cannot manage another teacher's exams
-- A teacher cannot grade students outside the exam's eligible class and academic year
-- A grade cannot be lower than zero
-- A grade cannot exceed the exam maximum score
+- A teacher can only manage grades for exams assigned to them
+- Students outside the exam's class and academic year cannot be graded
+- A score cannot be lower than zero
+- A score cannot exceed the exam maximum score
 - Duplicate grades for the same student and exam are prevented at database level
 - Exam deletion is blocked when grades already exist
 - Nested grade deletion verifies that the grade belongs to the requested exam
 
-Frontend permissions improve the user experience, but they are never used as the only security layer.
+Frontend permissions improve the user experience but are not used as the security layer.
 
 ## Project Structure
-
-A simplified structure:
 
 ```text
 backend/
@@ -512,11 +303,209 @@ frontend/
 └── package.json
 ```
 
-## Planned Work
+## Installation
 
-The application is still evolving. Planned features include:
+### Requirements
 
-### Teacher profile
+Install the following:
+
+```text
+PHP 8.3+
+Composer
+Node.js
+npm
+MySQL or another supported relational database
+```
+
+Clone the repository:
+
+```bash
+git clone https://github.com/yassine-khelifa-dev/school-management-app.git
+cd school-management-app
+```
+
+## Backend Setup
+
+Open the backend directory:
+
+```bash
+cd backend
+```
+
+Install dependencies:
+
+```bash
+composer install
+```
+
+Create the environment file:
+
+```bash
+cp .env.example .env
+```
+
+Generate the application key:
+
+```bash
+php artisan key:generate
+```
+
+Configure the database in `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=school_app
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Run migrations:
+
+```bash
+php artisan migrate
+```
+
+If seeders are available:
+
+```bash
+php artisan db:seed
+```
+
+Start the Laravel API:
+
+```bash
+php artisan serve
+```
+
+Default development URL:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Frontend Setup
+
+Open another terminal:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the Vite development server:
+
+```bash
+npm run dev
+```
+
+Default development URL:
+
+```text
+http://localhost:5173
+```
+
+If the frontend uses a Vite environment variable for the API URL, create:
+
+```text
+frontend/.env
+```
+
+Example:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000/api
+```
+
+The environment variable name must match the Axios configuration used by the project.
+
+## Running the Application
+
+Terminal 1:
+
+```bash
+cd backend
+php artisan serve
+```
+
+Terminal 2:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:5173
+```
+
+## Useful Commands
+
+### Backend
+
+Run tests:
+
+```bash
+php artisan test
+```
+
+Run Laravel Pint:
+
+```bash
+./vendor/bin/pint
+```
+
+Clear Laravel caches:
+
+```bash
+php artisan optimize:clear
+```
+
+Run the Composer test script:
+
+```bash
+composer test
+```
+
+### Frontend
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+Run ESLint:
+
+```bash
+npm run lint
+```
+
+Preview production build:
+
+```bash
+npm run preview
+```
+
+## Roadmap
+
+### Teacher Profile
+
+Planned additions:
 
 - Teacher profile page
 - Assigned classes and subjects
@@ -524,20 +513,20 @@ The application is still evolving. Planned features include:
 - Exam history
 - Grade activity summary
 
-### Student profile
+### Student Profile
+
+Planned additions:
 
 - Student profile page
+- Current enrollment
 - Enrollment history
-- Current class and academic year
 - Exam results
 - Grade history
-- Student-facing dashboard
+- Student dashboard
 
-### Exam statistics
+### Exam Statistics
 
-Statistics will be displayed primarily on the exam details page.
-
-Planned metrics include:
+Planned statistics for the exam details page:
 
 - Average score
 - Highest score
@@ -547,72 +536,18 @@ Planned metrics include:
 - Success rate
 - Grade distribution
 
-### AI-assisted teacher comments
+### AI-Assisted Teacher Comments
 
-A future version will experiment with AI-assisted feedback.
+A future feature will provide AI-assisted comment suggestions for teachers based on exam results and grade context.
 
-The idea is to allow a teacher to request a suggested comment based on information such as:
+Generated comments will remain editable suggestions and will require teacher review before being saved.
 
-```text
-student score
-exam maximum score
-existing teacher context
-```
+### Quality and Delivery
 
-AI output will remain a suggestion. The teacher will review and edit the comment before saving it.
+Planned improvements include:
 
-The feature is intended to support teachers rather than automatically publish generated feedback.
-
-### Testing and quality
-
-Planned improvements:
-
-- More Laravel Feature Tests
+- Extended Laravel Feature Tests
 - Frontend component and integration tests
-- End-to-end tests for critical workflows
+- End-to-end tests
 - CI pipeline
 - API documentation
-
-## Development Status
-
-Implemented:
-
-```text
-Authentication
-Role-aware authorization
-Student management
-Enrollment management
-Exam management
-Exam filtering and pagination
-Exam details
-URL-persisted exam filters
-Teacher-scoped teaching assignments
-Bulk grade management
-Grade comments
-Grade deletion
-Frontend validation
-Backend validation
-Database grade uniqueness
-```
-
-In progress / planned:
-
-```text
-Teacher profile
-Student profile
-Exam statistics
-Automated test coverage
-CI
-API documentation
-AI-assisted teacher feedback
-```
-
-## Why I Built This Project
-
-This project was created to practice and demonstrate the type of work expected in a real full-stack application.
-The focus is not only on building screens, but on handling the decisions behind them: authorization boundaries, relational data, API contracts, validation, database integrity, asynchronous frontend state, and maintainable separation of responsibilities.
-The project is also being used to deepen my Laravel and React experience through progressively more complex features rather than isolated tutorials.
-
-## License
-
-This project is currently intended for educational and portfolio purposes.
