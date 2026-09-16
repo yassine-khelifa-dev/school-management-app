@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Grade\GradeMangeRequest;
+use App\Http\Resources\ExamResource;
 use App\Http\Resources\StudentGradeResource;
 use App\Models\Exam;
 use App\Models\Grade;
@@ -56,6 +57,7 @@ class GradeConroller extends Controller
         $students->load(['grades' => fn($q) => $q->where('exam_id', $exam->id)]);
 
         return response()->json([
+            'exam' => new ExamResource($exam),
             'data' => StudentGradeResource::collection($students),
             'meta' => [
                 'maximum_score' => $exam->maximum_score,
