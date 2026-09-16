@@ -3,7 +3,6 @@ import type { SchoolClassType } from "../../schoolClasses/types";
 import type { SubjectType } from "../../subjects/types";
 import type { TeacherType } from "../../teachers/types";
 import * as z from "zod";
-
 export type ExamType = {
   id: number;
   title: string;
@@ -48,9 +47,42 @@ export type ExamFilterType = {
 export const FormSchemaExam = z.object({
   title: z.string().min(5),
   description: z.string(),
-  teaching_assignment_id: z.number()
+  teaching_assignment_id: z
+    .number()
     .positive("Teaching assignment is required"),
   exam_date: z.string(),
   maximum_score: z.number().max(1000).min(1),
 });
 export type FormExam = z.infer<typeof FormSchemaExam>;
+
+export type GradeType = {
+  id: number;
+  full_name: string;
+  last_name: string;
+  first_name: string;
+  grade: {
+    id: number | null;
+    score: number | null;
+    graded_at: string | null;
+    comment: string | null;
+  };
+};
+
+export type ExamGradeType = {
+  exam: ExamType;
+  data: GradeType[];
+  meta: { maximum_score: number; grades_count: number; students_count: number };
+};
+
+export const createGradesSchema = (maximum_score: number) =>
+  z.object({
+    grades: z.array(
+      z.object({
+        student_id: z.number(),
+        score: z.number().min(0).max(maximum_score).nullable(),
+        comment: z.string().optional().nullable(),
+      }),
+    ),
+  });
+
+export type GradesFormType = z.infer<ReturnType<typeof createGradesSchema>>;

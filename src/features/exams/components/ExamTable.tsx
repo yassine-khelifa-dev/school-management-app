@@ -11,6 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from "@mui/icons-material/EditSquare";
 import { useExamPolicy } from "../permissions";
 import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 import { useNavigate } from "react-router";
 type Props = {
   examList: ExamListType;
@@ -25,7 +26,7 @@ export default function ExamTable({
   onDelete,
   onEdit,
 }: Props) {
-  const { canEdit, canViewAny, canDelete } = useExamPolicy();
+  const { canEdit, canViewAny, canDelete, canManageGrades } = useExamPolicy();
   const navigate = useNavigate();
 
   return (
@@ -69,9 +70,8 @@ export default function ExamTable({
                     {canViewAny && (
                       <Button
                         color="warning"
-                        onClick={() =>
-                          navigate("/exams/"+exam.id)
-                        }
+                        title="Show"
+                        onClick={() => navigate("/exams/" + exam.id)}
                         variant="contained"
                       >
                         <DocumentScannerIcon />
@@ -79,14 +79,32 @@ export default function ExamTable({
                     )}
 
                     {canEdit && (
-                      <Button onClick={() => onEdit(exam)} variant="contained">
+                      <Button
+                        title="Edit"
+                        onClick={() => onEdit(exam)}
+                        variant="contained"
+                      >
                         <EditSquareIcon />
+                      </Button>
+                    )}
+
+                    {canManageGrades && (
+                      <Button
+                        color="secondary"
+                        title="Manage Grades"
+                        onClick={() =>
+                          navigate("/exams/" + exam.id + "/grades")
+                        }
+                        variant="contained"
+                      >
+                        <ChecklistIcon />
                       </Button>
                     )}
 
                     {canDelete && (
                       <Button
                         color="error"
+                        title="Delete"
                         onClick={() => onDelete(exam)}
                         variant="contained"
                       >

@@ -3,101 +3,136 @@ import { useUser } from "../contexts/UserContext";
 
 export default function Navbar() {
   const { user } = useUser();
+
+  const linkStyle = ({ isActive }: { isActive: boolean }) => ({
+    textDecoration: "none",
+    color: isActive ? "#111827" : "#6b7280",
+    fontWeight: isActive ? 700 : 500,
+    padding: "8px 12px",
+    borderRadius: "8px",
+    backgroundColor: isActive ? "#f3f4f6" : "transparent",
+    transition: "all 0.2s ease",
+  });
+
   return (
-    <>
-      <nav>
-        {!user && (
-          <NavLink
-            style={({ isActive }) => ({
-              fontWeight: isActive ? "bold" : "normal",
-              color: isActive ? "blue" : "black",
-            })}
-            to="/login"
+    <nav
+      style={{
+        width: "100%",
+        backgroundColor: "#ffffff",
+        borderBottom: "1px solid #e5e7eb",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+      }}
+    >
+      <div
+        style={{
+          minHeight: "64px",
+          padding: "0 24px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "24px",
+        }}
+      >
+        {/* Brand */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <div
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "10px",
+              backgroundColor: "#111827",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 700,
+              fontSize: "17px",
+            }}
           >
-            Login
-          </NavLink>
-        )}
+            S
+          </div>
 
-        {user?.user.role === "teacher" && (
-          <>
-            <NavLink
-              style={({ isActive }) => ({
-                fontWeight: isActive ? "bold" : "normal",
-                color: isActive ? "blue" : "black",
-              })}
-              to="/teacher/students"
-            >
-              My Students
-            </NavLink>
-            {" | "}
-            <NavLink
-              style={({ isActive }) => ({
-                fontWeight: isActive ? "bold" : "normal",
-                color: isActive ? "blue" : "black",
-              })}
-              to="/exams"
-            >
-              Exams
-            </NavLink>
-            {" | "}
-            <NavLink
-              style={({ isActive }) => ({
-                fontWeight: isActive ? "bold" : "normal",
-                color: isActive ? "blue" : "black",
-              })}
-              to="/logout"
-            >
-              Logout
-            </NavLink>
-          </>
-        )}
+          <span
+            style={{
+              fontSize: "18px",
+              fontWeight: 700,
+              color: "#111827",
+              letterSpacing: "-0.3px",
+            }}
+          >
+            Seven School App
+          </span>
+        </div>
 
-        {user?.user.role === "admin" && (
-          <>
-            <NavLink
-              style={({ isActive }) => ({
-                fontWeight: isActive ? "bold" : "normal",
-                color: isActive ? "blue" : "black",
-              })}
-              to="/students"
-            >
-              Students
+        {/* Navigation */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
+          {!user && (
+            <NavLink to="/login" style={linkStyle}>
+              Login
             </NavLink>
+          )}
 
-            {" | "}
-            <NavLink
-              style={({ isActive }) => ({
-                fontWeight: isActive ? "bold" : "normal",
-                color: isActive ? "blue" : "black",
-              })}
-              to="/enrollments"
-            >
-              Enrollments
-            </NavLink>
+          {user?.user.role === "teacher" && (
+            <>
+              <NavLink to="/teacher/students" style={linkStyle}>
+                My Students
+              </NavLink>
 
-            {" | "}
-            <NavLink
-              style={({ isActive }) => ({
-                fontWeight: isActive ? "bold" : "normal",
-                color: isActive ? "blue" : "black",
-              })}
-              to="/exams"
-            >
-              Exams
-            </NavLink>
-            {" | "}
-            <NavLink
-              style={({ isActive }) => ({
-                fontWeight: isActive ? "bold" : "normal",
-                color: isActive ? "blue" : "black",
-              })}
-              to="/logout"
-            >
-              Logout
-            </NavLink>
-          </>
-        )}
-      </nav>
-    </>
+              <NavLink to="/exams" style={linkStyle}>
+                Exams
+              </NavLink>
+
+              <NavLink
+                to="/logout"
+                style={({ isActive }) => ({
+                  ...linkStyle({ isActive }),
+                  color: "#dc2626",
+                })}
+              >
+                Logout
+              </NavLink>
+            </>
+          )}
+
+          {user?.user.role === "admin" && (
+            <>
+              <NavLink to="/students" style={linkStyle}>
+                Students
+              </NavLink>
+
+              <NavLink to="/enrollments" style={linkStyle}>
+                Enrollments
+              </NavLink>
+
+              <NavLink to="/exams" style={linkStyle}>
+                Exams
+              </NavLink>
+
+              <NavLink
+                to="/logout"
+                style={({ isActive }) => ({
+                  ...linkStyle({ isActive }),
+                  color: "#dc2626",
+                })}
+              >
+                Logout
+              </NavLink>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
   );
 }
