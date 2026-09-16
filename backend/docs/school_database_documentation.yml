@@ -1,0 +1,136 @@
+# School Management Database Documentation
+# Laravel learning project
+# Documentation only: Laravel does not execute this file.
+
+database:
+  name: school_management
+
+tables:
+  students:
+    purpose: "Stores student personal and account information."
+    columns:
+      id: { type: bigint, primary_key: true }
+      first_name: { type: string }
+      last_name: { type: string }
+      email: { type: string, unique: true }
+      password: { type: string }
+      phone: { type: string, nullable: true }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    relationships:
+      - "Many-to-many with classes through enrollments."
+      - "Many-to-many with exams through grades."
+
+  teachers:
+    purpose: "Stores teacher personal and account information."
+    columns:
+      id: { type: bigint, primary_key: true }
+      first_name: { type: string }
+      last_name: { type: string }
+      email: { type: string, unique: true }
+      password: { type: string }
+      phone: { type: string, nullable: true }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    relationships:
+      - "Connected to subjects, classes, and academic years through teaching_assignments."
+      - "One teacher can create many exams."
+
+  classes:
+    purpose: "Stores school classes or groups."
+    columns:
+      id: { type: bigint, primary_key: true }
+      name: { type: string }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    relationships:
+      - "Many-to-many with students through enrollments."
+      - "Connected to teachers and subjects through teaching_assignments."
+      - "One class can have many exams."
+
+  subjects:
+    purpose: "Stores the subjects taught by the school."
+    columns:
+      id: { type: bigint, primary_key: true }
+      name: { type: string }
+      description: { type: text, nullable: true }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    relationships:
+      - "Connected to teachers and classes through teaching_assignments."
+      - "One subject can have many exams."
+
+  academic_years:
+    purpose: "Stores school-year periods and preserves historical data."
+    columns:
+      id: { type: bigint, primary_key: true }
+      name: { type: string, example: "2026/2027" }
+      starts_at: { type: date }
+      ends_at: { type: date }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    relationships:
+      - "One academic year has many enrollments."
+      - "One academic year has many teaching assignments."
+      - "One academic year has many exams."
+
+  enrollments:
+    purpose: "One row means one student is enrolled in one class during one academic year."
+    columns:
+      id: { type: bigint, primary_key: true }
+      student_id: { type: bigint, foreign_key: "students.id" }
+      class_id: { type: bigint, foreign_key: "classes.id" }
+      academic_year_id: { type: bigint, foreign_key: "academic_years.id" }
+      enrolled_at: { type: date }
+      status: { type: string, example: "active" }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    unique_constraints:
+      - [student_id, academic_year_id]
+
+  teaching_assignments:
+    purpose: "One row means one teacher teaches one subject to one class during one academic year."
+    columns:
+      id: { type: bigint, primary_key: true }
+      teacher_id: { type: bigint, foreign_key: "teachers.id" }
+      class_id: { type: bigint, foreign_key: "classes.id" }
+      subject_id: { type: bigint, foreign_key: "subjects.id" }
+      academic_year_id: { type: bigint, foreign_key: "academic_years.id" }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    unique_constraints:
+      - [teacher_id, class_id, subject_id, academic_year_id]
+
+  exams:
+    purpose: "Stores exam information independently from student results."
+    columns:
+      id: { type: bigint, primary_key: true }
+      title: { type: string }
+      class_id: { type: bigint, foreign_key: "classes.id" }
+      subject_id: { type: bigint, foreign_key: "subjects.id" }
+      teacher_id: { type: bigint, foreign_key: "teachers.id" }
+      academic_year_id: { type: bigint, foreign_key: "academic_years.id" }
+      exam_date: { type: date }
+      maximum_score: { type: decimal }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    relationships:
+      - "An exam belongs to one class."
+      - "An exam belongs to one subject."
+      - "An exam is created by one teacher."
+      - "An exam belongs to one academic year."
+      - "An exam has many grades."
+
+  grades:
+    purpose: "One row means one student received one score for one exam."
+    columns:
+      id: { type: bigint, primary_key: true }
+      student_id: { type: bigint, foreign_key: "students.id" }
+      exam_id: { type: bigint, foreign_key: "exams.id" }
+      score: { type: decimal }
+      comment: { type: text, nullable: true }
+      graded_at: { type: datetime, nullable: true }
+      created_at: { type: timestamp }
+      updated_at: { type: timestamp }
+    unique_constraints:
+      - [student_id, exam_id]
