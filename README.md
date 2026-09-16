@@ -610,9 +610,7 @@ AI-assisted teacher feedback
 ## Why I Built This Project
 
 This project was created to practice and demonstrate the type of work expected in a real full-stack application.
-
 The focus is not only on building screens, but on handling the decisions behind them: authorization boundaries, relational data, API contracts, validation, database integrity, asynchronous frontend state, and maintainable separation of responsibilities.
-
 The project is also being used to deepen my Laravel and React experience through progressively more complex features rather than isolated tutorials.
 
 ## License
