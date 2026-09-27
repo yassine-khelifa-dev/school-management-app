@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import { Navigate, Outlet } from "react-router-dom";
 import axios from "axios";
+import { LoadingUI } from "../components/ui/LoadingUI";
 
 type Props = {
   role: string;
@@ -46,7 +47,7 @@ export default function ProtectedRoute({ role }: Props) {
 
   if (status === "loading") {
     console.log("loading");
-    return <p>Checking access...</p>;
+    return <LoadingUI fullscreen />;
   }
 
   if (status === "network") {

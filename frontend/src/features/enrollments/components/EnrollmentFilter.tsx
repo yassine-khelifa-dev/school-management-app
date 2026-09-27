@@ -12,6 +12,7 @@ import type { SchoolClassType } from "../../schoolClasses/types";
 import TextField from "@mui/material/TextField";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { Button } from "@mui/material";
+import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 
 type Props = {
   query: EnrollQueryType;
@@ -37,38 +38,18 @@ export default function EnrollmentFilter({
   };
 
   return (
-    <div
-      style={{
-        border: "blue 1px solid",
-        padding: "13px",
-        margin: "5px 0px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h3>Filter</h3>
+    <section className="filter-card">
+      <div className="filter-card__header">
+        <h2 className="filter-card__title"><FilterListRoundedIcon fontSize="small" /> Search & filter</h2>
 
-        <Button color="secondary" onClick={resetFilter} variant="contained">
-          <RestartAltIcon />{" "}
+        <Button color="inherit" onClick={resetFilter} variant="text" startIcon={<RestartAltIcon />}>
+          Reset
         </Button>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          alignContent: "end",
-        }}
-      >
+      <div className="filter-grid filter-grid--enrollment">
         <TextField
-          sx={{
-            width: "50%",
-          }}
+          fullWidth
           id="outlined-basic"
           label="Full Name"
           variant="outlined"
@@ -106,13 +87,7 @@ export default function EnrollmentFilter({
         </FormControl>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          padding: "10px 0px",
-        }}
-      >
+      <div className="filter-grid filter-grid--two">
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-Academic">
             Academic Year
@@ -151,6 +126,6 @@ export default function EnrollmentFilter({
           </Select>
         </FormControl>
       </div>
-    </div>
+    </section>
   );
 }

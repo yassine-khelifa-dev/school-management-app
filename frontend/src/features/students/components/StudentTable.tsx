@@ -19,8 +19,8 @@ import { useState } from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -60,11 +60,11 @@ export default function StudentTable({
 
   const handleEnrollDetails = () => {
     setOpenEnrollDetails(false);
-    setSelectStudent(null)
+    setSelectStudent(null);
   };
 
   return (
-    <div>
+    <div className="data-card">
       <ConfirmationDialogRaw
         open={openEnrollDetails}
         setClose={handleEnrollDetails}
@@ -75,23 +75,23 @@ export default function StudentTable({
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>ID</StyledTableCell>
-              <StyledTableCell align="left">First Name</StyledTableCell>
+              <StyledTableCell className="table-id-column">ID</StyledTableCell>
+              <StyledTableCell>First name</StyledTableCell>
               <StyledTableCell>Last name</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
               <StyledTableCell>Phone</StyledTableCell>
-              <StyledTableCell>Current Class</StyledTableCell>
-              <StyledTableCell>Current Academic Year</StyledTableCell>
+              <StyledTableCell>Current class</StyledTableCell>
+              <StyledTableCell>Academic year</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
               <StyledTableCell>Enrollments</StyledTableCell>
 
-              {hasActions && <StyledTableCell>Actions</StyledTableCell>}
+              {hasActions && <StyledTableCell className="table-actions-column">Actions</StyledTableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
             {students.map((row) => (
               <StyledTableRow key={row.id}>
-                <StyledTableCell>{row.id}</StyledTableCell>
+                <StyledTableCell className="table-id-column">{row.id}</StyledTableCell>
                 <StyledTableCell>{row.first_name}</StyledTableCell>
                 <StyledTableCell>{row.last_name}</StyledTableCell>
                 <StyledTableCell>{row.email}</StyledTableCell>
@@ -120,8 +120,8 @@ export default function StudentTable({
                 </StyledTableCell>
 
                 {hasActions && (
-                  <StyledTableCell>
-                    <div>
+                  <StyledTableCell className="table-actions-column">
+                    <div className="table-actions">
                       {canEdit && (
                         <Button
                           variant="contained"
@@ -129,10 +129,10 @@ export default function StudentTable({
                           onClick={() => onEdit(row.id)}
                           sx={{
                             textAlign: "center",
-                            marginRight: "2px",
                           }}
-                          endIcon={<EditNoteIcon />}
-                        ></Button>
+                          aria-label="Edit student"
+                          title="Edit student"
+                        ><EditNoteIcon /></Button>
                       )}
 
                       {canDelete && (
@@ -143,8 +143,9 @@ export default function StudentTable({
                           sx={{
                             textAlign: "center",
                           }}
-                          endIcon={<DeleteIcon />}
-                        ></Button>
+                          aria-label="Delete student"
+                          title="Delete student"
+                        ><DeleteIcon /></Button>
                       )}
                     </div>
                   </StyledTableCell>
@@ -154,19 +155,8 @@ export default function StudentTable({
           </TableBody>
         </Table>
       </TableContainer>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "end",
-        }}
-      >
+      <div className="pagination-bar">
         <Pagination
-          style={{
-            paddingTop: "10px",
-            marginLeft: "auto",
-            width: "fit-content",
-          }}
           count={paginate?.last_page ?? 1}
           page={paginate?.current_page ?? 1}
           color="primary"

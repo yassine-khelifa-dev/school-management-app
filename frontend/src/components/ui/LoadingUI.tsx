@@ -1,27 +1,20 @@
 import { CircularProgress } from "@mui/material";
 
-export function LoadingUI() {
+type LoadingUIProps = {
+  fullscreen?: boolean;
+};
+
+export function LoadingUI({ fullscreen = false }: LoadingUIProps) {
   return (
-    <>
-      <div
-        style={{
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 300,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 10,
-            background: "rgba(255,255,255,0.6)",
-          }}
-        >
-          <CircularProgress />
-        </div>
+    <div
+      className={`page-loading${fullscreen ? " page-loading--fullscreen" : ""}`}
+      role="status"
+      aria-label="Loading"
+      aria-live="polite"
+    >
+      <div className="page-loading__content">
+        <CircularProgress size={34} thickness={4} />
       </div>
-    </>
+    </div>
   );
 }

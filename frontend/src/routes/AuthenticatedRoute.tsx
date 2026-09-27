@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { Navigate, Outlet } from "react-router-dom";
+import { LoadingUI } from "../components/ui/LoadingUI";
 
 export default function AuthenticatedRoute() {
   const [status, setStatus] = useState("loading");
@@ -19,7 +20,7 @@ export default function AuthenticatedRoute() {
   }, []);
 
   if (status === "loading") {
-    return <p>Checking access...</p>;
+    return <LoadingUI fullscreen />;
   }
 
   if (status === "unauthenticated") {

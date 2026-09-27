@@ -5,6 +5,11 @@ import loginService from "../services/auth";
 import type { LoginType, UserType } from "../types/user";
 import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import "../styles/LoginPage.css";
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const { user, setUser } = useUser();
@@ -14,16 +19,16 @@ export default function LoginPage() {
   });
 
   const redUser = (user: UserType) => {
-    if (user.user.role === "admin") navigate("/students");
-    if (user.user.role === "teacher") navigate("/teacher/students");
+    if (user?.user?.role === "admin") navigate("/students");
+    if (user?.user?.role === "teacher") navigate("/teacher/students");
   };
 
   useEffect(() => {
-    if (user?.user.role === "admin") navigate("/students");
-    if (user?.user.role === "teacher") navigate("/teacher/students");
+    if (user?.user?.role === "admin") navigate("/students");
+    if (user?.user?.role === "teacher") navigate("/teacher/students");
   }, [user, navigate]);
 
-  async function handleLogin(e) {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const user = await loginService(credi);
     //console.log("hi I am ..",user.user.role);
@@ -36,120 +41,97 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "calc(100vh - 65px)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f8fafc",
-        padding: "24px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "420px",
-          backgroundColor: "#ffffff",
-          border: "1px solid #e5e7eb",
-          borderRadius: "16px",
-          padding: "32px",
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.06)",
-        }}
-      >
-        <div style={{ marginBottom: "28px" }}>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "28px",
-              fontWeight: 700,
-              color: "#111827",
-            }}
-          >
-            Welcome back
-          </h1>
+    <main className="login-page">
+      <section className="login-story" aria-label="About Seven School">
+        <div className="login-brand">
+          <span className="login-brand__mark">
+            <SchoolRoundedIcon fontSize="medium" />
+          </span>
+          <span>
+            <span className="login-brand__name">Seven School</span>
+            <span className="login-brand__label">Academic Portal</span>
+          </span>
+        </div>
 
-          <p
-            style={{
-              margin: "8px 0 0",
-              color: "#6b7280",
-              fontSize: "14px",
-              lineHeight: 1.6,
-            }}
-          >
-            Sign in to access your school dashboard.
+        <div className="login-story__content">
+          <div className="login-eyebrow">Learn. Grow. Succeed.</div>
+          <h1>
+            Everything your school needs, <span>in one place.</span>
+          </h1>
+          <p className="login-story__lead">
+            A focused workspace for educators and administrators to support
+            every student throughout their academic journey.
           </p>
         </div>
 
-        <form
-          onSubmit={handleLogin}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-          }}
-        >
-          <TextField
-            required
-            fullWidth
-            id="tf-email"
-            label="Email"
-            type="email"
-            placeholder="example@email.com"
-            value={credi.email}
-            onChange={(e) =>
-              setCredi({
-                ...credi,
-                email: e.target.value,
-              })
-            }
-          />
+        <div className="login-trust" aria-label="Platform highlights">
+          <span><i aria-hidden="true" />Secure access</span>
+          <span><i aria-hidden="true" />Built for education</span>
+        </div>
+      </section>
 
-          <TextField
-            fullWidth
-            id="tf-pass"
-            type="password"
-            required
-            label="Password"
-            placeholder="******"
-            value={credi.password}
-            onChange={(e) =>
-              setCredi({
-                ...credi,
-                password: e.target.value,
-              })
-            }
-          />
+      <section className="login-access">
+        <div className="login-access__inner">
+          <header className="login-access__header">
+            <h2>Welcome back</h2>
+            <p>Enter your school credentials to access your workspace.</p>
+          </header>
 
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{
-              mt: 1,
-              py: 1.3,
-              textTransform: "none",
-              fontWeight: 600,
-              fontSize: "15px",
-              borderRadius: 2,
-            }}
-          >
-            Log in
-          </Button>
-        </form>
+          <form className="login-form" onSubmit={handleLogin}>
+            <div>
+              <label className="login-form__label" htmlFor="tf-email">Email address</label>
+              <TextField
+                required
+                fullWidth
+                id="tf-email"
+                type="email"
+                placeholder="name@school.edu"
+                value={credi.email}
+                slotProps={{ htmlInput: { "aria-label": "Email address" } }}
+                onChange={(e) =>
+                  setCredi({
+                    ...credi,
+                    email: e.target.value,
+                  })
+                }
+              />
+            </div>
 
-        <p
-          style={{
-            marginTop: "24px",
-            marginBottom: 0,
-            textAlign: "center",
-            color: "#9ca3af",
-            fontSize: "13px",
-          }}
-        >
-          School Management System
-        </p>
-      </div>
-    </div>
+            <div>
+              <label className="login-form__label" htmlFor="tf-pass">Password</label>
+              <TextField
+                fullWidth
+                id="tf-pass"
+                type="password"
+                required
+                placeholder="Enter your password"
+                value={credi.password}
+                slotProps={{ htmlInput: { "aria-label": "Password" } }}
+                onChange={(e) =>
+                  setCredi({
+                    ...credi,
+                    password: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              endIcon={<ArrowForwardRoundedIcon />}
+              sx={{ mt: 0.75, minHeight: 54, fontSize: "0.95rem" }}
+            >
+              Sign in to your account
+            </Button>
+          </form>
+
+          <footer className="login-form__footer">
+            <span><LockOutlinedIcon sx={{ fontSize: 15 }} />Protected school access</span>
+          </footer>
+        </div>
+      </section>
+    </main>
   );
 }

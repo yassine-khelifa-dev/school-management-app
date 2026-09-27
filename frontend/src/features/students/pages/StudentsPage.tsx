@@ -96,23 +96,19 @@ export default function StudentsPage() {
   
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1>Student</h1>
+    <main className="page-shell">
+      <div className="page-header">
+        <div>
+          <h1>Students</h1>
+          <p>Manage student records and academic information.</p>
+        </div>
 
         {canAdd && (
           <Button
             variant="contained"
-            color="success"
             onClick={handleClickOpenCreateDialog}
           >
-            <AddBoxIcon sx={{ paddingRight: "2px" }} /> Student
+            <AddBoxIcon sx={{ mr: 1 }} /> Add student
           </Button>
         )}
       </div>
@@ -141,11 +137,7 @@ export default function StudentsPage() {
         backerrors={error}
       />
 
-      <div
-        style={{
-          padding: "5px 0px",
-        }}
-      >
+      <div className="page-notices">
         {error && <Alert severity="error">{error.message}</Alert>}
         {messages && <Alert severity="info">{messages}</Alert>}
       </div>
@@ -167,8 +159,8 @@ export default function StudentsPage() {
         </>
       )}
       {students?.length === 0 && !loading && !error && (
-        <span>There are no Students! </span>
+        <div className="empty-state">There are no students to display.</div>
       )}
-    </>
+    </main>
   );
 }

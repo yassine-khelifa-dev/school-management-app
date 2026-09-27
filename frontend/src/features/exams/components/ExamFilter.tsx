@@ -5,6 +5,7 @@ import Select from "@mui/material/Select";
 import { useEffect, useState } from "react";
 import { getFilterOptions } from "../services/examService";
 import type { ExamFilterType, ExamQueryType } from "../types";
+import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 type Props = {
   changeFilter: (field: string, value: string) => void;
   query: ExamQueryType;
@@ -24,23 +25,12 @@ export default function ExamFilter({ changeFilter, query }: Props) {
   }, []);
 
   return (
-    <div
-      style={{
-        padding: "10px 10px",
-        border: "solid 1px black",
-        borderRadius: "10px",
-        marginBottom: "20px",
-      }}
-    >
-      <h2>Filter</h2>
+    <section className="filter-card">
+      <div className="filter-card__header">
+        <h2 className="filter-card__title"><FilterListRoundedIcon fontSize="small" /> Search & filter</h2>
+      </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "4px",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="filter-grid">
         <FormControl
           style={{
             width: "100%",
@@ -105,20 +95,13 @@ export default function ExamFilter({ changeFilter, query }: Props) {
         </FormControl>
       </div>
 
-      <div
-        style={{
-          marginTop: "10px",
-          display: "flex",
-          gap: "4px",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="filter-grid filter-grid--two">
         <FormControl
           style={{
             width: "100%",
           }}
         >
-          <InputLabel id="in-q_field_sortedr">Field sorted</InputLabel>
+          <InputLabel id="in-q_field_sortedr">Sort by</InputLabel>
           <Select
             labelId="q_field_sorted"
             id="q_field_sorted"
@@ -138,7 +121,7 @@ export default function ExamFilter({ changeFilter, query }: Props) {
             width: "100%",
           }}
         >
-          <InputLabel id="in-q_dir_sorted">Direction sorted</InputLabel>
+          <InputLabel id="in-q_dir_sorted">Sort direction</InputLabel>
           <Select
             labelId="q_dir_sorted"
             id="q_dir_sorted"
@@ -152,6 +135,6 @@ export default function ExamFilter({ changeFilter, query }: Props) {
           </Select>
         </FormControl>
       </div>
-    </div>
+    </section>
   );
 }

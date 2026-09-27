@@ -26,19 +26,19 @@ export default function EnrollmentTable({
   deleting,
 }: Props) {
   return (
-    <>
+    <div className="data-card">
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Studane</TableCell>
-              <TableCell>Studane Email</TableCell>
-              <TableCell align="right">Class</TableCell>
-              <TableCell align="right">Academic Year</TableCell>
-              <TableCell align="right">Enrolled at</TableCell>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell className="table-id-column">ID</TableCell>
+              <TableCell>Student</TableCell>
+              <TableCell>Student email</TableCell>
+              <TableCell>Class</TableCell>
+              <TableCell>Academic year</TableCell>
+              <TableCell>Enrollment date</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell className="table-actions-column">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -47,32 +47,27 @@ export default function EnrollmentTable({
                 key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" className="table-id-column">
                   {row.id}
                 </TableCell>
                 <TableCell>{row.student.full_name}</TableCell>
                 <TableCell>{row.student.email}</TableCell>
 
-                <TableCell align="right"> {row.schoolClass.name}</TableCell>
-                <TableCell align="right">{row.academicYear.name}</TableCell>
-                <TableCell align="right">
-                  {moment(row.enrolled_at).format("MM-DD-YYYY")}
+                <TableCell>{row.schoolClass.name}</TableCell>
+                <TableCell>{row.academicYear.name}</TableCell>
+                <TableCell>
+                  {moment(row.enrolled_at).format("YYYY-MM-DD")}
                 </TableCell>
-                <TableCell align="right">{row.status}</TableCell>
-                <TableCell align="right">
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "5px",
-                    }}
-                  >
+                <TableCell>{row.status}</TableCell>
+                <TableCell className="table-actions-column">
+                  <div className="table-actions">
                     <Button
                       onClick={() => onEdit(row)}
                       variant="outlined"
-                      startIcon={<RebaseEditIcon />}
                       color="secondary"
-                      title="Edit"
-                    ></Button>
+                      title="Edit enrollment"
+                      aria-label="Edit enrollment"
+                    ><RebaseEditIcon /></Button>
 
                     <Button
                       onClick={() => onDelete(row)}
@@ -80,9 +75,9 @@ export default function EnrollmentTable({
                       variant="outlined"
                       loading={deleting}
                       disabled={deleting}
-                      startIcon={<DeleteIcon />}
-                      title="delete"
-                    ></Button>
+                      title="Delete enrollment"
+                      aria-label="Delete enrollment"
+                    ><DeleteIcon /></Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -90,13 +85,7 @@ export default function EnrollmentTable({
           </TableBody>
         </Table>
       </TableContainer>
-      <div
-        style={{
-          paddingTop: "10px",
-          display: "flex",
-          justifyContent: "end",
-        }}
-      >
+      <div className="pagination-bar">
         <Pagination
           count={enrollments?.meta.last_page ?? 1}
           page={enrollments?.meta.current_page ?? 1}
@@ -104,6 +93,6 @@ export default function EnrollmentTable({
           variant="outlined"
         />
       </div>
-    </>
+    </div>
   );
 }

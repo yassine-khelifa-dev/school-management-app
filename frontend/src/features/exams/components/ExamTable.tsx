@@ -30,18 +30,18 @@ export default function ExamTable({
   const navigate = useNavigate();
 
   return (
-    <>
+    <div className="data-card">
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell className="table-id-column">ID</TableCell>
               <TableCell>Title</TableCell>
               <TableCell>Exam date</TableCell>
               <TableCell>Teacher</TableCell>
               <TableCell>Subject</TableCell>
-              <TableCell>Academic Year</TableCell>
-              <TableCell align="center">Actions</TableCell>
+              <TableCell>Academic year</TableCell>
+              <TableCell className="table-actions-column">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -50,7 +50,7 @@ export default function ExamTable({
                 key={exam.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" className="table-id-column">
                   {exam.id}
                 </TableCell>
                 <TableCell>{exam.title}</TableCell>
@@ -59,18 +59,13 @@ export default function ExamTable({
                 <TableCell>{exam.subject.name}</TableCell>
                 <TableCell>{exam.academicYear.name}</TableCell>
 
-                <TableCell align="center">
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "3px",
-                      justifyContent: "center",
-                    }}
-                  >
+                <TableCell className="table-actions-column">
+                  <div className="table-actions">
                     {canViewAny && (
                       <Button
                         color="warning"
-                        title="Show"
+                        title="View exam"
+                        aria-label="View exam"
                         onClick={() => navigate("/exams/" + exam.id)}
                         variant="contained"
                       >
@@ -80,7 +75,8 @@ export default function ExamTable({
 
                     {canEdit && (
                       <Button
-                        title="Edit"
+                        title="Edit exam"
+                        aria-label="Edit exam"
                         onClick={() => onEdit(exam)}
                         variant="contained"
                       >
@@ -91,7 +87,8 @@ export default function ExamTable({
                     {canManageGrades && (
                       <Button
                         color="secondary"
-                        title="Manage Grades"
+                        title="Manage grades"
+                        aria-label="Manage grades"
                         onClick={() =>
                           navigate("/exams/" + exam.id + "/grades")
                         }
@@ -104,7 +101,8 @@ export default function ExamTable({
                     {canDelete && (
                       <Button
                         color="error"
-                        title="Delete"
+                        title="Delete exam"
+                        aria-label="Delete exam"
                         onClick={() => onDelete(exam)}
                         variant="contained"
                       >
@@ -119,19 +117,8 @@ export default function ExamTable({
         </Table>
       </TableContainer>
 
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "end",
-        }}
-      >
+      <div className="pagination-bar">
         <Pagination
-          style={{
-            paddingTop: "10px",
-            marginLeft: "auto",
-            width: "fit-content",
-          }}
           count={examList?.meta?.last_page ?? 1}
           page={examList?.meta?.current_page ?? 1}
           color="primary"
@@ -140,6 +127,6 @@ export default function ExamTable({
           }}
         />
       </div>
-    </>
+    </div>
   );
 }

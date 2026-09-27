@@ -2,7 +2,6 @@ import EnrollmentTable from "../components/EnrollmentTable";
 import EnrollmentFilter from "../components/EnrollmentFilter";
 import { useEnrollment } from "../hooks/useEnrollment";
 import Alert from "@mui/material/Alert";
-import { CircularProgress } from "@mui/material";
 import Button from "@mui/material/Button";
 import LinkIcon from "@mui/icons-material/Link";
 import CreateEnrollmentDialog from "../components/CreateEnrollmentDialog";
@@ -10,6 +9,7 @@ import { useState } from "react";
 import EditEnrollmentDialog from "../components/EditEnrollmentDialog";
 import type { EnrollmentType } from "../types";
 import DeleteEnrollmentDialog from "../components/DeleteEnrollmentDialog";
+import { LoadingUI } from "../../../components/ui/LoadingUI";
 
 export default function EnrollmentPage() {
   //
@@ -62,27 +62,23 @@ export default function EnrollmentPage() {
   };
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1>Enrollments</h1>
+    <main className="page-shell">
+      <div className="page-header">
+        <div>
+          <h1>Enrollments</h1>
+          <p>Connect students with classes and academic years.</p>
+        </div>
 
         <Button
           variant="contained"
-          color="success"
           onClick={() => handleOpenCreateDialog(true)}
         >
-          <LinkIcon sx={{ paddingRight: "5px" }} />
-          Enrollment
+          <LinkIcon sx={{ mr: 1 }} />
+          New enrollment
         </Button>
       </div>
 
-      {messages && <Alert severity="info">{messages}</Alert>}
+      {messages && <div className="page-notices"><Alert severity="info">{messages}</Alert></div>}
 
       {openCreateDialog && (
         <CreateEnrollmentDialog
@@ -109,21 +105,7 @@ export default function EnrollmentPage() {
         />
       )}
 
-      {loading && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 10,
-            background: "rgba(255,255,255,0.5)",
-          }}
-        >
-          <CircularProgress />
-        </div>
-      )}
+      {loading && <LoadingUI />}
       <EnrollmentFilter
         academicYers={academicYers}
         schoolClasses={schoolClasses}
@@ -132,7 +114,7 @@ export default function EnrollmentPage() {
         resetFilter={resetFilter}
       />
 
-      {error && <Alert severity="error">{error.message}</Alert>}
+      {error && <div className="page-notices"><Alert severity="error">{error.message}</Alert></div>}
 
       {enrollmentList?.data.length === 0 && (
         <Alert severity="info">There are no enrollments!</Alert>
@@ -147,6 +129,6 @@ export default function EnrollmentPage() {
           changePage={changePage}
         />
       )}
-    </>
+    </main>
   );
 }

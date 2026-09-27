@@ -11,6 +11,7 @@ import CreateExamDialog from "../components/CreateExamDialog";
 import { useExamPolicy } from "../permissions";
 import useExamList from "../hooks/useExamList";
 import useExamActions from "../hooks/useExamActions";
+import { LoadingUI } from "../../../components/ui/LoadingUI";
 
 export default function ExamsPage() {
   const { canCreate } = useExamPolicy();
@@ -86,20 +87,16 @@ export default function ExamsPage() {
   };
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1>Exams</h1>
+    <main className="page-shell">
+      <div className="page-header">
+        <div>
+          <h1>Exams</h1>
+          <p>Create, review and manage academic assessments.</p>
+        </div>
 
         {canCreate && (
           <Button
             variant="contained"
-            color="success"
             onClick={handleOpenCreate}
             disabled={actions.loading}
           >
@@ -107,7 +104,7 @@ export default function ExamsPage() {
               <CircularProgress size={20} />
             ) : (
               <>
-                <AddIcon sx={{ paddingRight: "2px" }} /> Exam
+                <AddIcon sx={{ mr: 1 }} /> New exam
               </>
             )}
           </Button>
@@ -170,21 +167,7 @@ export default function ExamsPage() {
         />
       )}
 
-      {list.loading && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 10,
-            background: "rgba(255,255,255,0.5)",
-          }}
-        >
-          <CircularProgress />
-        </div>
-      )}
+      {list.loading && <LoadingUI />}
 
       {list.examList && list.examList.data.length > 0 && (
         <ExamTable
@@ -194,6 +177,6 @@ export default function ExamsPage() {
           onEdit={handleOnEdit}
         />
       )}
-    </>
+    </main>
   );
 }

@@ -1,135 +1,89 @@
 import { NavLink } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import "./Navbar.css";
 
 export default function Navbar() {
   const { user } = useUser();
 
-  const linkStyle = ({ isActive }: { isActive: boolean }) => ({
-    textDecoration: "none",
-    color: isActive ? "#111827" : "#6b7280",
-    fontWeight: isActive ? 700 : 500,
-    padding: "8px 12px",
-    borderRadius: "8px",
-    backgroundColor: isActive ? "#f3f4f6" : "transparent",
-    transition: "all 0.2s ease",
-  });
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `app-navbar__link${isActive ? " app-navbar__link--active" : ""}`;
 
   return (
-    <nav
-      style={{
-        width: "100%",
-        backgroundColor: "#ffffff",
-        borderBottom: "1px solid #e5e7eb",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-      }}
-    >
-      <div
-        style={{
-          minHeight: "64px",
-          padding: "0 24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "24px",
-        }}
-      >
-        {/* Brand */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
-          <div
-            style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "10px",
-              backgroundColor: "#111827",
-              color: "#ffffff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 700,
-              fontSize: "17px",
-            }}
-          >
-            S
-          </div>
-
-          <span
-            style={{
-              fontSize: "18px",
-              fontWeight: 700,
-              color: "#111827",
-              letterSpacing: "-0.3px",
-            }}
-          >
-            Seven School App
+    <nav className="app-navbar">
+      <div className="app-navbar__inner">
+        <div className="app-navbar__brand">
+          <span className="app-navbar__mark"><SchoolRoundedIcon fontSize="small" /></span>
+          <span>
+            <strong>Seven School</strong>
+            <small>Academic portal</small>
           </span>
         </div>
 
-        {/* Navigation */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-          }}
-        >
-          {!user && (
-            <NavLink to="/login" style={linkStyle}>
-              Login
+        <div className="app-navbar__links">
+          {user?.user?.role === "teacher" && (
+            <>
+              <NavLink to="/teacher/students" className={linkClass}>
+                <PeopleAltOutlinedIcon fontSize="small" /> My Students
+              </NavLink>
+
+              <NavLink to="/exams" className={linkClass}>
+                <AssignmentOutlinedIcon fontSize="small" /> Exams
+              </NavLink>
+
+            </>
+          )}
+
+          {user?.user?.role === "admin" && (
+            <>
+              <NavLink to="/students" className={linkClass}>
+                <PeopleAltOutlinedIcon fontSize="small" /> Students
+              </NavLink>
+
+              <NavLink to="/enrollments" className={linkClass}>
+                <HowToRegOutlinedIcon fontSize="small" /> Enrollments
+              </NavLink>
+
+              <NavLink to="/exams" className={linkClass}>
+                <AssignmentOutlinedIcon fontSize="small" /> Exams
+              </NavLink>
+
+            </>
+          )}
+        </div>
+
+        <div className="app-navbar__account">
+          {user ? (
+            <>
+              <div className="app-navbar__profile" title={user.user.email}>
+                <span className="app-navbar__avatar">
+                  <PersonRoundedIcon fontSize="small" />
+                </span>
+                <span className="app-navbar__identity">
+                  <strong>{user.user.role}</strong>
+                  <small>{user.user.email}</small>
+                </span>
+              </div>
+
+              <NavLink
+                to="/logout"
+                className={({ isActive }) =>
+                  `${linkClass({ isActive })} app-navbar__logout`
+                }
+              >
+                <LogoutOutlinedIcon fontSize="small" /> Logout
+              </NavLink>
+            </>
+          ) : (
+            <NavLink to="/login" className={linkClass}>
+              <LoginOutlinedIcon fontSize="small" /> Login
             </NavLink>
-          )}
-
-          {user?.user.role === "teacher" && (
-            <>
-              <NavLink to="/teacher/students" style={linkStyle}>
-                My Students
-              </NavLink>
-
-              <NavLink to="/exams" style={linkStyle}>
-                Exams
-              </NavLink>
-
-              <NavLink
-                to="/logout"
-                style={({ isActive }) => ({
-                  ...linkStyle({ isActive }),
-                  color: "#dc2626",
-                })}
-              >
-                Logout
-              </NavLink>
-            </>
-          )}
-
-          {user?.user.role === "admin" && (
-            <>
-              <NavLink to="/students" style={linkStyle}>
-                Students
-              </NavLink>
-
-              <NavLink to="/enrollments" style={linkStyle}>
-                Enrollments
-              </NavLink>
-
-              <NavLink to="/exams" style={linkStyle}>
-                Exams
-              </NavLink>
-
-              <NavLink
-                to="/logout"
-                style={({ isActive }) => ({
-                  ...linkStyle({ isActive }),
-                  color: "#dc2626",
-                })}
-              >
-                Logout
-              </NavLink>
-            </>
           )}
         </div>
       </div>
