@@ -6,7 +6,7 @@ body {
   position: relative;
   width: min(1440px, calc(100% - 64px));
   margin: 0 auto;
-  padding: 42px 0 64px;
+  padding: 30px 0 64px;
 }
 
 .page-header {
@@ -170,6 +170,48 @@ body {
 
 .table-actions .MuiSvgIcon-root {
   font-size: 1.18rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-badge .MuiSvgIcon-root {
+  font-size: 0.98rem;
+}
+
+.status-badge--active {
+  color: #157347;
+  background: #eaf8f0;
+  border-color: #bce7cf;
+}
+
+.status-badge--completed {
+  color: #2354a5;
+  background: #edf3ff;
+  border-color: #c9d9fb;
+}
+
+.status-badge--cancelled {
+  color: #b13a3a;
+  background: #fff0f0;
+  border-color: #f3c8c8;
+}
+
+.status-badge--unavailable {
+  color: #68758a;
+  background: #f3f5f8;
+  border-color: #dce2e9;
 }
 
 .data-card .MuiTableRow-root:hover .MuiTableCell-body {

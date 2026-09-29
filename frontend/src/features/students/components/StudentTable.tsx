@@ -16,6 +16,7 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import ConfirmationDialogRaw from "./ListEnrollmentDialog";
 import { useState } from "react";
+import { EnrollmentStatusBadge } from "../../../components/ui/EnrollmentStatusBadge";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -104,7 +105,7 @@ export default function StudentTable({
                 </StyledTableCell>
 
                 <StyledTableCell>
-                  {row.enrollment?.status ?? <RemoveCircleIcon />}
+                  <EnrollmentStatusBadge status={row.enrollment?.status} />
                 </StyledTableCell>
 
                 <StyledTableCell>
