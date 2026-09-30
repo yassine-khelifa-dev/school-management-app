@@ -77,4 +77,6 @@ class GradeConroller extends Controller
         $grade->delete();
         return response()->noContent();
     }
+
+
 }

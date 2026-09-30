@@ -10,6 +10,7 @@ import { Button, Pagination } from "@mui/material";
 import RebaseEditIcon from "@mui/icons-material/RebaseEdit";
 import moment from "moment";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { EnrollmentStatusBadge } from "../../../components/ui/EnrollmentStatusBadge";
 type Props = {
   enrollments: EnrollmentListType;
   changePage: (page: number) => void;
@@ -58,7 +59,7 @@ export default function EnrollmentTable({
                 <TableCell>
                   {moment(row.enrolled_at).format("YYYY-MM-DD")}
                 </TableCell>
-                <TableCell>{row.status}</TableCell>
+                <TableCell><EnrollmentStatusBadge status={row.status} /></TableCell>
                 <TableCell className="table-actions-column">
                   <div className="table-actions">
                     <Button

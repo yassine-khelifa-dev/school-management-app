@@ -32,5 +32,21 @@ class Teacher extends Model
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    public function schoolClasses()
+    {
+        $this->load(['teachingAssignments.schoolClass']);
+        return  $this->teachingAssignments->pluck('schoolClass')->unique();
+    }
 
+    public function subjects()
+    {
+        $this->load(['teachingAssignments.subject']);
+        return $this->teachingAssignments->pluck('subject')->unique();
+    }
+
+    public function academicYears()
+    {
+        $this->load(['teachingAssignments.academicYear']);
+        return   $this->teachingAssignments->pluck('academicYear')->unique()->sortByDesc('starts_at');
+    }
 }
