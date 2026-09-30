@@ -137,9 +137,7 @@ class Subject extends Model
                 'students.first_name',
                 'students.last_name'
             )
-
             ->orderByDesc('avg_total')
-
             ->limit($limit);
     }
 }
