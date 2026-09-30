@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Security\AuthController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\GradeConroller;
+use App\Http\Controllers\Api\StatisticController;
 use App\Http\Controllers\Api\TeachingAssignmentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,12 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     // TeachingAssignment
     Route::get('teaching-assignments', [TeachingAssignmentController::class, 'index'])->name('teachingAssignments.index');
     Route::get('teaching-assignments/options', [TeachingAssignmentController::class, 'options'])->name('teachingAssignments.options');
+
+    // Statistics:
+    Route::get('statistics/filter-options', [StatisticController::class, 'filterOptions'])->name('statistics.filter-options');
+    Route::get('statistics/overview', [StatisticController::class, 'overview'])->name('statistics.overview');
+    Route::get('statistics/subjects/{subject}/top-students', [StatisticController::class, 'topStudents'])->name('statistics.top-students');
+
     // END --- for Admin and Teacher
 
 

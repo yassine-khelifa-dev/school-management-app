@@ -113,4 +113,20 @@ class Student extends Model
             );
         });
     }
+
+
+    public function scopeForAcademicYearAndClass(
+        Builder $query,
+        int $academicYear,
+        ?int $schoolClass = null
+    ): Builder {
+        return $query
+            ->whereHas('enrollments', function ($q) use ($academicYear, $schoolClass) {
+                $q->where('academic_year_id', $academicYear)
+                    ->when(
+                        $schoolClass,
+                        fn($q) => $q->where('class_id', $schoolClass)
+                    );
+            });
+    }
 }
