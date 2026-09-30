@@ -34,7 +34,8 @@ class Grade extends Model
     public function scopeForStatisticsScope(
         Builder $query,
         int $academicYear,
-        ?int $schoolClass = null
+        ?int $schoolClass,
+        ?Teacher $teacher
     ) {
 
         return $query->whereHas(
@@ -42,6 +43,7 @@ class Grade extends Model
             fn($q) =>
             $q->where('academic_year_id', $academicYear)
                 ->when($schoolClass,  fn($q) => $q->where('class_id', $schoolClass))
+                ->when($teacher,  fn($q) => $q->where('teacher_id', $teacher->id))
         );
     }
 
@@ -49,10 +51,11 @@ class Grade extends Model
     public function scopeGlobalAverage(
         Builder $query,
         int $academicYear,
-        ?int $schoolClass = null
+        ?int $schoolClass,
+        ?Teacher $teacher,
     ) {
 
-        return  $query->forStatisticsScope($academicYear, $schoolClass)
+        return  $query->forStatisticsScope($academicYear, $schoolClass, $teacher)
             ->join('exams', 'exams.id', '=', 'grades.exam_id')
             ->selectRaw('AVG((grades.score / NULLIF(exams.maximum_score, 0) ) * 100) as percentage ')
             ->value('percentage');
@@ -62,10 +65,12 @@ class Grade extends Model
         Builder $query,
         int $academicYear,
         ?int $schoolClass = null,
-        int $threshold = 50,
+        ?int $threshold = 50,
+        ?Teacher $teacher,
+
     ): Builder {
         return $query
-            ->forStatisticsScope($academicYear, $schoolClass)
+            ->forStatisticsScope($academicYear, $schoolClass,  $teacher)
 
             ->join('students', 'students.id', '=', 'grades.student_id')
             ->join('exams', 'exams.id', '=', 'grades.exam_id')

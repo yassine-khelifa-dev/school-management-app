@@ -48,6 +48,9 @@ class StatisticController extends Controller
 
     public function topStudents(Request $request, Subject $subject)
     {
+        $teacher = Auth::user()->role === RoleEnum::TEACHER->value
+            ? Auth::user()->teacher
+            : null;
         $filters = $request->validate([
             'school_class' => [
                 'nullable',
@@ -67,6 +70,17 @@ class StatisticController extends Controller
             ]
         ]);
 
+        $exists = $subject->teachingAssignments()
+            ->where('academic_year_id', $filters['academic_year'])
+            ->when(
+                $filters['school_class'] ?? null,
+                fn($q) =>
+                $q->where('class_id', $filters['school_class'])
+            )
+            ->when($teacher,  fn($q) => $q->where('teacher_id', $teacher->id))
+            ->exists();
+        abort_unless($exists, 404);
+
         return response()->json([
             "subject" => [
                 "id" => $subject->id,
@@ -74,9 +88,12 @@ class StatisticController extends Controller
             ],
             "top_students" => $subject
                 ->topStudents(
+                    $subject->id,
                     $filters['academic_year'],
                     $filters['school_class'] ?? null,
-                    $filters['limit'] ?? 3
+                    $filters['limit'] ?? 3,
+                    $teacher,
+
                 )
                 ->get()
         ], 200);
@@ -85,6 +102,10 @@ class StatisticController extends Controller
 
     public function overview(StatisticsOverviewRequest $requet)
     {
+        $teacher = Auth::user()->role === RoleEnum::TEACHER->value
+            ? Auth::user()->teacher
+            : null;
+
         $filter = $requet->validated();
         $threshold = 50;
 
@@ -92,17 +113,25 @@ class StatisticController extends Controller
 
         return response()->json([
             "summary" => [
-                "students_count" => Student::forAcademicYearAndClass(
+                "students_count" =>
+                $teacher ?  Student::assignedToTeacher(
+                    $teacher,
                     $filter['academic_year'],
                     $filter['school_class'] ?? null
-                )->count(),
+                )->count() :
+                    Student::forAcademicYearAndClass(
+                        $filter['academic_year'],
+                        $filter['school_class'] ?? null
+                    )->count(),
                 "graded_records_count" => Grade::forStatisticsScope(
                     $filter['academic_year'],
-                    $filter['school_class'] ?? null
+                    $filter['school_class'] ?? null,
+                    $teacher
                 )->count(),
-                "global_average" => number_format(Grade::globalAverage(
+                "global_average" => (int) number_format(Grade::globalAverage(
                     $filter['academic_year'],
-                    $filter['school_class'] ?? null
+                    $filter['school_class'] ?? null,
+                    $teacher,
                 ), 2),
                 "subjects_total" => Subject::forAcademicYear($filter['academic_year'], $filter['school_class'] ?? null)->count(),
                 "subjects_passing" => Subject::withAverageComparison($filter['academic_year'], $filter['school_class'] ?? null, $threshold, '>=')->count(),
@@ -112,7 +141,9 @@ class StatisticController extends Controller
             SubjectStatisticsResource::collection(
                 Grade::globalAverageBySubject(
                     $filter['academic_year'],
-                    $filter['school_class'] ?? null
+                    $filter['school_class'] ?? null,
+                    $threshold,
+                    $teacher
                 )->get()
             ),
 

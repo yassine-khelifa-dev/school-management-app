@@ -76,9 +76,12 @@ class Subject extends Model
 
     public function scopeTopStudents(
         Builder $query,
+        int $subjectId,
         int $academicYear,
         ?int $schoolClass = null,
-        int $limit = 5,
+        ?int $limit = 5,
+        ?Teacher $teacher,
+
     ): Builder {
         return $query
             ->join(
@@ -106,10 +109,14 @@ class Subject extends Model
                 'grades.student_id'
             )
 
+            ->where('subjects.id', $subjectId)
+
             ->where(
                 'teaching_assignments.academic_year_id',
                 $academicYear
             )
+
+            ->when($teacher, fn($q) => $q->where('teaching_assignments.teacher_id', $teacher->id))
 
             ->when(
                 $schoolClass,
