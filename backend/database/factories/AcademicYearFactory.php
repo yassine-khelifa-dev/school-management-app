@@ -18,6 +18,8 @@ class AcademicYearFactory extends Factory
     public function definition(): array
     {
 
-        return [];
+        return [
+            'name' => ucfirst(fake()->word()),
+        ];
     }
 }

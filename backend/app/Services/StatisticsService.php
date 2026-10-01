@@ -43,6 +43,7 @@ class StatisticsService
 
             $teacher = $user->teacher;
 
+
             return [
                 "academic_years" => AcademicResource::collection($teacher->academicYears()),
                 "classes" => ClassResource::collection($teacher->schoolClasses()),
