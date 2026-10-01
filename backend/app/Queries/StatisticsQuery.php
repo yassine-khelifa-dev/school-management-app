@@ -90,7 +90,6 @@ class StatisticsQuery
     }
 
 
-
     public function subjectsOverview(
         int $academicYear,
         ?int $schoolClass = null,
