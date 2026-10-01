@@ -75,7 +75,7 @@ class StatisticsQuery
 
             ->selectRaw(
                 'AVG(
-                (grades.score / NULLIF(exams.maximum_score, 0)) * 100
+                        grades.score * 100.0 / NULLIF(exams.maximum_score, 0)
             ) as avg_total'
             )
 
@@ -144,7 +144,7 @@ class StatisticsQuery
 
             ->selectRaw(
                 'AVG(
-                (grades.score / NULLIF(exams.maximum_score, 0)) * 100
+                    grades.score * 100.0 / NULLIF(exams.maximum_score, 0)
             ) as average'
             )
 
@@ -156,7 +156,7 @@ class StatisticsQuery
                 'SUM(
                 CASE
                     WHEN (
-                        (grades.score / NULLIF(exams.maximum_score, 0)) * 100
+                                grades.score * 100.0 / NULLIF(exams.maximum_score, 0)
                     ) >= ?
                     THEN 1
                     ELSE 0
@@ -169,7 +169,7 @@ class StatisticsQuery
                 'SUM(
                 CASE
                     WHEN (
-                        (grades.score / NULLIF(exams.maximum_score, 0)) * 100
+                                grades.score * 100.0 / NULLIF(exams.maximum_score, 0)
                     ) < ?
                     THEN 1
                     ELSE 0
@@ -183,7 +183,7 @@ class StatisticsQuery
                 SUM(
                     CASE
                         WHEN (
-                            (grades.score / NULLIF(exams.maximum_score, 0)) * 100
+                                    grades.score * 100.0 / NULLIF(exams.maximum_score, 0)
                         ) >= ?
                         THEN 1
                         ELSE 0
@@ -211,7 +211,9 @@ class StatisticsQuery
         return  Grade::query()
             ->forStatisticsScope($academicYear, $schoolClass, $teacher)
             ->join('exams', 'exams.id', '=', 'grades.exam_id')
-            ->selectRaw('AVG((grades.score / NULLIF(exams.maximum_score, 0) ) * 100) as percentage ')
+            ->selectRaw('AVG(
+            grades.score * 100.0 / NULLIF(exams.maximum_score, 0)
+            ) as percentage')
             ->value('percentage');
     }
 
@@ -270,7 +272,7 @@ class StatisticsQuery
 
             ->selectRaw(
                 'AVG(
-                (grades.score / NULLIF(exams.maximum_score, 0)) * 100
+                        grades.score * 100.0 / NULLIF(exams.maximum_score, 0)
             ) as avg_total'
             )
 

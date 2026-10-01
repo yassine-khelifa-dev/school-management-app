@@ -150,7 +150,7 @@ class StatisticsService
                         $filters['academic_year'],
                         $filters['school_class'] ?? null,
                         $teacher,
-                        $filters['limit'] ?? 3,
+                        $filters['limit'] ?? 5,
                     )
             )
         ], 200);
