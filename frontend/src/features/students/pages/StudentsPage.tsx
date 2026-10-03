@@ -72,7 +72,7 @@ export default function StudentsPage() {
 
     console.log("student edited ! old value", selectedStudent);
     console.log("student edited ! new value", data);
-    console.log("**", error.message);
+   // console.log("**", error.message);
 
     const success = await editStudent(data, selectedStudent);
 
@@ -93,8 +93,6 @@ export default function StudentsPage() {
 
   const handleClickOpenCreateDialog = () => setOpenCreateDialog(true);
 
-  
-
   return (
     <main className="page-shell">
       <div className="page-header">
@@ -104,16 +102,11 @@ export default function StudentsPage() {
         </div>
 
         {canAdd && (
-          <Button
-            variant="contained"
-            onClick={handleClickOpenCreateDialog}
-          >
+          <Button variant="contained" onClick={handleClickOpenCreateDialog}>
             <AddBoxIcon sx={{ mr: 1 }} /> Add student
           </Button>
         )}
       </div>
-
-     
 
       <CreateStudentDialog
         open={openCreateDialog}
@@ -129,13 +122,16 @@ export default function StudentsPage() {
         confirm={handleConfirmDel}
         backerrors={error}
       />
-      <EditStudentDialog
-        open={openEditDialog}
-        setOpen={setOpenEditDialog}
-        student={selectedStudent}
-        confirm={handleConfirEdit}
-        backerrors={error}
-      />
+
+      {selectedStudent && (
+        <EditStudentDialog
+          open={openEditDialog}
+          setOpen={setOpenEditDialog}
+          student={selectedStudent}
+          confirm={handleConfirEdit}
+          backerrors={error}
+        />
+      )}
 
       <div className="page-notices">
         {error && <Alert severity="error">{error.message}</Alert>}

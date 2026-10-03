@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import { useUser } from "../contexts/UserContext";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
@@ -8,6 +7,7 @@ import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import "./Navbar.css";
+import { useUser } from "../contexts/useUser";
 
 export default function Navbar() {
   const { user } = useUser();
@@ -19,7 +19,9 @@ export default function Navbar() {
     <nav className="app-navbar">
       <div className="app-navbar__inner">
         <div className="app-navbar__brand">
-          <span className="app-navbar__mark"><SchoolRoundedIcon fontSize="small" /></span>
+          <span className="app-navbar__mark">
+            <SchoolRoundedIcon fontSize="small" />
+          </span>
           <span>
             <strong>Seven School</strong>
             <small>Academic portal</small>
@@ -36,7 +38,6 @@ export default function Navbar() {
               <NavLink to="/exams" className={linkClass}>
                 <AssignmentOutlinedIcon fontSize="small" /> Exams
               </NavLink>
-
             </>
           )}
 
@@ -53,7 +54,6 @@ export default function Navbar() {
               <NavLink to="/exams" className={linkClass}>
                 <AssignmentOutlinedIcon fontSize="small" /> Exams
               </NavLink>
-
             </>
           )}
         </div>
@@ -61,6 +61,10 @@ export default function Navbar() {
         <div className="app-navbar__account">
           {user ? (
             <>
+              <NavLink to="/statistics" className={linkClass}>
+                <AssignmentOutlinedIcon fontSize="small" /> statistics
+              </NavLink>
+
               <div className="app-navbar__profile" title={user.user.email}>
                 <span className="app-navbar__avatar">
                   <PersonRoundedIcon fontSize="small" />

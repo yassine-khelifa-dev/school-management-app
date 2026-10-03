@@ -28,7 +28,7 @@ export async function delStudent(student: StudentType, signal?: AbortSignal) {
 }
 
 export async function updateStudent(student: FormStudentInputs) {
-  const [firstName, ...rest] = student.fullname.trim().split(" ");
+  const [firstName, ...rest] = (student.fullname ?? "").trim().split(" ");
   const lastName = rest.join(" ");
 
   const res = await api.patch("students/" + student.id, {

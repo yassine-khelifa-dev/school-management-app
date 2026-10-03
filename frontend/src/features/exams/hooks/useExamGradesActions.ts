@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import useApiError from "../../../hooks/useApiError";
 import type { GradesFormType } from "../types";
 import { delay } from "../../enrollments/services/enrollmentService";
@@ -23,6 +23,7 @@ export default function useExamGradesActions() {
         setMessage("Grades Has been Updated with successfully!");
         return true;
       }
+      return false;
     } catch (err) {
       handleError(err);
       return false;

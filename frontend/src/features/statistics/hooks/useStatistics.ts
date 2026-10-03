@@ -11,18 +11,18 @@ export function useStatistics() {
   const { error, clearError, handleError } = useApiError();
 
   const [query, setQueryState] = useState<StatiscticsQueryType>({
-    academic_year: "1",
-    subject: "1",
-    school_class: "",
+    academic_year: undefined,
+    subject: "all",
+    school_class: "all",
   });
 
-  const [overviewList, setOverviewList] = useState<OverViewType>(null);
-  const [list, setList] = useState<TopStudentsType>(null);
+  const [overviewList, setOverviewList] = useState<OverViewType | null>(null);
+  const [list, setList] = useState<TopStudentsType | null>(null);
 
   const [loadingStatiPage, setLoadingStatiPage] = useState<boolean>(false);
 
   const setQuery = (key: string, value: string) => {
-    console.log(key, value);
+    if (key === "subject" && value == "all") setList(null);
 
     setQueryState((prev) => {
       const nq = {
@@ -39,12 +39,25 @@ export function useStatistics() {
       try {
         clearError();
         setLoadingStatiPage(true);
-        const [resTopStud, resOverview] = await Promise.all([
-          getTopStudents(query, controller.signal),
-          getOverView(query, controller.signal),
-        ]);
 
+        const q = {
+          academic_year: query.academic_year,
+
+          ...(query.subject !== "all" && query.subject
+            ? { subject: query.subject }
+            : {}),
+
+          ...(query.school_class !== "all" && query.school_class
+            ? { school_class: query.school_class }
+            : {}),
+        };
+
+        if (!q.academic_year) return;
+        const resOverview = await getOverView(q, controller.signal);
         setOverviewList(resOverview);
+
+        if (!q.subject) return;
+        const resTopStud = await getTopStudents(q, controller.signal);
         setList(resTopStud);
       } catch (err) {
         handleError(err);

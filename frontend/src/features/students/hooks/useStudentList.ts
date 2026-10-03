@@ -28,7 +28,7 @@ export function useStudentList() {
   });
 
   async function deleteStudent(student: StudentType) {
-    console.log("hook:deleteStudnet ", student.email);
+    //console.log("hook:deleteStudnet ", student.email);
     try {
       setLoading(true);
       clearError();
@@ -37,7 +37,11 @@ export function useStudentList() {
 
       const remainingStudents = students.filter((s) => s.id !== student.id);
 
-      if (remainingStudents.length === 0 && paginate?.current_page > 1)
+      if (
+        remainingStudents.length === 0 &&
+        paginate?.current_page &&
+        paginate.current_page > 1
+      )
         setQuery((prev) => ({ ...prev, page: paginate.current_page - 1 }));
       else setQuery((prev) => ({ ...prev, page: paginate?.current_page ?? 1 }));
 
@@ -64,12 +68,12 @@ export function useStudentList() {
         setQuery((prev) => ({ ...prev, page: 1 }));
         return true;
       } else {
-        console.log("storeStudent: Something went wrong");
+        //  console.log("storeStudent: Something went wrong");
         handleError(rep);
         return false;
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       handleError(err);
       return false;
     } finally {
@@ -82,13 +86,15 @@ export function useStudentList() {
     oldStudent: StudentType,
   ) {
     if (newStudent.id !== oldStudent.id) return;
-    console.log("hook:deleteStudnet ", oldStudent.email);
+    // console.log("hook:deleteStudnet ", oldStudent.email);
     try {
       setLoading(true);
       clearError();
-      const rep = await updateStudent(newStudent);
+      await updateStudent(newStudent);
 
-      const [firstName, ...rest] = newStudent.fullname.trim().split(" ");
+      const [firstName, ...rest] = (newStudent.fullname ?? "")
+        .trim()
+        .split(" ");
       const lastName = rest.join(" ");
 
       setStudents((prev) =>
@@ -97,23 +103,23 @@ export function useStudentList() {
             ? {
                 ...student,
                 id: newStudent.id,
-                full_name: newStudent.fullname,
+                full_name: newStudent.fullname ?? "",
                 first_name: firstName,
                 last_name: lastName,
-                email: newStudent.email,
+                email: newStudent.email ?? "",
                 phone: newStudent.phone,
               }
             : student,
         ),
       );
-      console.log("success: editStudent: ", rep);
+      // console.log("success: editStudent: ", rep);
       return true;
     } catch (err) {
       handleError(err);
       return false;
     } finally {
       setLoading(false);
-      console.log("end -- editStudent");
+      // console.log("end -- editStudent");
     }
   }
 
@@ -128,7 +134,7 @@ export function useStudentList() {
         setStudents(data.data);
         setPaginate(data.meta);
 
-        console.log("data", data.data);
+        //   console.log("data", data.data);
       } catch (err) {
         handleError(err);
       } finally {

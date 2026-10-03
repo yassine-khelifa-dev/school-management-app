@@ -78,7 +78,11 @@ export default function EnrollmentPage() {
         </Button>
       </div>
 
-      {messages && <div className="page-notices"><Alert severity="info">{messages}</Alert></div>}
+      {messages && (
+        <div className="page-notices">
+          <Alert severity="info">{messages}</Alert>
+        </div>
+      )}
 
       {openCreateDialog && (
         <CreateEnrollmentDialog
@@ -114,13 +118,17 @@ export default function EnrollmentPage() {
         resetFilter={resetFilter}
       />
 
-      {error && <div className="page-notices"><Alert severity="error">{error.message}</Alert></div>}
+      {error && (
+        <div className="page-notices">
+          <Alert severity="error">{error.message}</Alert>
+        </div>
+      )}
 
-      {enrollmentList?.data.length === 0 && (
+      {enrollmentList && enrollmentList.data.length === 0 && (
         <Alert severity="info">There are no enrollments!</Alert>
       )}
 
-      {enrollmentList?.data.length > 0 && (
+      {enrollmentList && enrollmentList.data.length > 0 && (
         <EnrollmentTable
           onEdit={handleEdit}
           onDelete={handleDelete}

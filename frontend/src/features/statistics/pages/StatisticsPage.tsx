@@ -4,16 +4,24 @@ import StatisticsTable from "../components/StatisticsTable";
 import StatisticsFilter from "../components/StatisticsFilter";
 import { useStatistics } from "../hooks/useStatistics";
 import { useStatisticsFilterOption } from "../hooks/useStatisticsFilterOption";
+import { useEffect } from "react";
 
 export default function StatisticsPage() {
+  const { filterOptions, errorFilterOptions, loadingFilterOptions } =
+    useStatisticsFilterOption();
+
   const { error, loadingStatiPage, list, query, setQuery, overviewList } =
     useStatistics();
-
-  const { filterOptions } = useStatisticsFilterOption();
 
   const academicYear = filterOptions?.academic_years?.find(
     (a) => String(a.id) === String(query.academic_year),
   );
+
+  useEffect(() => {
+    if (!query.academic_year && filterOptions?.academic_years?.length) {
+      setQuery("academic_year", String(filterOptions.academic_years[0].id));
+    }
+  }, [filterOptions]);
 
   const messages = "";
 
@@ -66,11 +74,13 @@ export default function StatisticsPage() {
             flexWrap: "wrap",
           }}
         >
-          <StatisticsFilter
-            data={filterOptions}
-            setQuery={setQuery}
-            query={query}
-          />
+          {filterOptions && (
+            <StatisticsFilter
+              data={filterOptions}
+              setQuery={setQuery}
+              query={query}
+            />
+          )}
         </div>
       </div>
       <div className="page-notices">
@@ -80,7 +90,13 @@ export default function StatisticsPage() {
 
       {loadingStatiPage && <LoadingUI />}
 
-      {list && (
+      {errorFilterOptions && (
+        <Alert severity="error">{errorFilterOptions.message}</Alert>
+      )}
+
+      {loadingFilterOptions && <LoadingUI />}
+
+      {overviewList && (
         <>
           <StatisticsTable
             data={list}
@@ -90,7 +106,7 @@ export default function StatisticsPage() {
           />
         </>
       )}
-      {!list && !loadingStatiPage && !error && (
+      {!overviewList && !loadingStatiPage && !error && (
         <div className="empty-state">There are no data to display.</div>
       )}
     </main>

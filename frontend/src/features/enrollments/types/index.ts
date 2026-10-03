@@ -42,7 +42,7 @@ export const EnrollmentFormSchema = z.object({
 export type EnrollmentFormType = z.infer<typeof EnrollmentFormSchema>;
 
 export type EnrollQueryType = {
-  page?: number;
+  page: number;
   filter: {
     status?: string;
     search?: string;

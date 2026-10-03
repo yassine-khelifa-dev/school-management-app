@@ -93,7 +93,7 @@ export default function GradeTable({ obj, refresh }: Props) {
           open={openDelDialog}
           setClose={setOpenDelDialog}
           handleConfirm={confirmDel}
-          error={error?.message}
+          error={error?.message ?? ""}
           loading={loading}
         />
       )}

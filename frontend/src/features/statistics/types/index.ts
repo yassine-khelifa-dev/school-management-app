@@ -26,7 +26,7 @@ export type StatiscticsFilterOptionsType = {
 
 export type StatiscticsQueryType = {
   school_class?: string;
-  academic_year: string;
+  academic_year?: string;
   subject?: string;
   limit?: number;
 };
@@ -37,6 +37,7 @@ type SummarySubjectType = {
   name: string;
   students_count: number;
   average: number;
+  graded_records_count: number;
   pass_count: number;
   fail_count: number;
   pass_rate: number;

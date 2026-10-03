@@ -3,12 +3,12 @@ import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import loginService from "../services/auth";
 import type { LoginType, UserType } from "../types/user";
-import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import "../styles/LoginPage.css";
+import { useUser } from "../contexts/useUser";
 
 export default function LoginPage() {
   const navigate = useNavigate();

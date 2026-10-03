@@ -44,7 +44,7 @@ type Props = {
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
   query: StudentQueryType;
-  onQueryChange: React.Dispatch<React.SetStateAction<StudentQueryType>>;
+  onQueryChange: (newQuery: StudentQueryType) => void;
 };
 
 export default function StudentTable({

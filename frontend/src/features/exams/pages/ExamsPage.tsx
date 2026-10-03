@@ -47,7 +47,7 @@ export default function ExamsPage() {
       list.changePage(1);
     }
 
-    return success;
+    return !!success;
   };
 
   const handleOnEdit = (exam: ExamType) => {
@@ -143,7 +143,7 @@ export default function ExamsPage() {
           setClose={setOpenDeleteExamDialog}
           exam={examSelected}
           handleConfirm={handleConfirmDeleteDialog}
-          error={actions.error?.message}
+          error={actions.error?.message ?? ""}
           loading={actions.loading}
         />
       )}
@@ -154,7 +154,7 @@ export default function ExamsPage() {
           open={openEditExamDialog}
           setClose={setOpenEditExamDialog}
           confirmEdit={handleConfirmEdit}
-          error={actions.error?.message}
+          error={actions.error?.message ?? ""}
         />
       )}
 
@@ -163,7 +163,7 @@ export default function ExamsPage() {
           open={openCreateExamDialog}
           setClose={setOpenCreateExamDialog}
           confirmCreate={handleCreate}
-          error={actions.error?.message}
+          error={actions.error?.message ?? ""}
         />
       )}
 

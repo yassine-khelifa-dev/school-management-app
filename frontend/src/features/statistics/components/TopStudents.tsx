@@ -1,15 +1,13 @@
 import type { TopStudentsType } from "../types";
 
 type Props = {
-  data: TopStudentsType;
+  data: TopStudentsType | null;
 };
 
 export function TopStudents({ data }: Props) {
   return (
     <>
-          <h5>Top Students</h5>
-
-      {data.top_students.map((s, index) => (
+      {data?.top_students?.map((s, index) => (
         <div
           key={s.student_id}
           style={{
@@ -100,6 +98,10 @@ export function TopStudents({ data }: Props) {
           </span>
         </div>
       ))}
+
+      {(!data?.top_students || data.top_students.length === 0) && (
+        <div className="empty-state">There are no data to display.</div>
+      )}
     </>
   );
 }
