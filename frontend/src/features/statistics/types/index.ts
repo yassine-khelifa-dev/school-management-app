@@ -37,6 +37,7 @@ type SummarySubjectType = {
   name: string;
   students_count: number;
   average: number;
+  graded_records_count: number;
   pass_count: number;
   fail_count: number;
   pass_rate: number;

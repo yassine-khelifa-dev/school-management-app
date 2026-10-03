@@ -3,7 +3,10 @@ import type {
   StatiscticsQueryType,
   TopStudentsType,
 } from "../types";
+
 import { TopStudents } from "./TopStudents";
+import { SummaryCard } from "./SummaryCard";
+
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -11,26 +14,34 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
-import { SummaryCard } from "./SummaryCard";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
+    backgroundColor: "#f8fafc",
+    color: "#64748b",
+    fontSize: "11px",
+    fontWeight: 700,
+    letterSpacing: "1px",
+    textTransform: "uppercase",
+    borderBottom: "1px solid #e2e8f0",
+    padding: "14px 16px",
   },
+
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: "13px",
+    color: theme.palette.text.primary,
+    padding: "15px 16px",
+    borderBottom: "1px solid #eef2f7",
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
+const StyledTableRow = styled(TableRow)(() => ({
+  transition: "background-color 0.18s ease",
+
   "&:last-child td, &:last-child th": {
-    border: 0,
+    borderBottom: 0,
   },
 }));
 
@@ -40,6 +51,7 @@ type Props = {
   setQuery: (key: string, value: string) => void;
   query: StatiscticsQueryType;
 };
+
 export default function StatisticsTable({
   data,
   overviewList,
@@ -53,63 +65,76 @@ export default function StatisticsTable({
 
   return (
     <>
-      <h3
-        style={{
-          marginBottom: "16px",
-          color: "#0f172a",
-          fontSize: "20px",
-          fontWeight: 700,
+      <Box
+        sx={{
+          mt: 3,
+          mb: 1.5,
         }}
       >
-        Statistics
-      </h3>
+        <h3
+          style={{
+            margin: 0,
+            color: "#0f172a",
+            fontSize: "18px",
+            fontWeight: 700,
+          }}
+        >
+          Statistics
+        </h3>
+      </Box>
 
       <SummaryCard summary={overviewList.summary} />
 
-      <div
-        style={{
+      <Box
+        sx={{
           display: "grid",
-          gridTemplateColumns: "minmax(0, 2fr) minmax(280px, 1fr)",
-          gap: "18px",
+          gridTemplateColumns: {
+            xs: "1fr",
+            lg: "minmax(0, 2fr) 340px",
+          },
+          gap: 2.5,
           alignItems: "start",
-          marginTop: "18px",
+          mt: 2.5,
         }}
       >
-        {/* Subjects table */}
-        <div
-          style={{
-            background: "#ffffff",
+        {/* Subjects overview */}
+        <Box
+          sx={{
+            backgroundColor: "#ffffff",
             border: "1px solid #e2e8f0",
             borderRadius: "16px",
-            padding: "16px",
-            boxShadow: "0 4px 16px rgba(15, 23, 42, 0.06)",
             overflow: "hidden",
+            boxShadow: "0 4px 18px rgba(15, 23, 42, 0.05)",
           }}
         >
-          <div
-            style={{
+          {/* Header */}
+          <Box
+            sx={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              marginBottom: "14px",
+              gap: 1.5,
+              px: 2,
+              py: 2,
+              borderBottom: "1px solid #eef2f7",
             }}
           >
-            <div
-              style={{
-                width: "36px",
-                height: "36px",
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "10px",
+                backgroundColor: "#e0f2fe",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRadius: "10px",
-                background: "#e0f2fe",
                 fontSize: "18px",
+                flexShrink: 0,
               }}
             >
               📊
-            </div>
+            </Box>
 
-            <div>
+            <Box>
               <div
                 style={{
                   fontSize: "16px",
@@ -122,43 +147,56 @@ export default function StatisticsTable({
 
               <div
                 style={{
+                  marginTop: "2px",
                   fontSize: "12px",
                   color: "#64748b",
-                  marginTop: "2px",
                 }}
               >
                 Performance by subject
               </div>
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           <TableContainer
             component={Paper}
             elevation={0}
             sx={{
-              border: "1px solid #e2e8f0",
-              borderRadius: "12px",
-              overflow: "hidden",
+              borderRadius: 0,
+              overflowX: "auto",
             }}
           >
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <Table
+              sx={{
+                minWidth: 760,
+              }}
+              aria-label="statistics table"
+            >
               <TableHead>
                 <TableRow>
-                  <StyledTableCell className="table-id-column">
-                    Subject
+                  <StyledTableCell>Subject</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Students
                   </StyledTableCell>
-
-                  <StyledTableCell>Students</StyledTableCell>
-                  <StyledTableCell>Average</StyledTableCell>
-                  <StyledTableCell>Pass</StyledTableCell>
-                  <StyledTableCell>Fail</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Average
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    Graded records
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Pass</StyledTableCell>
+                  <StyledTableCell align="center">Fail</StyledTableCell>
                   <StyledTableCell>Pass rate</StyledTableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
                 {overviewList.subjects.map((row) => {
-                  const isSelected = String(query.subject) === String(row.id);
+                  const isSelected =
+                    String(query.subject) === String(row.id);
+
+                  const passRate = Number(row.pass_rate ?? 0);
+                  const rateColor =
+                    passRate >= 50 ? "#16a34a" : "#dc2626";
 
                   return (
                     <StyledTableRow
@@ -166,81 +204,202 @@ export default function StatisticsTable({
                       onClick={() => handleClick(row.id)}
                       sx={{
                         cursor: "pointer",
-                        transition: "all 0.2s ease",
 
-                        backgroundColor: isSelected ? "#e0f2fe" : "#ffffff",
+                        backgroundColor: isSelected
+                          ? "#f0f9ff"
+                          : "#ffffff",
 
                         "&:hover": {
-                          backgroundColor: isSelected ? "#bae6fd" : "#f0f9ff",
+                          backgroundColor: isSelected
+                            ? "#e0f2fe"
+                            : "#f8fafc",
                         },
 
                         ...(isSelected && {
                           "& td:first-of-type": {
                             borderLeft: "4px solid #0284c7",
-                          },
-
-                          "& td": {
-                            fontWeight: 600,
+                            paddingLeft: "12px",
                           },
                         }),
                       }}
                     >
-                      <StyledTableCell className="table-id-column">
-                        {row.name}
+                      {/* Subject */}
+                      <StyledTableCell>
+                        <span
+                          style={{
+                            fontWeight: isSelected ? 700 : 600,
+                            color: "#0f172a",
+                          }}
+                        >
+                          {row.name}
+                        </span>
                       </StyledTableCell>
 
-                      <StyledTableCell>{row.students_count}</StyledTableCell>
+                      {/* Students */}
+                      <StyledTableCell align="center">
+                        <span
+                          style={{
+                            color: "#475569",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {row.students_count}
+                        </span>
+                      </StyledTableCell>
 
-                      <StyledTableCell>{row.average}</StyledTableCell>
+                      {/* Average */}
+                      <StyledTableCell align="center">
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            minWidth: "62px",
+                            padding: "5px 9px",
+                            borderRadius: "999px",
+                            backgroundColor: "#ecfeff",
+                            color: "#0f766e",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {Number(row.average).toFixed(1)}%
+                        </span>
+                      </StyledTableCell>
 
-                      <StyledTableCell>{row.pass_count}</StyledTableCell>
+                      {/* Graded records */}
+                      <StyledTableCell align="center">
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            minWidth: "44px",
+                            justifyContent: "center",
+                            padding: "4px 8px",
+                            borderRadius: "7px",
+                            backgroundColor: "#f1f5f9",
+                            color: "#475569",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {row.graded_records_count}
+                        </span>
+                      </StyledTableCell>
 
-                      <StyledTableCell>{row.fail_count}</StyledTableCell>
+                      {/* Pass */}
+                      <StyledTableCell align="center">
+                        <span
+                          style={{
+                            color: "#16a34a",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {row.pass_count}
+                        </span>
+                      </StyledTableCell>
 
-                      <StyledTableCell>{row.pass_rate}</StyledTableCell>
+                      {/* Fail */}
+                      <StyledTableCell align="center">
+                        <span
+                          style={{
+                            color: "#dc2626",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {row.fail_count}
+                        </span>
+                      </StyledTableCell>
+
+                      {/* Pass rate */}
+                      <StyledTableCell>
+                        <Box
+                          sx={{
+                            minWidth: 90,
+                            maxWidth: 120,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mb: 0.7,
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "12px",
+                                color: "#64748b",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {passRate.toFixed(0)}%
+                            </span>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              width: "100%",
+                              height: "5px",
+                              borderRadius: "999px",
+                              backgroundColor: "#e2e8f0",
+                              overflow: "hidden",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                height: "100%",
+                                width: `${Math.min(passRate, 100)}%`,
+                                backgroundColor: rateColor,
+                                borderRadius: "999px",
+                                transition: "width 0.3s ease",
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      </StyledTableCell>
                     </StyledTableRow>
                   );
                 })}
               </TableBody>
             </Table>
           </TableContainer>
-        </div>
+        </Box>
 
         {/* Top students */}
-        <div
-          style={{
-            background: "#ffffff",
+        <Box
+          sx={{
+            backgroundColor: "#ffffff",
             border: "1px solid #e2e8f0",
             borderRadius: "16px",
-            padding: "16px",
-            boxShadow: "0 4px 16px rgba(15, 23, 42, 0.06)",
-            minHeight: "100%",
+            overflow: "hidden",
+            boxShadow: "0 4px 18px rgba(15, 23, 42, 0.05)",
           }}
         >
-          <div
-            style={{
+          <Box
+            sx={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              marginBottom: "14px",
+              gap: 1.5,
+              px: 2,
+              py: 2,
+              borderBottom: "1px solid #eef2f7",
             }}
           >
-            <div
-              style={{
-                width: "36px",
-                height: "36px",
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "10px",
+                backgroundColor: "#fef3c7",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRadius: "10px",
-                background: "#fef3c7",
                 fontSize: "18px",
               }}
             >
               🏆
-            </div>
+            </Box>
 
-            <div>
+            <Box>
               <div
                 style={{
                   fontSize: "16px",
@@ -253,19 +412,25 @@ export default function StatisticsTable({
 
               <div
                 style={{
+                  marginTop: "2px",
                   fontSize: "12px",
                   color: "#64748b",
-                  marginTop: "2px",
                 }}
               >
                 Best performing students
               </div>
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <TopStudents data={data} />
-        </div>
-      </div>
+          <Box
+            sx={{
+              p: 1.5,
+            }}
+          >
+            <TopStudents data={data} />
+          </Box>
+        </Box>
+      </Box>
     </>
   );
 }

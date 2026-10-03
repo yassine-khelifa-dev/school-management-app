@@ -3,11 +3,11 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import { useEffect, useState } from "react";
 import type {
   StatiscticsFilterOptionsType,
   StatiscticsQueryType,
 } from "../types";
+import { useEffect } from "react";
 
 type Props = {
   data: StatiscticsFilterOptionsType;
@@ -16,31 +16,14 @@ type Props = {
 };
 
 export default function StatisticsFilter({ data, setQuery, query }: Props) {
-  const [subjectSelected, setSubjectSelected] = useState("" + query.subject);
-  const [academicYearSelected, setAcademicYearSelected] = useState(
-    "" + query.academic_year,
-  );
-  const [schoolClassSelected, setSchoolClassSelected] = useState(
-    "" + query.school_class,
-  );
-
-  useEffect(() => {
-    const up = () => {
-      setSubjectSelected("" + query.subject);
-    };
-    up();
-  }, [query]);
-
   const handleChange = (event: SelectChangeEvent, key: string) => {
     const value = event.target.value;
-
-    if (key === "subject") setSubjectSelected(value);
-    if (key === "academic_year") setAcademicYearSelected(value);
-    if (key === "school_class") setSchoolClassSelected(value);
-
     setQuery(key, value);
   };
 
+  useEffect(() => {
+    console.log("StatisticsFilter", query);
+  }, [query]);
   const controlStyle = {
     minWidth: 190,
     "& .MuiOutlinedInput-root": {
@@ -72,7 +55,6 @@ export default function StatisticsFilter({ data, setQuery, query }: Props) {
       color: "#0284c7",
     },
   };
-
   return (
     <Box
       sx={{
@@ -87,16 +69,16 @@ export default function StatisticsFilter({ data, setQuery, query }: Props) {
 
         <Select
           labelId="subject-label"
-          value={subjectSelected}
+          value={query.subject ?? "all"}
           label="Subject"
           onChange={(e) => handleChange(e, "subject")}
         >
-          <MenuItem value="">
+          <MenuItem value="all">
             <em>All subjects</em>
           </MenuItem>
 
           {data?.subjects?.map((subject) => (
-            <MenuItem key={subject.id} value={subject.id}>
+            <MenuItem key={subject.id} value={String(subject.id)}>
               {subject.name}
             </MenuItem>
           ))}
@@ -108,16 +90,13 @@ export default function StatisticsFilter({ data, setQuery, query }: Props) {
 
         <Select
           labelId="academic-year-label"
-          value={academicYearSelected}
+            value={query.academic_year ?? ""}
           label="Academic Year"
           onChange={(e) => handleChange(e, "academic_year")}
         >
-          <MenuItem value="">
-            <em>Select academic year</em>
-          </MenuItem>
 
           {data?.academic_years?.map((year) => (
-            <MenuItem key={year.id} value={year.id}>
+            <MenuItem key={year.id} value={String(year.id)}>
               {year.name}
             </MenuItem>
           ))}
@@ -129,16 +108,16 @@ export default function StatisticsFilter({ data, setQuery, query }: Props) {
 
         <Select
           labelId="school-class-label"
-          value={schoolClassSelected}
+          value={query.school_class ?? "all"}
           label="School Class"
           onChange={(e) => handleChange(e, "school_class")}
         >
-          <MenuItem value="">
+          <MenuItem value="all">
             <em>All classes</em>
           </MenuItem>
 
           {data?.classes?.map((schoolClass) => (
-            <MenuItem key={schoolClass.id} value={schoolClass.id}>
+            <MenuItem key={schoolClass.id} value={String(schoolClass.id)}>
               {schoolClass.name}
             </MenuItem>
           ))}

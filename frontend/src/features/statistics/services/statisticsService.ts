@@ -10,17 +10,10 @@ export async function getTopStudents(
   query: StatiscticsQueryType,
   signal?: AbortSignal,
 ): Promise<TopStudentsType> {
-  const { subject, academic_year, school_class, limit } = query;
   const res = await api.get(
-    "statistics/subjects/" +
-      (subject ?? 1) +
-      "/top-students?academic_year=" +
-      (academic_year ?? 1) +
-      "&school_class=" +
-      (school_class ?? "") +
-      "&limit=" +
-      (limit ?? 5),
+    "statistics/subjects/" + query.subject + "/top-students",
     {
+      params: query,
       signal,
     },
   );

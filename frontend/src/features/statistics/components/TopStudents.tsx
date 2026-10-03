@@ -7,9 +7,8 @@ type Props = {
 export function TopStudents({ data }: Props) {
   return (
     <>
-          <h5>Top Students</h5>
 
-      {data.top_students.map((s, index) => (
+      {data?.top_students?.map((s, index) => (
         <div
           key={s.student_id}
           style={{
@@ -100,6 +99,10 @@ export function TopStudents({ data }: Props) {
           </span>
         </div>
       ))}
+
+      {! data?.top_students && (
+        <div className="empty-state">There are no data to display.</div>
+      )}
     </>
   );
 }
