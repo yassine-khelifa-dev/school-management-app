@@ -195,6 +195,8 @@ class StatisticsQuery
                 [$threshold]
             )
 
+            ->selectRaw('COUNT(grades.id) as graded_records_count')
+
             ->groupBy(
                 'subjects.id',
                 'subjects.name'
