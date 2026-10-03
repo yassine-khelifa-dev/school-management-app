@@ -1,5 +1,5 @@
 import Navbar from "./components/Navbar";
-import { AuthProvider } from "./contexts/UserContext";
+import { AuthProvider } from "./contexts/AuthProvider";
 import AppRoute from "./routes";
 
 function App() {

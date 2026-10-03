@@ -9,9 +9,13 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import "../styles/LoginPage.css";
 import { useUser } from "../contexts/useUser";
+import Alert from "@mui/material/Alert";
+import useApiError from "../hooks/useApiError";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { error, clearError, handleError } = useApiError();
+  const [loading, setLoading] = useState(false);
   const { user, setUser } = useUser();
   const [credi, setCredi] = useState<LoginType>({
     email: "sydnie33@example.com",
@@ -30,16 +34,23 @@ export default function LoginPage() {
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const user = await loginService(credi);
-    //console.log("hi I am ..",user.user.role);
 
-    // save:
-    localStorage.setItem("user", JSON.stringify(user));
+    try {
+      clearError();
+      setLoading(true);
 
-    setUser(user);
-    redUser(user);
+      const user = await loginService(credi);
+
+      localStorage.setItem("user", JSON.stringify(user));
+
+      setUser(user);
+      redUser(user);
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
   }
-
   return (
     <main className="login-page">
       <section className="login-story" aria-label="About Seven School">
@@ -65,8 +76,14 @@ export default function LoginPage() {
         </div>
 
         <div className="login-trust" aria-label="Platform highlights">
-          <span><i aria-hidden="true" />Secure access</span>
-          <span><i aria-hidden="true" />Built for education</span>
+          <span>
+            <i aria-hidden="true" />
+            Secure access
+          </span>
+          <span>
+            <i aria-hidden="true" />
+            Built for education
+          </span>
         </div>
       </section>
 
@@ -78,8 +95,11 @@ export default function LoginPage() {
           </header>
 
           <form className="login-form" onSubmit={handleLogin}>
+            {error && <Alert severity="error">{error.message}</Alert>}
             <div>
-              <label className="login-form__label" htmlFor="tf-email">Email address</label>
+              <label className="login-form__label" htmlFor="tf-email">
+                Email address
+              </label>
               <TextField
                 required
                 fullWidth
@@ -98,7 +118,9 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="login-form__label" htmlFor="tf-pass">Password</label>
+              <label className="login-form__label" htmlFor="tf-pass">
+                Password
+              </label>
               <TextField
                 fullWidth
                 id="tf-pass"
@@ -120,15 +142,19 @@ export default function LoginPage() {
               type="submit"
               variant="contained"
               fullWidth
+              disabled={loading}
               endIcon={<ArrowForwardRoundedIcon />}
               sx={{ mt: 0.75, minHeight: 54, fontSize: "0.95rem" }}
             >
-              Sign in to your account
+              {loading ? "Signing in..." : "Sign in to your account"}
             </Button>
           </form>
 
           <footer className="login-form__footer">
-            <span><LockOutlinedIcon sx={{ fontSize: 15 }} />Protected school access</span>
+            <span>
+              <LockOutlinedIcon sx={{ fontSize: 15 }} />
+              Protected school access
+            </span>
           </footer>
         </div>
       </section>
