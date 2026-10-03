@@ -7,7 +7,8 @@ import { useStatisticsFilterOption } from "../hooks/useStatisticsFilterOption";
 import { useEffect } from "react";
 
 export default function StatisticsPage() {
-  const { filterOptions } = useStatisticsFilterOption();
+  const { filterOptions, errorFilterOptions, loadingFilterOptions } =
+    useStatisticsFilterOption();
 
   const { error, loadingStatiPage, list, query, setQuery, overviewList } =
     useStatistics();
@@ -73,11 +74,13 @@ export default function StatisticsPage() {
             flexWrap: "wrap",
           }}
         >
-          <StatisticsFilter
-            data={filterOptions}
-            setQuery={setQuery}
-            query={query}
-          />
+          {filterOptions && (
+            <StatisticsFilter
+              data={filterOptions}
+              setQuery={setQuery}
+              query={query}
+            />
+          )}
         </div>
       </div>
       <div className="page-notices">
@@ -86,6 +89,12 @@ export default function StatisticsPage() {
       </div>
 
       {loadingStatiPage && <LoadingUI />}
+
+      {errorFilterOptions && (
+        <Alert severity="error">{errorFilterOptions.message}</Alert>
+      )}
+
+      {loadingFilterOptions && <LoadingUI />}
 
       {overviewList && (
         <>

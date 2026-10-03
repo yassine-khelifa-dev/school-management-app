@@ -16,14 +16,12 @@ export function useStatistics() {
     school_class: "all",
   });
 
-  const [overviewList, setOverviewList] = useState<OverViewType>(null);
-  const [list, setList] = useState<TopStudentsType>(null);
+  const [overviewList, setOverviewList] = useState<OverViewType | null>(null);
+  const [list, setList] = useState<TopStudentsType | null>(null);
 
   const [loadingStatiPage, setLoadingStatiPage] = useState<boolean>(false);
 
   const setQuery = (key: string, value: string) => {
-    console.log(key, value);
-
     if (key === "subject" && value == "all") setList(null);
 
     setQueryState((prev) => {

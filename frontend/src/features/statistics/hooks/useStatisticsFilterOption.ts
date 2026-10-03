@@ -7,7 +7,7 @@ export function useStatisticsFilterOption() {
   const { error, clearError, handleError } = useApiError();
 
   const [filterOptions, setFilterOptions] =
-    useState<StatiscticsFilterOptionsType>(null);
+    useState<StatiscticsFilterOptionsType|null>(null);
 
   const [loadingFilterOptions, setLoadingStatiPage] = useState<boolean>(false);
 

@@ -14,7 +14,7 @@ import GradeTable from "../components/GradeTable";
 import useExamGrades from "../hooks/useExamGrades";
 import ReplyIcon from "@mui/icons-material/Reply";
 export default function ExamGradesPage() {
-  const { id } = useParams();
+  const { id = "" } = useParams();
   const navigate = useNavigate();
 
   const { grades, error, loading, refresh } = useExamGrades(id);
@@ -64,7 +64,7 @@ export default function ExamGradesPage() {
               }}
             >
               <Box>
-                <Typography variant="h5" fontWeight={600}>
+                <Typography variant="h5" sx={{ fontWeight: 600 }}>
                   <Button onClick={() => navigate(-1)}>
                     <ReplyIcon />
                   </Button>
@@ -116,7 +116,7 @@ export default function ExamGradesPage() {
                   Maximum Score
                 </Typography>
 
-                <Typography variant="h4" fontWeight={600}>
+                <Typography variant="h4" sx={{ fontWeight: 600 }}>
                   {grades.exam.maximum_score}
                 </Typography>
               </Box>
@@ -136,7 +136,7 @@ export default function ExamGradesPage() {
                   Students
                 </Typography>
 
-                <Typography fontWeight={600}>
+                <Typography sx={{ fontWeight: 600 }}>
                   {grades.meta.students_count}
                 </Typography>
               </Box>
@@ -146,7 +146,7 @@ export default function ExamGradesPage() {
                   Graded
                 </Typography>
 
-                <Typography fontWeight={600}>
+                <Typography sx={{ fontWeight: 600 }}>
                   {grades.meta.grades_count}
                 </Typography>
               </Box>
@@ -156,7 +156,7 @@ export default function ExamGradesPage() {
                   Not Yet Graded
                 </Typography>
 
-                <Typography fontWeight={600}>
+                <Typography sx={{ fontWeight: 600 }}>
                   {grades.meta.students_count - grades.meta.grades_count}
                 </Typography>
               </Box>

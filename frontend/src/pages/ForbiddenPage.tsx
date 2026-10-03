@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUser } from "../contexts/UserContext";
+import { useUser } from "../contexts/useUser";
 
 export default function ForbiddenPage() {
   const { user } = useUser();

@@ -12,7 +12,7 @@ type Props = {
 };
 
 export default function ExamFilter({ changeFilter, query }: Props) {
-  const [filterOptions, setFilterOptions] = useState<ExamFilterType>(null);
+  const [filterOptions, setFilterOptions] = useState<ExamFilterType|null>(null);
 
   useEffect(() => {
     const getData = async () => {

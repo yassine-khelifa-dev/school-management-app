@@ -9,6 +9,7 @@ import AuthenticatedRoute from "./AuthenticatedRoute";
 import ExamsPage from "../features/exams/pages/ExamsPage";
 import ExamDetailsPage from "../features/exams/pages/ExamDetailsPage";
 import ExamGradesPage from "../features/exams/pages/ExamGradesPage";
+import StatisticsPage from "../features/statistics/pages/StatisticsPage";
 
 export default function AppRoute() {
   return (
@@ -21,7 +22,8 @@ export default function AppRoute() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/exams" element={<ExamsPage />} />
         <Route path="/exams/:id" element={<ExamDetailsPage />} />
-        <Route path="//exams/:id/grades" element={<ExamGradesPage />} />
+        <Route path="/exams/:id/grades" element={<ExamGradesPage />} />
+        <Route path="/statistics" element={<StatisticsPage />} />
       </Route>
 
       <Route element={<ProtectedRoute role="admin" />}>

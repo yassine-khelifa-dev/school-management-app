@@ -66,7 +66,7 @@ export default function ExamForm({
 
         const res = await getOptionsTeachingAssignment();
         setOptionsTeachingAssignment(res);
-      } catch (err) {
+      } catch {
         setOptionsError("Unable to load teaching assignments.");
       } finally {
         setOptionsLoading(false);

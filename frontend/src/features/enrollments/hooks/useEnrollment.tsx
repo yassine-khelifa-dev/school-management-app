@@ -116,12 +116,12 @@ export function useEnrollment() {
 
       if (res.status === 204) {
         // cas : success
-        const remaining = enrollmentList.data.filter(
+        const remaining = enrollmentList?.data?.filter(
           (en) => en.id !== enroll.id,
         );
 
         // update paginate and enroll-list:
-        if (remaining.length === 0 && query.page > 1)
+        if (remaining?.length === 0 && query.page > 1)
           changePage(query.page - 1);
         else {
           // remain the page has same enroll's size ( 8-row)

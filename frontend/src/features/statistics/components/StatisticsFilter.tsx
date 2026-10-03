@@ -7,7 +7,6 @@ import type {
   StatiscticsFilterOptionsType,
   StatiscticsQueryType,
 } from "../types";
-import { useEffect } from "react";
 
 type Props = {
   data: StatiscticsFilterOptionsType;
@@ -21,9 +20,7 @@ export default function StatisticsFilter({ data, setQuery, query }: Props) {
     setQuery(key, value);
   };
 
-  useEffect(() => {
-    console.log("StatisticsFilter", query);
-  }, [query]);
+ 
   const controlStyle = {
     minWidth: 190,
     "& .MuiOutlinedInput-root": {

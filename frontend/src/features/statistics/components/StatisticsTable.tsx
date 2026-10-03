@@ -46,7 +46,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 }));
 
 type Props = {
-  data: TopStudentsType;
+  data: TopStudentsType | null;
   overviewList: OverViewType;
   setQuery: (key: string, value: string) => void;
   query: StatiscticsQueryType;
@@ -58,9 +58,8 @@ export default function StatisticsTable({
   setQuery,
   query,
 }: Props) {
-  const handleClick = (id) => {
-    console.log(id);
-    setQuery("subject", id);
+  const handleClick = (id: number) => {
+    setQuery("subject", "" + id);
   };
 
   return (
@@ -174,12 +173,8 @@ export default function StatisticsTable({
               <TableHead>
                 <TableRow>
                   <StyledTableCell>Subject</StyledTableCell>
-                  <StyledTableCell align="center">
-                    Students
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    Average
-                  </StyledTableCell>
+                  <StyledTableCell align="center">Students</StyledTableCell>
+                  <StyledTableCell align="center">Average</StyledTableCell>
                   <StyledTableCell align="center">
                     Graded records
                   </StyledTableCell>
@@ -191,12 +186,10 @@ export default function StatisticsTable({
 
               <TableBody>
                 {overviewList.subjects.map((row) => {
-                  const isSelected =
-                    String(query.subject) === String(row.id);
+                  const isSelected = String(query.subject) === String(row.id);
 
                   const passRate = Number(row.pass_rate ?? 0);
-                  const rateColor =
-                    passRate >= 50 ? "#16a34a" : "#dc2626";
+                  const rateColor = passRate >= 50 ? "#16a34a" : "#dc2626";
 
                   return (
                     <StyledTableRow
@@ -205,14 +198,10 @@ export default function StatisticsTable({
                       sx={{
                         cursor: "pointer",
 
-                        backgroundColor: isSelected
-                          ? "#f0f9ff"
-                          : "#ffffff",
+                        backgroundColor: isSelected ? "#f0f9ff" : "#ffffff",
 
                         "&:hover": {
-                          backgroundColor: isSelected
-                            ? "#e0f2fe"
-                            : "#f8fafc",
+                          backgroundColor: isSelected ? "#e0f2fe" : "#f8fafc",
                         },
 
                         ...(isSelected && {
