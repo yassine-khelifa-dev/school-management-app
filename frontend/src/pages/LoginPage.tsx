@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { user, setUser } = useUser();
   const [credi, setCredi] = useState<LoginType>({
-    email: "sydnie33@example.com",
+    email: "admin@northstar-school.test",
     password: "password",
   });
 
